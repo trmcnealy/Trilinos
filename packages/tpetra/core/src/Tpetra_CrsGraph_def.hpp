@@ -1633,17 +1633,6 @@ namespace Tpetra {
         ret.allocSize = 0;
       }
       else {
-        std::cout << "CrsGraph Device memory space: " << device_type::memory_space::name() << '\n';
-        std::cout << "Node memory space: " << Node::memory_space::name() << '\n';
-        std::cout << "    Its memory space: " << device_type::memory_space::name() << '\n';
-        //std::cout << "Local graph device type: " << local_graph_type::device_type::name() << '\n';
-        std::cout << "Its memory space: " << local_graph_type::device_type::memory_space::name() << '\n';
-/*
-        std::cout << "Hello from CrsGraph: about to access k_rowPtrs_.\n";
-        std::cout << "Type is " << typeid(this->k_rowPtrs_).name() << '\n';
-        std::cout << "Pointer/extent: " << this->k_rowPtrs_.data() << "  -- " << this->k_rowPtrs_.extent(0) << '\n';
-        std::cout << "First elem: " << this->k_rowPtrs_(0) << '\n';
-*/
         ret.offset1D  = this->k_rowPtrs_(myRow);
         ret.allocSize = this->k_rowPtrs_(myRow+1) - this->k_rowPtrs_(myRow);
       }
