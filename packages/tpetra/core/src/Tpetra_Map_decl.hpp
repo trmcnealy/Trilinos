@@ -242,6 +242,9 @@ namespace Tpetra {
     /// It defines where the Map's data live, and where Map might
     /// choose to execute parallel kernels.
     using device_type = typename Node::device_type;
+#ifdef KOKKOS_ENABLE_HIP
+    static_assert(!std::is_same<device_type, Kokkos::Device<Kokkos::Experimental::HIP, Kokkos::Experimental::HIPSpace>>::value, "Can't use HIP/HIPSpace yet");
+#endif
 
     //! The Kokkos execution space.
     using execution_space = typename device_type::execution_space;

@@ -1960,7 +1960,7 @@ RCP<Tpetra::CrsMatrix<SC, LO, GO, NT>> getUnsortedTestMatrix(
   size_type numEntries = 0;
   for(LO i = 0; i < numLocalRows; i++)
     numEntries += entriesPerRow[i];
-  Array<lno_t> rowptrs(numLocalRows + 1);
+  Array<size_type> rowptrs(numLocalRows + 1);
   Array<lno_t> colinds(numEntries);
   Array<kk_scalar_t> values(numEntries);
   size_type accum = 0;

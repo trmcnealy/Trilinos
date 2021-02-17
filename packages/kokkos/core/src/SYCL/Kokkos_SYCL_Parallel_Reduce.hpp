@@ -69,14 +69,6 @@ class ParallelReduce<FunctorType, Kokkos::RangePolicy<Traits...>, ReducerType,
   using reference_type  = typename Analysis::reference_type;
 
   using WorkTag = typename Policy::work_tag;
-  using ReducerConditional =
-      Kokkos::Impl::if_c<std::is_same<InvalidType, ReducerType>::value,
-                         FunctorType, ReducerType>;
-  using WorkTagFwd =
-      std::conditional_t<std::is_same<InvalidType, ReducerType>::value, WorkTag,
-                         void>;
-  using ValueInit =
-      typename Kokkos::Impl::FunctorValueInit<FunctorType, WorkTagFwd>;
 
  public:
   // V - View
@@ -94,20 +86,27 @@ class ParallelReduce<FunctorType, Kokkos::RangePolicy<Traits...>, ReducerType,
         m_result_ptr(reducer.view().data()) {}
 
  private:
-  template <typename TagType>
-  std::enable_if_t<std::is_void<TagType>::value> exec(reference_type update) {
-    using member_type = typename Policy::member_type;
-    member_type e     = m_policy.end();
-    for (member_type i = m_policy.begin(); i < e; ++i) m_functor(i, update);
-  }
+  template <typename T>
+  struct HasJoin {
+    template <typename U>
+    static constexpr decltype(
+        std::declval<U>().join(
+            std::declval<
+                typename FunctorValueTraits<T, WorkTag>::value_type&>(),
+            std::declval<
+                const typename FunctorValueTraits<T, WorkTag>::value_type&>()),
+        bool())
+    test_join(int) {
+      return true;
+    }
 
-  template <typename TagType>
-  std::enable_if_t<!std::is_void<TagType>::value> exec(reference_type update) {
-    using member_type = typename Policy::member_type;
-    member_type e     = m_policy.end();
-    for (member_type i = m_policy.begin(); i < e; ++i)
-      m_functor(TagType{}, i, update);
-  }
+    template <typename U>
+    static constexpr bool test_join(...) {
+      return false;
+    }
+
+    static constexpr bool value = test_join<T>(int());
+  };
 
   template <typename T>
   struct ExtendedReferenceWrapper : std::reference_wrapper<T> {
@@ -118,169 +117,222 @@ class ParallelReduce<FunctorType, Kokkos::RangePolicy<Traits...>, ReducerType,
     template <typename Dummy = T>
     std::enable_if_t<std::is_same_v<Dummy, T> &&
                      ReduceFunctorHasInit<Dummy>::value>
-    init(value_type& old_value, const value_type& new_value) const {
-      return this->get().init(old_value, new_value);
+    init(value_type& value) const {
+      return this->get().init(value);
     }
 
     template <typename Dummy = T>
-    std::enable_if_t<std::is_same_v<Dummy, T> &&
-                     ReduceFunctorHasJoin<Dummy>::value>
-    join(value_type& old_value, const value_type& new_value) const {
-      return this->get().join(old_value, new_value);
+    std::enable_if_t<std::is_same_v<Dummy, T> && HasJoin<Dummy>::value> join(
+        volatile value_type& dest, const volatile value_type& src) const {
+      return this->get().join(dest, src);
     }
 
     template <typename Dummy = T>
     std::enable_if_t<std::is_same_v<Dummy, T> &&
                      ReduceFunctorHasFinal<Dummy>::value>
-    final(value_type& old_value) const {
-      return this->get().final(old_value);
+    final(value_type& value) const {
+      return this->get().final(value);
     }
   };
 
-  template <typename PolicyType, typename Functor>
-  void sycl_direct_launch(const PolicyType& policy,
-                          const Functor& functor) const {
+  template <typename PolicyType, typename Functor, typename Reducer>
+  void sycl_direct_launch(const PolicyType& policy, const Functor& functor,
+                          const Reducer& reducer) const {
+    static_assert(ReduceFunctorHasInit<Functor>::value ==
+                  ReduceFunctorHasInit<FunctorType>::value);
+    static_assert(ReduceFunctorHasFinal<Functor>::value ==
+                  ReduceFunctorHasFinal<FunctorType>::value);
+    static_assert(HasJoin<Functor>::value == HasJoin<FunctorType>::value);
+    if constexpr (!std::is_same<Reducer, InvalidType>::value)
+      static_assert(HasJoin<Reducer>::value == HasJoin<ReducerType>::value);
+
+    using ReducerConditional =
+        Kokkos::Impl::if_c<std::is_same<InvalidType, Reducer>::value, Functor,
+                           Reducer>;
+    using ReducerTypeFwd = typename ReducerConditional::type;
+    using WorkTagFwd =
+        std::conditional_t<std::is_same<InvalidType, Reducer>::value, WorkTag,
+                           void>;
+    using ValueInit =
+        Kokkos::Impl::FunctorValueInit<ReducerTypeFwd, WorkTagFwd>;
+    using ValueJoin =
+        Kokkos::Impl::FunctorValueJoin<ReducerTypeFwd, WorkTagFwd>;
+    using ValueOps = Kokkos::Impl::FunctorValueOps<Functor, WorkTag>;
+
+    auto selected_reducer = ReducerConditional::select(functor, reducer);
+
     // Convenience references
     const Kokkos::Experimental::SYCL& space = policy.space();
     Kokkos::Experimental::Impl::SYCLInternal& instance =
         *space.impl_internal_space_instance();
-    cl::sycl::queue& q = *instance.m_queue;
+    sycl::queue& q = *instance.m_queue;
 
-    auto result_ptr = static_cast<pointer_type>(
-        sycl::malloc(sizeof(*m_result_ptr), q, sycl::usm::alloc::shared));
+    // FIXME_SYCL optimize
+    constexpr size_t wgroup_size       = 128;
+    constexpr size_t values_per_thread = 2;
+    std::size_t size                   = policy.end() - policy.begin();
+    const auto init_size               = std::max<std::size_t>(
+        ((size + values_per_thread - 1) / values_per_thread + wgroup_size - 1) /
+            wgroup_size,
+        1);
+    const unsigned int value_count =
+        FunctorValueTraits<ReducerTypeFwd, WorkTagFwd>::value_count(
+            selected_reducer);
+    const auto results_ptr = static_cast<pointer_type>(sycl::malloc_shared(
+        sizeof(value_type) * std::max(value_count, 1u) * init_size, q));
 
-    value_type identity{};
-    if constexpr (!std::is_same<ReducerType, InvalidType>::value)
-      m_reducer.init(identity);
-
-    *result_ptr = identity;
-    if constexpr (ReduceFunctorHasInit<Functor>::value)
-      ValueInit::init(functor, result_ptr);
-
-    q.submit([&](cl::sycl::handler& cgh) {
-      // FIXME_SYCL a local size larger than 1 doesn't work for all cases
-      cl::sycl::nd_range<1> range(policy.end() - policy.begin(), 1);
-
-      const auto reduction = [&]() {
-        if constexpr (!std::is_same<ReducerType, InvalidType>::value) {
-          return cl::sycl::ONEAPI::reduction(
-              result_ptr, identity,
-              [this](value_type& old_value, const value_type& new_value) {
-                m_reducer.join(old_value, new_value);
-                return old_value;
-              });
-        } else {
-          if constexpr (ReduceFunctorHasJoin<Functor>::value) {
-            return cl::sycl::ONEAPI::reduction(
-                result_ptr, identity,
-                [functor](value_type& old_value, const value_type& new_value) {
-                  functor.join(old_value, new_value);
-                  return old_value;
-                });
-          } else {
-            return cl::sycl::ONEAPI::reduction(result_ptr, identity,
-                                               std::plus<>());
+    // If size<=1 we only call init(), the functor and possibly final once
+    // working with the global scratch memory but don't copy back to
+    // m_result_ptr yet.
+    if (size <= 1) {
+      q.submit([&](sycl::handler& cgh) {
+        const auto begin = policy.begin();
+        cgh.single_task([=]() {
+          reference_type update =
+              ValueInit::init(selected_reducer, results_ptr);
+          if (size == 1) {
+            if constexpr (std::is_same<WorkTag, void>::value)
+              functor(begin, update);
+            else
+              functor(WorkTag(), begin, update);
           }
-        }
-      }();
+          if constexpr (ReduceFunctorHasFinal<Functor>::value)
+            FunctorFinal<Functor, WorkTag>::final(functor, results_ptr);
+        });
+      });
+      space.fence();
+    }
 
-      cgh.parallel_for(range, reduction,
-                       [=](cl::sycl::nd_item<1> item, auto& sum) {
-                         const typename Policy::index_type id =
-                             static_cast<typename Policy::index_type>(
-                                 item.get_global_id(0)) +
-                             policy.begin();
-                         value_type partial = identity;
-                         if constexpr (std::is_same<WorkTag, void>::value)
-                           functor(id, partial);
-                         else
-                           functor(WorkTag(), id, partial);
-                         sum.combine(partial);
-                       });
-    });
+    // Otherwise, we perform a reduction on the values in all workgroups
+    // separately, write the workgroup results back to global memory and recurse
+    // until only one workgroup does the reduction and thus gets the final
+    // value.
+    bool first_run = true;
+    while (size > 1) {
+      auto n_wgroups = ((size + values_per_thread - 1) / values_per_thread +
+                        wgroup_size - 1) /
+                       wgroup_size;
+      q.submit([&](sycl::handler& cgh) {
+        sycl::accessor<value_type, 1, sycl::access::mode::read_write,
+                       sycl::access::target::local>
+            local_mem(sycl::range<1>(wgroup_size) * std::max(value_count, 1u),
+                      cgh);
+        const auto begin = policy.begin();
 
-    q.wait();
+        cgh.parallel_for(
+            sycl::nd_range<1>(n_wgroups * wgroup_size, wgroup_size),
+            [=](sycl::nd_item<1> item) {
+              const auto local_id = item.get_local_linear_id();
+              const auto global_id =
+                  wgroup_size * item.get_group_linear_id() * values_per_thread +
+                  local_id;
 
-    static_assert(ReduceFunctorHasFinal<Functor>::value ==
-                  ReduceFunctorHasFinal<FunctorType>::value);
-    static_assert(ReduceFunctorHasJoin<Functor>::value ==
-                  ReduceFunctorHasJoin<FunctorType>::value);
+              // In the first iteration, we call functor to initialize the local
+              // memory. Otherwise, the local memory is initialized with the
+              // results from the previous iteration that are stored in global
+              // memory. Note that we load values_per_thread values per thread
+              // and immediately combine them to avoid too many threads being
+              // idle in the actual workgroup reduction.
+              using index_type       = typename Policy::index_type;
+              const auto upper_bound = std::min<index_type>(
+                  global_id + values_per_thread * wgroup_size, size);
+              if (first_run) {
+                reference_type update = ValueInit::init(
+                    selected_reducer, &local_mem[local_id * value_count]);
+                for (index_type id = global_id; id < upper_bound;
+                     id += wgroup_size) {
+                  if constexpr (std::is_same<WorkTag, void>::value)
+                    functor(id + begin, update);
+                  else
+                    functor(WorkTag(), id + begin, update);
+                }
+              } else {
+                if (global_id >= size)
+                  ValueInit::init(selected_reducer,
+                                  &local_mem[local_id * value_count]);
+                else {
+                  ValueOps::copy(functor, &local_mem[local_id * value_count],
+                                 &results_ptr[global_id * value_count]);
+                  for (index_type id = global_id + wgroup_size;
+                       id < upper_bound; id += wgroup_size) {
+                    ValueJoin::join(selected_reducer,
+                                    &local_mem[local_id * value_count],
+                                    &results_ptr[id * value_count]);
+                  }
+                }
+              }
+              item.barrier(sycl::access::fence_space::local_space);
 
-    if constexpr (ReduceFunctorHasFinal<Functor>::value)
-      FunctorFinal<Functor, WorkTag>::final(functor, result_ptr);
-    else
-      *m_result_ptr = *result_ptr;
+              // Perform the actual workgroup reduction. To achieve a better
+              // memory access pattern, we use sequential addressing and a
+              // reversed loop. If the workgroup size is 8, the first element
+              // contains all the values with index%4==0, after the second one
+              // the values with index%2==0 and after the third one index%1==0,
+              // i.e., all values.
+              for (unsigned int stride = wgroup_size / 2; stride > 0;
+                   stride >>= 1) {
+                const auto idx = local_id;
+                if (idx < stride) {
+                  ValueJoin::join(selected_reducer,
+                                  &local_mem[idx * value_count],
+                                  &local_mem[(idx + stride) * value_count]);
+                }
+                item.barrier(sycl::access::fence_space::local_space);
+              }
 
-    sycl::free(result_ptr, q);
-  }
+              // Finally, we copy the workgroup results back to global memory to
+              // be used in the next iteration. If this is the last iteration,
+              // i.e., there is only one workgroup also call final() if
+              // necessary.
+              if (local_id == 0) {
+                ValueOps::copy(
+                    functor,
+                    &results_ptr[(item.get_group_linear_id()) * value_count],
+                    &local_mem[0]);
+                if constexpr (ReduceFunctorHasFinal<Functor>::value)
+                  if (n_wgroups <= 1)
+                    FunctorFinal<Functor, WorkTag>::final(
+                        functor, &results_ptr[(item.get_group_linear_id()) *
+                                              value_count]);
+              }
+            });
+      });
+      space.fence();
 
-  template <typename Functor>
-  void sycl_indirect_launch(const Functor& functor) const {
-    // Convenience references
-    const Kokkos::Experimental::SYCL& space = m_policy.space();
-    Kokkos::Experimental::Impl::SYCLInternal& instance =
-        *space.impl_internal_space_instance();
-    Kokkos::Experimental::Impl::SYCLInternal::IndirectKernelMemory& kernelMem =
-        *instance.m_indirectKernel;
+      first_run = false;
+      size      = n_wgroups;
+    }
 
-    // Allocate USM shared memory for the functor
-    kernelMem.resize(std::max(kernelMem.size(), sizeof(functor)));
+    // At this point, the reduced value is written to the entry in results_ptr
+    // and all that is left is to copy it back to the given result pointer if
+    // necessary.
+    if (m_result_ptr) {
+      Kokkos::Impl::DeepCopy<Kokkos::Experimental::SYCLDeviceUSMSpace,
+                             Kokkos::Experimental::SYCLDeviceUSMSpace>(
+          space, m_result_ptr, results_ptr,
+          sizeof(*m_result_ptr) * value_count);
+      space.fence();
+    }
 
-    // Placement new a copy of functor into USM shared memory
-    //
-    // Store it in a unique_ptr to call its destructor on scope exit
-    std::unique_ptr<Functor, Kokkos::Impl::destruct_delete> kernelFunctorPtr(
-        new (kernelMem.data()) Functor(functor));
-
-    auto kernelFunctor = ExtendedReferenceWrapper<Functor>(*kernelFunctorPtr);
-    sycl_direct_launch(m_policy, kernelFunctor);
+    sycl::free(results_ptr, q);
   }
 
  public:
   void execute() const {
-    if (m_policy.begin() == m_policy.end()) {
-      const Kokkos::Experimental::SYCL& space = m_policy.space();
-      Kokkos::Experimental::Impl::SYCLInternal& instance =
-          *space.impl_internal_space_instance();
-      cl::sycl::queue& q = *instance.m_queue;
+    Kokkos::Experimental::Impl::SYCLInternal& instance =
+        *m_policy.space().impl_internal_space_instance();
+    using IndirectKernelMem =
+        Kokkos::Experimental::Impl::SYCLInternal::IndirectKernelMem;
+    IndirectKernelMem& indirectKernelMem  = instance.m_indirectKernelMem;
+    IndirectKernelMem& indirectReducerMem = instance.m_indirectReducerMem;
 
-      pointer_type result_ptr =
-          ReduceFunctorHasFinal<FunctorType>::value
-              ? static_cast<pointer_type>(sycl::malloc(
-                    sizeof(*m_result_ptr), q, sycl::usm::alloc::shared))
-              : m_result_ptr;
+    const auto functor_wrapper = Experimental::Impl::make_sycl_function_wrapper<
+        ExtendedReferenceWrapper<FunctorType>>(m_functor, indirectKernelMem);
+    const auto reducer_wrapper = Experimental::Impl::make_sycl_function_wrapper<
+        ExtendedReferenceWrapper<ReducerType>>(m_reducer, indirectReducerMem);
 
-      sycl::usm::alloc result_ptr_type =
-          sycl::get_pointer_type(result_ptr, q.get_context());
-
-      switch (result_ptr_type) {
-        case sycl::usm::alloc::host:
-        case sycl::usm::alloc::shared:
-          ValueInit::init(m_functor, result_ptr);
-          break;
-        case sycl::usm::alloc::device:
-          // non-USM-allocated memory
-        case sycl::usm::alloc::unknown: {
-          value_type host_result;
-          ValueInit::init(m_functor, &host_result);
-          q.memcpy(result_ptr, &host_result, sizeof(host_result)).wait();
-          break;
-        }
-        default: Kokkos::abort("pointer type outside of SYCL specs.");
-      }
-
-      if constexpr (ReduceFunctorHasFinal<FunctorType>::value) {
-        FunctorFinal<FunctorType, WorkTag>::final(m_functor, result_ptr);
-        sycl::free(result_ptr, q);
-      }
-
-      return;
-    }
-
-    if constexpr (std::is_trivially_copyable_v<decltype(m_functor)>)
-      sycl_direct_launch(m_policy, m_functor);
-    else
-      sycl_indirect_launch(m_functor);
+    sycl_direct_launch(m_policy, functor_wrapper.get_functor(),
+                       reducer_wrapper.get_functor());
   }
 
  private:

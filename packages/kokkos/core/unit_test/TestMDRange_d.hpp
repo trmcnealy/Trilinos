@@ -49,10 +49,16 @@ namespace Test {
 TEST(TEST_CATEGORY, mdrange_3d) {
   TestMDRange_3D<TEST_EXECSPACE>::test_for3(1, 10, 100);
   TestMDRange_3D<TEST_EXECSPACE>::test_for3(100, 10, 100);
+#if !defined(KOKKOS_ENABLE_SYCL) && !defined(KOKKOS_ENABLE_OPENMPTARGET)
+  // FIXME_SYCL requires MDRange parallel_reduce
+  // FIXME_OPENMPTARGET requires MDRange parallel_reduce
   TestMDRange_3D<TEST_EXECSPACE>::test_reduce3(1, 10, 100);
   TestMDRange_3D<TEST_EXECSPACE>::test_reduce3(100, 10, 100);
+#endif
 }
 
+// FIXME_SYCL requires MDRange parallel_reduce
+#if !defined(KOKKOS_ENABLE_SYCL) && !defined(KOKKOS_ENABLE_OPENMPTARGET)
 TEST(TEST_CATEGORY, mdrange_neg_idx) {
   TestMDRange_2D_NegIdx<TEST_EXECSPACE>::test_2D_negidx(128, 32);
   TestMDRange_3D_NegIdx<TEST_EXECSPACE>::test_3D_negidx(128, 32, 8);
@@ -60,5 +66,6 @@ TEST(TEST_CATEGORY, mdrange_neg_idx) {
   TestMDRange_5D_NegIdx<TEST_EXECSPACE>::test_5D_negidx(128, 32, 8, 8, 4);
   TestMDRange_6D_NegIdx<TEST_EXECSPACE>::test_6D_negidx(128, 32, 8, 8, 4, 2);
 }
+#endif
 
 }  // namespace Test

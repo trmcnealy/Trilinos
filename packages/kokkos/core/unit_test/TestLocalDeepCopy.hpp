@@ -1083,6 +1083,8 @@ struct DeepCopyScratchFunctor {
 };
 }  // namespace Impl
 
+// FIXME_SYCL needs TeamPolicy scratch memory
+#ifndef KOKKOS_ENABLE_SYCL
 TEST(TEST_CATEGORY, deep_copy_scratch) {
   using TestDeviceTeamPolicy = Kokkos::TeamPolicy<TEST_EXECSPACE>;
 
@@ -1111,4 +1113,5 @@ TEST(TEST_CATEGORY, deep_copy_scratch) {
     ASSERT_EQ(host_copy_2(i), 6.0);
   }
 }
+#endif
 }  // namespace Test

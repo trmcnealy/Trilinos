@@ -73,6 +73,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL(CrsMatrix, Bug8447, SC, LO, GO, NT)
   typedef Tpetra::CrsMatrix<SC,LO,GO,NT> CrsMatrixType;
   typedef typename CrsMatrixType::impl_scalar_type implScalarType;
   typedef typename CrsMatrixType::local_matrix_type lclMatrixType;
+  typedef typename lclMatrixType::size_type size_type;
 
   RCP<const Comm<int> > comm = getDefaultComm();
   TEUCHOS_TEST_FOR_EXCEPTION(
@@ -82,7 +83,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL(CrsMatrix, Bug8447, SC, LO, GO, NT)
   const int myPID = comm->getRank();
 
   std::vector<GO> globalIDs, globalIDs2;
-  std::vector<LO> rowptr;
+  std::vector<size_type> rowptr;
   std::vector<LO> indices;
   std::vector<implScalarType> values;
   const SC ONE = Teuchos::ScalarTraits<implScalarType>::one ();

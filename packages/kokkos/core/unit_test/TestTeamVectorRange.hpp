@@ -169,17 +169,17 @@ struct my_complex {
   }
 
   KOKKOS_INLINE_FUNCTION
-  bool operator==(const my_complex& src) {
+  bool operator==(const my_complex& src) const {
     return (re == src.re) && (im == src.im) && (dummy == src.dummy);
   }
 
   KOKKOS_INLINE_FUNCTION
-  bool operator!=(const my_complex& src) {
+  bool operator!=(const my_complex& src) const {
     return (re != src.re) || (im != src.im) || (dummy != src.dummy);
   }
 
   KOKKOS_INLINE_FUNCTION
-  bool operator!=(const double& val) {
+  bool operator!=(const double& val) const {
     return (re != val) || (im != 0) || (dummy != 0);
   }
 
@@ -244,8 +244,9 @@ struct functor_teamvector_for {
     shared_int values         = shared_int(team.team_shmem(), shmemSize);
 
     if (values.data() == nullptr || values.extent(0) < shmemSize) {
-      printf("FAILED to allocate shared memory of size %u\n",
-             static_cast<unsigned int>(shmemSize));
+      KOKKOS_IMPL_DO_NOT_USE_PRINTF(
+          "FAILED to allocate shared memory of size %u\n",
+          static_cast<unsigned int>(shmemSize));
     } else {
       // Initialize shared memory.
       Kokkos::parallel_for(Kokkos::TeamVectorRange(team, 131),
@@ -448,7 +449,10 @@ bool test_scalar(int nteams, int team_size, int test) {
         "Test::TeamVectorFor",
         Kokkos::TeamPolicy<ExecutionSpace>(nteams, team_size, 8),
         functor_teamvector_for<Scalar, ExecutionSpace>(d_flag));
-  } else if (test == 1) {
+  }
+  // FIXME_SYCL team reduce not implemented
+#ifndef KOKKOS_ENABLE_SYCL
+  else if (test == 1) {
     Kokkos::parallel_for(
         "Test::TeamVectorReduce",
         Kokkos::TeamPolicy<ExecutionSpace>(nteams, team_size, 8),
@@ -459,6 +463,7 @@ bool test_scalar(int nteams, int team_size, int test) {
         Kokkos::TeamPolicy<ExecutionSpace>(nteams, team_size, 8),
         functor_teamvector_reduce_reducer<Scalar, ExecutionSpace>(d_flag));
   }
+#endif
 
   Kokkos::deep_copy(h_flag, d_flag);
 

@@ -55,6 +55,7 @@ IF(INTERNAL_HAVE_COMPILER_NVCC)
   SET(KOKKOS_CXX_COMPILER_VERSION ${TEMP_CXX_COMPILER_VERSION} CACHE STRING INTERNAL FORCE)
   MESSAGE(STATUS "Compiler Version: ${KOKKOS_CXX_COMPILER_VERSION}")
   IF(INTERNAL_USE_COMPILER_LAUNCHER)
+    GLOBAL_APPEND(KOKKOS_LINK_OPTIONS -DKOKKOS_DEPENDENCE)
     IF(Kokkos_LAUNCH_COMPILER_INFO)
         GET_FILENAME_COMPONENT(BASE_COMPILER_NAME ${CMAKE_CXX_COMPILER} NAME)
         # does not have STATUS intentionally
@@ -103,8 +104,7 @@ ENDIF()
 IF(KOKKOS_CXX_COMPILER_ID STREQUAL Clang)
   # The Cray compiler reports as Clang to most versions of CMake
   EXECUTE_PROCESS(COMMAND ${CMAKE_CXX_COMPILER} --version
-                  COMMAND grep Cray
-                  COMMAND wc -l
+                  COMMAND grep -c Cray
                   OUTPUT_VARIABLE INTERNAL_HAVE_CRAY_COMPILER
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
   IF (INTERNAL_HAVE_CRAY_COMPILER) #not actually Clang
@@ -112,8 +112,7 @@ IF(KOKKOS_CXX_COMPILER_ID STREQUAL Clang)
   ENDIF()
   # The clang based Intel compiler reports as Clang to most versions of CMake
   EXECUTE_PROCESS(COMMAND ${CMAKE_CXX_COMPILER} --version
-                  COMMAND grep icpx
-                  COMMAND wc -l
+                  COMMAND grep -c "DPC++\\|icpx"
                   OUTPUT_VARIABLE INTERNAL_HAVE_INTEL_COMPILER
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
   IF (INTERNAL_HAVE_INTEL_COMPILER) #not actually Clang

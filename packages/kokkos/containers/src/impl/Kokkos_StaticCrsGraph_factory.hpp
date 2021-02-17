@@ -121,7 +121,7 @@ inline typename StaticCrsGraphType::staticcrsgraph_type create_staticcrsgraph(
 
   using work_type = View<typename output_type::size_type[],
                          typename output_type::array_layout,
-                         typename output_type::execution_space,
+                         typename output_type::device_type::memory_space,
                          typename output_type::memory_traits>;
 
   output_type output;

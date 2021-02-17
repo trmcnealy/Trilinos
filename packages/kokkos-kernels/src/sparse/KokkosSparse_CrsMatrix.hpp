@@ -529,7 +529,7 @@ public:
              OrdinalType ncols,
              size_type annz,
              ScalarType* val,
-             OrdinalType* rowmap,
+             size_type* rowmap,
              OrdinalType* cols)
   {
     ctor_impl (label, nrows, ncols, annz, val, rowmap, cols);
@@ -629,7 +629,7 @@ public:
           const OrdinalType ncols,
           const size_type annz,
           ScalarType* val,
-          OrdinalType* rows,
+          size_type* rows,
           OrdinalType* cols);
 
   KOKKOS_INLINE_FUNCTION
@@ -871,7 +871,7 @@ ctor_impl (const std::string &label,
            const OrdinalType ncols,
            const size_type annz,
            ScalarType* val,
-           OrdinalType* rows,
+           size_type* rows,
            OrdinalType* cols)
 {
   std::string str = label;

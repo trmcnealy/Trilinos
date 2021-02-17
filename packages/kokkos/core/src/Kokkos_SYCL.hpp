@@ -79,15 +79,20 @@ class SYCL {
 
   using scratch_memory_space = ScratchMemorySpace<SYCL>;
 
-  ~SYCL() = default;
+  ~SYCL();
   SYCL();
+  explicit SYCL(const sycl::queue&);
 
-  SYCL(SYCL&&)      = default;
-  SYCL(const SYCL&) = default;
-  SYCL& operator=(SYCL&&) = default;
-  SYCL& operator=(const SYCL&) = default;
+  SYCL(SYCL&&) noexcept;
+  SYCL(const SYCL&);
+  SYCL& operator=(SYCL&&) noexcept;
+  SYCL& operator=(const SYCL&);
 
   uint32_t impl_instance_id() const noexcept { return 0; }
+
+  sycl::context sycl_context() const noexcept {
+    return m_space_instance->m_queue->get_context();
+  };
 
   //@}
   //------------------------------------
@@ -95,7 +100,7 @@ class SYCL {
   //@{
 
   KOKKOS_INLINE_FUNCTION static int in_parallel() {
-#if defined(__SYCL_ARCH__)
+#if defined(__SYCL_DEVICE_ONLY__)
     return true;
 #else
     return false;
@@ -124,12 +129,12 @@ class SYCL {
 
   struct SYCLDevice {
     SYCLDevice();
-    explicit SYCLDevice(cl::sycl::device d);
-    explicit SYCLDevice(const cl::sycl::device_selector& selector);
+    explicit SYCLDevice(sycl::device d);
+    explicit SYCLDevice(const sycl::device_selector& selector);
     explicit SYCLDevice(size_t id);
     explicit SYCLDevice(const std::function<bool(const sycl::device&)>& pred);
 
-    cl::sycl::device get_device() const;
+    sycl::device get_device() const;
 
     friend std::ostream& operator<<(std::ostream& os, const SYCLDevice& that) {
       return that.info(os);
@@ -141,7 +146,7 @@ class SYCL {
    private:
     std::ostream& info(std::ostream& os) const;
 
-    cl::sycl::device m_device;
+    sycl::device m_device;
   };
 
   static void impl_initialize(SYCLDevice = SYCLDevice());
@@ -158,7 +163,9 @@ class SYCL {
   }
 
  private:
+  KOKKOS_FUNCTION void cleanup() noexcept;
   Impl::SYCLInternal* m_space_instance;
+  int* m_counter;
 };
 
 namespace Impl {
