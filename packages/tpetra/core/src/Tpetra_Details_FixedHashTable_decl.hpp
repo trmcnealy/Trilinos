@@ -84,9 +84,6 @@ template<class KeyType,
          class ValueType,
          class DeviceType>
 class FixedHashTable {
-#ifdef KOKKOS_ENABLE_HIP
-static_assert(!std::is_same<typename DeviceType::memory_space, Kokkos::Experimental::HIPSpace>::value, "Can't use HIPSpace here yet.");
-#endif
 private:
   typedef typename DeviceType::execution_space execution_space;
   typedef typename DeviceType::memory_space memory_space;
