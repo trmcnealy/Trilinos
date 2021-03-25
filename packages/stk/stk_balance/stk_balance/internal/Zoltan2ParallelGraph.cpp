@@ -13,18 +13,7 @@ void Zoltan2ParallelGraph::adjust_vertex_weights(const stk::balance::BalanceSett
 {
   const stk::mesh::Part & locallyOwnedPart =  stkMeshBulkData.mesh_meta_data().locally_owned_part();
 
-#ifndef STK_HIDE_DEPRECATED_CODE  // Delete after April 2021
-  if (balanceSettings.areVertexWeightsProvidedInAVector())
-  {
-    size_t previousSize = mVertexWeights.size();
-    mVertexWeights = balanceSettings.getVertexWeightsViaVector();
-    size_t newSize = mVertexWeights.size();
-    ThrowRequireWithSierraHelpMsg(newSize == previousSize);
-  }
-  else if (balanceSettings.areVertexWeightsProvidedViaFields())
-#else
   if (balanceSettings.areVertexWeightsProvidedViaFields())
-#endif
   {
     stk::mesh::EntityVector entitiesToBalance;
     const bool sortById = true;

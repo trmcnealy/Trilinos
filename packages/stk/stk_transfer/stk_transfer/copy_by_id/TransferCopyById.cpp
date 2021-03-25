@@ -239,8 +239,14 @@ void TransferCopyById::do_transfer()
   m_errorMsg.str("");
   m_errorMsg.clear();
 
+  m_mesha.begin_transfer();
+  m_meshb.begin_transfer();
+
   send_fields(commSparse);
   receive_fields(commSparse); 
+
+  m_mesha.end_transfer();
+  m_meshb.end_transfer();
 }
 
 }  } // namespace transfer stk
