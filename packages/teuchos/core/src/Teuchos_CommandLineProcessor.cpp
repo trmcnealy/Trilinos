@@ -49,7 +49,7 @@
 //#include "Teuchos_TimeMonitor.hpp"
 #include "Teuchos_Assert.hpp"
 #include "Teuchos_as.hpp"
-#ifndef _WIN32
+#ifndef _WINDOWS
 #include "Teuchos_Array.hpp"
 #include "unistd.h"
 #endif
@@ -318,7 +318,7 @@ CommandLineProcessor::parse(
       continue;
     }
     if( opt_name == pause_opt ) {
-#ifndef _WIN32
+#ifndef _WINDOWS
       Array<int> pids;
       pids.resize(GlobalMPISession::getNProc());
       int rank_pid = getpid();

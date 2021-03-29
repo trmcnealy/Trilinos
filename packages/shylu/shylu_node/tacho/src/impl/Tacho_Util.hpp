@@ -71,7 +71,7 @@ namespace Tacho {
 #if defined( KOKKOS_ENABLE_ASM )
 #if defined( __amd64 )  || defined( __amd64__ ) ||      \
   defined( __x86_64 ) || defined( __x86_64__ )
-#if !defined( _WIN32 ) /* IS NOT Microsoft Windows */
+#if !defined( _WINDOWS ) /* IS NOT Microsoft Windows */
 #define KOKKOS_IMPL_PAUSE asm volatile( "pause\n":::"memory" );
 #else
 #define KOKKOS_IMPL_PAUSE __asm__ __volatile__( "pause\n":::"memory" );

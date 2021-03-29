@@ -78,7 +78,7 @@ void test_view_mapping() {
       dim_s0_s0_s0_s0_s0_s0_s0_s0;
 
 // Fully static dimensions should not be larger than an int.
-#ifndef _WIN32  // For some reason on Windows the first test here fails with
+#ifndef _WINDOWS  // For some reason on Windows the first test here fails with
                 // size being 7 bytes on windows???
   ASSERT_LE(sizeof(dim_0), sizeof(int));
   ASSERT_LE(sizeof(dim_s2), sizeof(int));

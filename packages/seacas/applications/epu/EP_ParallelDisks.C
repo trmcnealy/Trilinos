@@ -13,7 +13,7 @@
 #include <EP_Internals.h>
 #include <EP_ParallelDisks.h>
 
-#ifdef _WIN32
+#ifdef _WINDOWS
 #include <Shlwapi.h>
 #endif
 

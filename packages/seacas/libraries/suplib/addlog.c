@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#if !defined(__CYGWIN__)
+#if !defined(__CYGWIN__) && !defined(_MSC_VER) && (!defined(__MINGW32__) || !defined(__MINGW64__))
 #include <sys/resource.h>
 #include <sys/utsname.h>
 #include <time.h>

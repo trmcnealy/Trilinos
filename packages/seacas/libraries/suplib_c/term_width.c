@@ -8,7 +8,7 @@
 #define _POSIX_SOURCE
 #include <stdio.h>
 
-#ifdef _MSC_VER
+#ifdef _WINDOWS
 #include <windows.h>
 #include <io.h>
 #define isatty _isatty

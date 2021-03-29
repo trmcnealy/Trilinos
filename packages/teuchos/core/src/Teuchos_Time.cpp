@@ -44,7 +44,7 @@
 
 #include "Teuchos_Time.hpp"
 
-#if defined(__INTEL_COMPILER) && defined(_WIN32)
+#if defined(__INTEL_COMPILER) && defined(_WINDOWS)
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -70,7 +70,7 @@ inline void seconds_initialize() {
 
 }       // end namespace
 
-#endif // defined(__INTEL_COMPILER) && defined(_WIN32)
+#endif // defined(__INTEL_COMPILER) && defined(_WINDOWS)
 
 #ifdef HAVE_TEUCHOS_TIME_MASSIF_SNAPSHOTS
 #include <valgrind.h>
@@ -207,7 +207,7 @@ double Time::wallTime()
 
         }
 
-#elif defined(__INTEL_COMPILER) && defined(_WIN32)
+#elif defined(__INTEL_COMPILER) && defined(_WINDOWS)
 
   seconds_initialize();
   LARGE_INTEGER count;
@@ -218,7 +218,7 @@ double Time::wallTime()
   //std::cout << "ticks = " << ticks << ", sec = " << sec << std::endl;
   return sec;
 
-#elif ICL || defined(_WIN32)
+#elif ICL || defined(_WINDOWS)
 
   clock_t start;
 

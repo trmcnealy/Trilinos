@@ -57,7 +57,7 @@
 #include <Panzer_MemUtils.hpp>
 #include <Teuchos_CommHelpers.hpp>
 
-#if       defined(_WIN32)
+#if       defined(_WINDOWS)
 #  include <windows.h>
 #  include <psapi.h>
 #elif     defined(__unix__)      || \
@@ -87,7 +87,7 @@
 #  endif // defined(__APPLE__) && ...
 #else
 #  error "Cannot define getPeakRSS( ) or getCurrentRSS( ) for an unknown OS."
-#endif // defined(_WIN32)
+#endif // defined(_WINDOWS)
 
 namespace panzer
 {
@@ -167,7 +167,7 @@ namespace panzer
     size_t mem(0);
 
     // Windows
-#   if       defined(_WIN32)
+#   if       defined(_WINDOWS)
       PROCESS_MEMORY_COUNTERS info;
       GetProcessMemoryInfo(GetCurrentProcess(), &info, sizeof(info));
       mem = (size_t)(info.PeakWorkingSetSize);
@@ -210,7 +210,7 @@ namespace panzer
     // Unknown OS
 #   else
       mem = (size_t)(0L);  // Unsupported.
-#   endif // defined(_WIN32)
+#   endif // defined(_WINDOWS)
     return reduceMemUsage(mem, comm, MEM_USAGE_PEAK);
   } // end of getPeakRSS()
 
@@ -224,7 +224,7 @@ namespace panzer
     size_t mem(0);
 
     // Windows
-#   if       defined(_WIN32)
+#   if       defined(_WINDOWS)
       PROCESS_MEMORY_COUNTERS info;
       GetProcessMemoryInfo(GetCurrentProcess(), &info, sizeof(info));
       mem = (size_t)(info.WorkingSetSize);
@@ -259,7 +259,7 @@ namespace panzer
     // AIX, BSD, Solaris, and Unknown OS
 #   else
       mem = (size_t)(0L);  // Unsupported.
-#   endif // defined(_WIN32)
+#   endif // defined(_WINDOWS)
     return reduceMemUsage(mem, comm, MEM_USAGE_CURRENT);
   } // end of getCurrentRSS()
 

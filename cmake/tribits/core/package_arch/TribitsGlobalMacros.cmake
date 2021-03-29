@@ -2156,22 +2156,22 @@ MACRO(TRIBITS_SETUP_ENV)
     SET(HAVE_MPI FALSE)
   ENDIF()
 
-  # OpenMP isn't really a TPL because support is built into the compiler.
-  IF(${PROJECT_NAME}_ENABLE_OpenMP)
-    FIND_PACKAGE(OpenMP)
-    IF(OPENMP_FOUND)
-      TRIBITS_SET_OPENMP_FLAGS(CXX)
-      TRIBITS_SET_OPENMP_FLAGS(C)
-      IF(OpenMP_Fortran_FLAGS)
-        TRIBITS_SET_OPENMP_FLAGS(Fortran)
-      ELSE()
-      # Older versions of FindOpenMP.cmake don't find Fortran flags.  Mike H said this is safe.
-        SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_C_FLAGS}")
-      ENDIF()
-    ELSE()
-      MESSAGE(FATAL_ERROR "Could not find OpenMP, try setting OpenMP_C_FLAGS and OpenMP_CXX_FLAGS directly")
-    ENDIF(OPENMP_FOUND)
-  ENDIF(${PROJECT_NAME}_ENABLE_OpenMP)
+  # # OpenMP isn't really a TPL because support is built into the compiler.
+  # IF(${PROJECT_NAME}_ENABLE_OpenMP)
+    # FIND_PACKAGE(OpenMP)
+    # IF(OPENMP_FOUND)
+      # TRIBITS_SET_OPENMP_FLAGS(CXX)
+      # TRIBITS_SET_OPENMP_FLAGS(C)
+      # IF(OpenMP_Fortran_FLAGS)
+        # TRIBITS_SET_OPENMP_FLAGS(Fortran)
+      # ELSE()
+      # # Older versions of FindOpenMP.cmake don't find Fortran flags.  Mike H said this is safe.
+        # SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_C_FLAGS}")
+      # ENDIF()
+    # ELSE()
+      # MESSAGE(FATAL_ERROR "Could not find OpenMP, try setting OpenMP_C_FLAGS and OpenMP_CXX_FLAGS directly")
+    # ENDIF(OPENMP_FOUND)
+  # ENDIF(${PROJECT_NAME}_ENABLE_OpenMP)
 
   # Check if we need the math library or not and find the right one
   IF (NOT NATIVE_MS_WINDOWS)
@@ -2483,11 +2483,12 @@ FUNCTION(TRIBITS_REPOSITORY_CONFIGURE_VERSION_DATE_FILES
     MESSAGE("-- NOTE: Can't fill in version date files for ${REPOSITORY_NAME} since"
       " GIT_VERSION_STRING=${GIT_VERSION_STRING} < 2.10.0")
   ELSE()
-    # Generate the version date integer
-    TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME("${REPO_SOURCE_ABS_DIR}" "HEAD"
-      REPO_GIT_COMMIT_UTC_TIME)
-    TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME("${REPO_GIT_COMMIT_UTC_TIME}"
-      REPO_GIT_VERSION_DATE )
+    # # Generate the version date integer
+    # TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME("${REPO_SOURCE_ABS_DIR}" "HEAD"
+      # REPO_GIT_COMMIT_UTC_TIME)
+    # TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME("${REPO_GIT_COMMIT_UTC_TIME}"
+      # REPO_GIT_VERSION_DATE )
+    SET(REPO_GIT_VERSION_DATE "2020;11;20;00")
   ENDIF()
 
   IF (REPO_GIT_VERSION_DATE)

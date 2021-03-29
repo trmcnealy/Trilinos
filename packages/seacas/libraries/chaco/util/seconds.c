@@ -10,7 +10,7 @@
 #else
 #include <time.h>
 #endif
-#if !defined(__CYGWIN__) && !defined(_MSC_VER)
+#if !defined(__CYGWIN__) && !defined(_MSC_VER) && (!defined(__MINGW32__) || !defined(__MINGW64__))
 #include <sys/resource.h>
 #endif
 

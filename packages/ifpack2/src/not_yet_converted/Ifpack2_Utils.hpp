@@ -46,7 +46,7 @@
 #include "Ifpack2_ConfigDefs.hpp"
 #include <cmath>
 #include "Tpetra_Comm.hpp"
-#if !( defined(__INTEL_COMPILER) && defined(_WIN32) )
+#if !( defined(__INTEL_COMPILER) && defined(_WINDOWS) )
 #  include "unistd.hpp" // Not a standard header file!
 #endif
 class Tpetra_RowMatrix;

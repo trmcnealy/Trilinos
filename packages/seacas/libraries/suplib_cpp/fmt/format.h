@@ -969,7 +969,7 @@ namespace internal {
     return internal::copy_str<Char>(buffer, buffer + num_digits, out);
   }
 
-#ifndef _WIN32
+#ifndef _WINDOWS
 #define FMT_USE_WINDOWS_H 0
 #elif !defined(FMT_USE_WINDOWS_H)
 #define FMT_USE_WINDOWS_H 1

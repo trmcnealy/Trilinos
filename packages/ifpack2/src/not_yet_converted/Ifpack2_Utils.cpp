@@ -67,7 +67,7 @@ void Ifpack2_BreakForDebugger(Tpetra_Comm& Comm)
     if (i == Comm.MyPID() ) {
 #if defined(TFLOP) || defined(JANUS_STLPORT)
       sprintf(buf, "Host: %s   PID: %d", "janus", getpid());
-#elif defined(__INTEL_COMPILER) && defined(_WIN32)
+#elif defined(__INTEL_COMPILER) && defined(_WINDOWS)
       sprintf(buf,"Intel compiler, unknown hostname and PID!");
 #else
       gethostname(hostname, sizeof(hostname));
@@ -76,7 +76,7 @@ void Ifpack2_BreakForDebugger(Tpetra_Comm& Comm)
 #endif
       printf("%s\n",buf);
       fflush(stdout);
-#if !( defined(__INTEL_COMPILER) && defined(_WIN32) )
+#if !( defined(__INTEL_COMPILER) && defined(_WINDOWS) )
       sleep(1);
 #endif
     }

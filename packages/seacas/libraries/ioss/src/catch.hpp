@@ -77,7 +77,7 @@
 #elif defined(linux) || defined(__linux) || defined(__linux__)
 #  define CATCH_PLATFORM_LINUX
 
-#elif defined(WIN32) || defined(__WIN32__) || defined(_WIN32) || defined(_MSC_VER) || defined(__MINGW32__)
+#elif defined(WIN32) || defined(__WIN32__) || defined(_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
 #  define CATCH_PLATFORM_WINDOWS
 #endif
 
@@ -8784,7 +8784,7 @@ inline auto Column::operator + (Column const& other) -> Columns {
 #include <set>
 #include <algorithm>
 
-#if !defined(CATCH_PLATFORM_WINDOWS) && ( defined(WIN32) || defined(__WIN32__) || defined(_WIN32) || defined(_MSC_VER) )
+#if !defined(CATCH_PLATFORM_WINDOWS) && ( defined(WIN32) || defined(__WIN32__) || defined(_WINDOWS) || defined(_MSC_VER) )
 #define CATCH_PLATFORM_WINDOWS
 #endif
 
@@ -13047,7 +13047,7 @@ namespace Catch {
         void libIdentify();
 
         int applyCommandLine( int argc, char const * const * argv );
-    #if defined(CATCH_CONFIG_WCHAR) && defined(_WIN32) && defined(UNICODE)
+    #if defined(CATCH_CONFIG_WCHAR) && defined(_WINDOWS) && defined(UNICODE)
         int applyCommandLine( int argc, wchar_t const * const * argv );
     #endif
 
@@ -13303,7 +13303,7 @@ namespace Catch {
         return 0;
     }
 
-#if defined(CATCH_CONFIG_WCHAR) && defined(_WIN32) && defined(UNICODE)
+#if defined(CATCH_CONFIG_WCHAR) && defined(_WINDOWS) && defined(UNICODE)
     int Session::applyCommandLine( int argc, wchar_t const * const * argv ) {
 
         char **utf8Argv = new char *[ argc ];

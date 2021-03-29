@@ -26,7 +26,7 @@
 #include "netcdf_meta.h"
 #endif
 
-#if defined(_WIN32) && defined(_MSC_VER) && _MSC_VER < 1900
+#if defined(_WINDOWS) && defined(_MSC_VER) && _MSC_VER < 1900
 #define PRId64 "I64d"
 #else
 #include <inttypes.h>

@@ -126,7 +126,7 @@ double _0 = 0.;
 #  ifdef MSDOS
 #    define MSpc
 #  else
-#    ifdef _WIN32
+#    ifdef _WINDOWS
 #      define MSpc
 #    endif
 #  endif

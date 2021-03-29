@@ -47,7 +47,7 @@
 #include <Teuchos_XMLObject.hpp>
 #include <Teuchos_FileInputSource.hpp>
 #include <Teuchos_XMLPerfTestArchive.hpp>
-#ifdef _WIN32
+#ifdef _WINDOWS
 #include <winsock2.h>
 #else
 #include <unistd.h>

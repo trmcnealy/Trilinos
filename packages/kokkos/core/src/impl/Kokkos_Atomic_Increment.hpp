@@ -50,6 +50,8 @@
 #if defined(KOKKOS_ATOMIC_HPP) && !defined(KOKKOS_ATOMIC_INCREMENT_HPP)
 #define KOKKOS_ATOMIC_INCREMENT_HPP
 
+#include "impl/Kokkos_Atomic_Fetch_Add.hpp"
+
 namespace Kokkos {
 
 // Atomic increment
@@ -91,7 +93,7 @@ KOKKOS_INLINE_FUNCTION void atomic_increment<short>(volatile short* a) {
 #endif
 }
 
-#ifndef _WIN32
+#ifndef _WINDOWS
 template <>
 KOKKOS_INLINE_FUNCTION void atomic_increment<int>(volatile int* a) {
 #if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64) && \

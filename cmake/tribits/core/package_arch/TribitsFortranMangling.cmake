@@ -63,7 +63,7 @@ IF (FC_FUNC_DEFAULT)
 
 ELSE()
 
-  IF(CYGWIN)
+  IF(CYGWIN OR MINGW)
     SET(F77_FUNC_DEFAULT "(name,NAME) name ## _" )
     SET(F77_FUNC__DEFAULT "(name,NAME) name ## __" )
   ELSEIF(WIN32)

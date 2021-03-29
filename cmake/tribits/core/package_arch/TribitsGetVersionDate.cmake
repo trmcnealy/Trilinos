@@ -34,8 +34,7 @@ FUNCTION(TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME  repo_base_dir  commit_ref
     set(OLD_ENV_TZ "$ENV{TZ}")
     set(ENV{TZ} GMT)
     execute_process(
-      COMMAND "${GIT_EXECUTABLE}" log
-        --format="%cd" --date=iso-local -1 ${commit_ref}
+      COMMAND "${GIT_EXECUTABLE}" log --format="%cd" --date=iso-local -1
       WORKING_DIRECTORY "${repo_base_dir}"
       OUTPUT_VARIABLE  GIT_CMND_OUTPUT
       ERROR_VARIABLE  GIT_CMND_OUTPUT

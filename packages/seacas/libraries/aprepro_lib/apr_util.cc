@@ -19,7 +19,7 @@
 #include <unistd.h>         // for close
 #include <vector>           // for vector
 
-#ifdef _WIN32
+#ifdef _WINDOWS
 #include <fcntl.h>
 #include <io.h>
 #include <windows.h>
@@ -27,7 +27,7 @@
 #include <unistd.h> // for close
 #endif
 
-#if !defined(S_ISDIR) && defined(_WIN32)
+#if !defined(S_ISDIR) && defined(_WINDOWS)
 #define S_ISDIR(mode) (((mode)&S_IFMT) == S_IFDIR)
 #endif
 
@@ -117,7 +117,7 @@ namespace SEAMS {
     int fd = mkstemps(tmp_name, 0);
     if (fd >= 0)
       close(fd);
-#elif defined(_WIN32)
+#elif defined(_WINDOWS)
     copy_string(tmp_name, _mktemp(tmp_name), strlen(tmp_name) + 1);
 #else
     int fd = mkstemp(tmp_name);

@@ -49,7 +49,7 @@
 
 #include <impl/Kokkos_HostBarrier.hpp>
 
-#if !defined(_WIN32)
+#if !defined(_WINDOWS)
 #include <sched.h>
 #include <time.h>
 #else
@@ -63,7 +63,7 @@ namespace Impl {
 
 void HostBarrier::impl_backoff_wait_until_equal(
     int* ptr, const int v, const bool active_wait) noexcept {
-#if !defined(_WIN32)
+#if !defined(_WINDOWS)
   timespec req;
   req.tv_sec     = 0;
   unsigned count = 0u;
@@ -91,7 +91,7 @@ void HostBarrier::impl_backoff_wait_until_equal(
 #endif
 #endif
   }
-#else  // _WIN32
+#else  // _WINDOWS
   while (!test_equal(ptr, v)) {
 #if defined(KOKKOS_ENABLE_ASM)
     for (int j = 0; j < num_nops; ++j) {

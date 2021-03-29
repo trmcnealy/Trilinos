@@ -43,7 +43,7 @@
 
 #include "fortranc.h"
 #include <string.h>
-#if defined(__NO_CYGWIN_OPTION__)
+#if defined(_WINDOWS)
 #include <windows.h>
 #else
 #include <sys/utsname.h>

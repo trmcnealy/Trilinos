@@ -42,7 +42,7 @@
 //@HEADER
 */
 
-#ifdef _WIN32
+#ifdef _WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #elif !defined(__APPLE__)

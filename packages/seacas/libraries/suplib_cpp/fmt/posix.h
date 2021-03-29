@@ -28,7 +28,7 @@
 #include "format.h"
 
 #ifndef FMT_POSIX
-#  if defined(_WIN32) && !defined(__MINGW32__)
+#  if defined(_WINDOWS) && !defined(__MINGW32__)
 // Fix warnings about deprecated symbols.
 #    define FMT_POSIX(call) _##call
 #  else
@@ -41,7 +41,7 @@
 #  define FMT_POSIX_CALL(call) FMT_SYSTEM(call)
 #else
 #  define FMT_SYSTEM(call) call
-#  ifdef _WIN32
+#  ifdef _WINDOWS
 // Fix warnings about deprecated symbols.
 #    define FMT_POSIX_CALL(call) ::_##call
 #  else
@@ -51,7 +51,7 @@
 
 // Retries the expression while it evaluates to error_result and errno
 // equals to EINTR.
-#ifndef _WIN32
+#ifndef _WINDOWS
 #  define FMT_RETRY_VAL(result, expression, error_result) \
     do {                                                  \
       result = (expression);                              \
@@ -265,7 +265,7 @@ long getpagesize();
 // A "C" numeric locale.
 class Locale {
  private:
-#  ifdef _WIN32
+#  ifdef _WINDOWS
   using locale_t = _locale_t;
 
   enum { LC_NUMERIC_MASK = LC_NUMERIC };

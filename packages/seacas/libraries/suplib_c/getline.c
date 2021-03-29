@@ -48,7 +48,7 @@ ssize_t getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 
   if (*buf == NULL || *bufsiz == 0) {
     *bufsiz = BUFSIZ;
-    if ((*buf = malloc(*bufsiz)) == NULL) {
+    if ((*buf = (char *)malloc(*bufsiz)) == NULL) {
       return -1;
     }
   }

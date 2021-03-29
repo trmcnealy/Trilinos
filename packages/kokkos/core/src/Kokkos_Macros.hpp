@@ -342,12 +342,12 @@
 #endif
 #endif
 
-#if !defined(KOKKOS_ENABLE_ASM) && !defined(_WIN32)
+#if !defined(KOKKOS_ENABLE_ASM) && !defined(_MSC_VER)
 #define KOKKOS_ENABLE_ASM 1
 #endif
 
 #if !defined(KOKKOS_FORCEINLINE_FUNCTION)
-#if !defined(_WIN32)
+#if !defined(_MSC_VER)
 #define KOKKOS_FORCEINLINE_FUNCTION inline __attribute__((always_inline))
 #define KOKKOS_IMPL_FORCEINLINE __attribute__((always_inline))
 #else
@@ -633,8 +633,9 @@
 #define KOKKOS_ATTRIBUTE_NODISCARD
 #endif
 
-#if defined(KOKKOS_COMPILER_GNU) || defined(KOKKOS_COMPILER_CLANG) || \
-    defined(KOKKOS_COMPILER_INTEL) || defined(KOKKOS_COMPILER_PGI)
+#if (defined(KOKKOS_COMPILER_GNU) || defined(KOKKOS_COMPILER_CLANG) ||  \
+     defined(KOKKOS_COMPILER_INTEL) || defined(KOKKOS_COMPILER_PGI)) && \
+    !defined(KOKKOS_COMPILER_MSVC) && !defined(_WINDOWS)
 #define KOKKOS_IMPL_ENABLE_STACKTRACE
 #define KOKKOS_IMPL_ENABLE_CXXABI
 #endif

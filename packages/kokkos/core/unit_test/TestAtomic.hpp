@@ -555,7 +555,7 @@ TEST(TEST_CATEGORY, atomics) {
       (TestAtomic::Loop<Kokkos::complex<double>, TEST_EXECSPACE>(100, 3)));
 
 // WORKAROUND MSVC
-#ifndef _WIN32
+#ifndef _WINDOWS
   ASSERT_TRUE(
       (TestAtomic::Loop<TestAtomic::SuperScalar<4>, TEST_EXECSPACE>(100, 1)));
   ASSERT_TRUE(

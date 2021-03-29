@@ -195,7 +195,7 @@ int main(int argc, char* argv[])
   }
 
 
-#if ! (defined(__INTEL_COMPILER) && defined(_WIN32) )
+#if ! (defined(__INTEL_COMPILER) && defined(_WINDOWS) )
 
   // Check ILAENV with similarity transformation routine:  dsytrd
   // NOTE:  Do not need to put floating point specifier [s,d,c,z] before routine name,

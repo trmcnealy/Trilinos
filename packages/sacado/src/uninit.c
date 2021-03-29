@@ -172,7 +172,7 @@ _uninit_f2c(void *x, int type, long len)
 #ifdef MSDOS
 #define MSpc
 #else
-#ifdef _WIN32
+#ifdef _WINDOWS
 #define MSpc
 #endif
 #endif

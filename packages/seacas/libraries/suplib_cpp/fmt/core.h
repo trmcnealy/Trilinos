@@ -166,7 +166,7 @@
     {
 #endif
 
-#if !defined(FMT_HEADER_ONLY) && defined(_WIN32)
+#if !defined(FMT_HEADER_ONLY) && defined(_WINDOWS)
 #ifdef FMT_EXPORT
 #define FMT_API __declspec(dllexport)
 #elif defined(FMT_SHARED)

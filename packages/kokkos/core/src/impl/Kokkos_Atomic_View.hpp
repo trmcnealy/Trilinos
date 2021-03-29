@@ -57,9 +57,9 @@ struct AtomicViewConstTag {};
 template <class ViewTraits>
 class AtomicDataElement {
  public:
-  typedef typename ViewTraits::value_type value_type;
-  typedef typename ViewTraits::const_value_type const_value_type;
-  typedef typename ViewTraits::non_const_value_type non_const_value_type;
+  using value_type           = typename ViewTraits::value_type;
+  using const_value_type     = typename ViewTraits::const_value_type;
+  using non_const_value_type = typename ViewTraits::non_const_value_type;
   volatile value_type* const ptr;
 
   KOKKOS_INLINE_FUNCTION
@@ -298,6 +298,8 @@ class AtomicDataElement {
     return *ptr >> val;
   }
 
+#if __cplusplus < 202002L
+
   KOKKOS_INLINE_FUNCTION
   bool operator==(const_value_type& val) const { return *ptr == val; }
   KOKKOS_INLINE_FUNCTION
@@ -327,6 +329,20 @@ class AtomicDataElement {
   bool operator>(const_value_type& val) const { return *ptr > val; }
   KOKKOS_INLINE_FUNCTION
   bool operator>(volatile const_value_type& val) const { return *ptr > val; }
+
+#else
+
+  KOKKOS_INLINE_FUNCTION
+  constexpr auto operator<=>(const_value_type& val) const {
+      return *ptr <=> val;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  constexpr auto operator<=>(volatile const_value_type& val) const {
+      return *ptr <=> val;
+  }
+  
+#endif
 
   KOKKOS_INLINE_FUNCTION
   operator const_value_type() const {
@@ -359,7 +375,7 @@ class AtomicViewDataHandle {
   }
 
   KOKKOS_INLINE_FUNCTION
-  operator typename ViewTraits::value_type*() const { return ptr; }
+  operator typename ViewTraits::value_type *() const { return ptr; }
 };
 
 template <unsigned Size>
@@ -367,12 +383,12 @@ struct Kokkos_Atomic_is_only_allowed_with_32bit_and_64bit_scalars;
 
 template <>
 struct Kokkos_Atomic_is_only_allowed_with_32bit_and_64bit_scalars<4> {
-  typedef int type;
+  using type = int;
 };
 
 template <>
 struct Kokkos_Atomic_is_only_allowed_with_32bit_and_64bit_scalars<8> {
-  typedef int64_t type;
+  using type = int64_t;
 };
 
 }  // namespace Impl

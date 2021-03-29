@@ -59,7 +59,8 @@ namespace Kokkos {
 //----------------------------------------------------------------------------
 
 #if defined(KOKKOS_ENABLE_CUDA)
-#if defined(__CUDA_ARCH__) || defined(KOKKOS_IMPL_CUDA_CLANG_WORKAROUND)
+#if (defined(__CUDA_ARCH__) || defined(KOKKOS_IMPL_CUDA_CLANG_WORKAROUND)) && \
+    !defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
 
 // Support for int, unsigned int, unsigned long long int, and float
 
@@ -160,8 +161,10 @@ atomic_fetch_add(volatile T* const dest,
     if (!done) {
       bool locked = Impl::lock_address_cuda_space((void*)dest);
       if (locked) {
+        Kokkos::memory_fence();
         return_val = *dest;
         *dest      = return_val + val;
+        Kokkos::memory_fence();
         Impl::unlock_address_cuda_space((void*)dest);
         done = 1;
       }
@@ -175,11 +178,183 @@ atomic_fetch_add(volatile T* const dest,
   }
   return return_val;
 }
+
+#elif defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
+
+__inline __device__ __host__ char atomic_fetch_add(volatile char* const dest,
+                                                   const char& val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((int*)dest, (int)val);
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+
+__inline __device__ __host__ short atomic_fetch_add(volatile short* const dest,
+                                                    const short& val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((int*)dest, (int)val);
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+
+__inline __device__ __host__ int atomic_fetch_add(volatile int* const dest,
+                                                  const int& val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((int*)dest, (int)val);
+#else
+  return Windows::Add((long*)dest, *((long*)&val));
+#endif
+}
+
+__inline __device__ __host__ long atomic_fetch_add(volatile long* const dest,
+                                                   const long& val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((int*)dest, (int)val);
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+
+__inline __device__ __host__ long long atomic_fetch_add(
+    volatile long long* const dest, const long long& val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((unsigned long long int*)dest, (unsigned long long int)val);
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+
+__inline __device__ __host__ float atomic_fetch_add(volatile float* const dest,
+                                                    const float& val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((float*)dest, val);
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+
+#if (600 <= __CUDA_ARCH__)
+__inline __device__ __host__ double atomic_fetch_add(
+    volatile double* const dest, const double& val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((double*)dest, val);
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+#endif
+
+template <typename T>
+__inline __device__ __host__ T atomic_fetch_add(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) == sizeof(int), const T>::type val) {
+#if defined(__CUDA_ARCH__)
+  // to work around a bug in the clang cuda compiler, the name here needs to be
+  // different from the one internal to the other overloads
+  union U1 {
+    int i;
+    T t;
+    KOKKOS_INLINE_FUNCTION U1() {}
+  } assume, oldval, newval;
+
+  oldval.t = *dest;
+
+  do {
+    assume.i = oldval.i;
+    newval.t = assume.t + val;
+    oldval.i = atomicCAS((int*)dest, assume.i, newval.i);
+  } while (assume.i != oldval.i);
+
+  return oldval.t;
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+
+template <typename T>
+__inline __device__ __host__ T atomic_fetch_add(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) != sizeof(int) &&
+                                sizeof(T) == sizeof(unsigned long long int),
+                            const T>::type val) {
+#if defined(__CUDA_ARCH__)
+  // to work around a bug in the clang cuda compiler, the name here needs to be
+  // different from the one internal to the other overloads
+  union U2 {
+    unsigned long long int i;
+    T t;
+    KOKKOS_INLINE_FUNCTION U2() {}
+  } assume, oldval, newval;
+
+  oldval.t = *dest;
+
+  do {
+    assume.i = oldval.i;
+    newval.t = assume.t + val;
+    oldval.i = atomicCAS((unsigned long long int*)dest, assume.i, newval.i);
+  } while (assume.i != oldval.i);
+
+  return oldval.t;
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+
+#if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64)
+template <typename T>
+inline T atomic_fetch_add(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) != sizeof(long) &&
+                                sizeof(T) != sizeof(long long) &&
+                                sizeof(T) == sizeof(Impl::cas128_t),
+                            const T&>::type val) {
+  return Windows::Add(dest, val);
+}
+#endif
+
+template <typename T>
+__inline __device__ __host__ T
+atomic_fetch_add(volatile T* const dest,
+                 typename std::enable_if<(sizeof(T) != 4) && (sizeof(T) != 8)
+#if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64)
+                                             && (sizeof(T) != 16)
+#endif
+                                             ,
+                                         const T&>::type val) {
+#if defined(__CUDA_ARCH__)
+  while (!Impl::lock_address_host_space((void*)dest))
+    ;
+  T return_val = *dest;
+
+  // Don't use the following line of code here:
+  //
+  // const T tmp = *dest = return_val + val;
+  //
+  // Instead, put each assignment in its own statement.  This is
+  // because the overload of T::operator= for volatile *this should
+  // return void, not volatile T&.  See Kokkos #177:
+  //
+  // https://github.com/kokkos/kokkos/issues/177
+  *dest       = return_val + val;
+  const T tmp = *dest;
+  (void)tmp;
+  Impl::unlock_address_host_space((void*)dest);
+
+  return return_val;
+#else
+  return Windows::Add(dest, val);
+#endif
+}
+//----------------------------------------------------------------------------
+
 #endif
 #endif
 //----------------------------------------------------------------------------
 #if !defined(KOKKOS_ENABLE_ROCM_ATOMICS) || !defined(KOKKOS_ENABLE_HIP_ATOMICS)
-#if !defined(__CUDA_ARCH__) || defined(KOKKOS_IMPL_CUDA_CLANG_WORKAROUND)
+#if (!defined(__CUDA_ARCH__) || defined(KOKKOS_IMPL_CUDA_CLANG_WORKAROUND)) && \
+    !defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
 #if defined(KOKKOS_ENABLE_GNU_ATOMICS) || defined(KOKKOS_ENABLE_INTEL_ATOMICS)
 
 #if defined(KOKKOS_ENABLE_ASM) && (defined(KOKKOS_ENABLE_ISA_X86_64) || \
@@ -329,6 +504,7 @@ inline T atomic_fetch_add(
                             const T>::type& val) {
   while (!Impl::lock_address_host_space((void*)dest))
     ;
+  Kokkos::memory_fence();
   T return_val = *dest;
 
   // Don't use the following line of code here:
@@ -343,9 +519,84 @@ inline T atomic_fetch_add(
   *dest       = return_val + val;
   const T tmp = *dest;
   (void)tmp;
+  Kokkos::memory_fence();
   Impl::unlock_address_host_space((void*)dest);
 
   return return_val;
+}
+//----------------------------------------------------------------------------
+#elif defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
+
+__inline char atomic_fetch_add(volatile char* const dest, const char& val) {
+  return Windows::Add(dest, val);
+}
+
+__inline short atomic_fetch_add(volatile short* const dest, const short& val) {
+  return Windows::Add(dest, val);
+}
+
+__inline int atomic_fetch_add(volatile int* const dest, const int& val) {
+  return Windows::Add((long*)dest, *((long*)&val));
+}
+
+__inline long atomic_fetch_add(volatile long* const dest, const long& val) {
+  return Windows::Add(dest, val);
+}
+
+__inline long long atomic_fetch_add(volatile long long* const dest,
+                                    const long long& val) {
+  return Windows::Add(dest, val);
+}
+
+__inline float atomic_fetch_add(volatile float* const dest, const float& val) {
+  return Windows::Add(dest, val);
+}
+
+#if (600 <= __CUDA_ARCH__)
+__inline double atomic_fetch_add(volatile double* const dest,
+                                 const double& val) {
+  return Windows::Add(dest, val);
+}
+#endif
+
+template <typename T>
+__inline T atomic_fetch_add(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) == sizeof(int), const T>::type val) {
+  return Windows::Add(dest, val);
+}
+
+template <typename T>
+__inline T atomic_fetch_add(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) != sizeof(int) &&
+                                sizeof(T) == sizeof(unsigned long long int),
+                            const T>::type val) {
+  return Windows::Add(dest, val);
+}
+
+#if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64)
+template <typename T>
+inline T atomic_fetch_add(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) != sizeof(long) &&
+                                sizeof(T) != sizeof(long long) &&
+                                sizeof(T) == sizeof(Impl::cas128_t),
+                            const T&>::type val) {
+  return Windows::Add(dest, val);
+}
+#endif
+
+template <typename T>
+__inline T atomic_fetch_add(
+    volatile T* const dest,
+    typename std::enable_if<(sizeof(T) != 4) && (sizeof(T) != 8)
+#if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64)
+                                && (sizeof(T) != 16)
+#endif
+                                ,
+                            const T&>::type val) {
+  return Windows::Add(dest, val);
 }
 //----------------------------------------------------------------------------
 

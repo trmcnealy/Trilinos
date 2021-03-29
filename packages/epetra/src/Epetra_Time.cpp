@@ -93,7 +93,7 @@ double Epetra_Time::WallTime(void) const
 #ifdef EPETRA_HAVE_OMP
        return(omp_get_wtime());
 #else
-#if ICL || defined(_WIN32)
+#if ICL || defined(_WINDOWS)
 
    clock_t start;
    //double duration;

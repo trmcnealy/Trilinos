@@ -7087,7 +7087,7 @@ int ML_Get_LevelID(ML *ml, int logical_level)
 #include <iostream>
 #include <stdio.h>
 #ifndef ICL
-#ifndef _WIN32
+#ifndef _WINDOWS
 #include <unistd.h>
 #endif
 #endif

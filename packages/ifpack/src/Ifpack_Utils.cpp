@@ -70,7 +70,7 @@ void Ifpack_BreakForDebugger(Epetra_Comm& Comm)
     if (i == Comm.MyPID() ) {
 #if defined(TFLOP) || defined(JANUS_STLPORT)
       sprintf(buf, "Host: %s   PID: %d", "janus", getpid());
-#elif defined(_WIN32)
+#elif defined(_WINDOWS)
       sprintf(buf,"Windows compiler, unknown hostname and PID!");
 #else
       gethostname(hostname, sizeof(hostname));
@@ -79,7 +79,7 @@ void Ifpack_BreakForDebugger(Epetra_Comm& Comm)
 #endif
       printf("%s\n",buf);
       fflush(stdout);
-#if !( defined(_WIN32) )
+#if !( defined(_WINDOWS) )
       sleep(1);
 #endif
     }

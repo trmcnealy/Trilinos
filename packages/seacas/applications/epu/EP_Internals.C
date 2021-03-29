@@ -21,7 +21,7 @@
 #include <string> // for string, basic_string
 #include <vector> // for vector
 
-#ifdef _WIN32
+#ifdef _WINDOWS
 #include <Shlwapi.h>
 #endif
 
@@ -83,7 +83,7 @@ namespace {
 
 bool Excn::is_path_absolute(const std::string &path)
 {
-#ifdef _WIN32
+#ifdef _WINDOWS
   return path[0] == '\\' || path[1] == ':';
 #else
   return path[0] == '/';

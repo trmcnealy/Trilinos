@@ -421,11 +421,11 @@ struct Edge{
 ////////////////////////////////////////////////////////////////////////////////
 inline size_t kk_get_file_size(const char* file)
 {
-  struct stat stat_buf;
-
-#ifdef _WIN32
+#ifdef _WINDOWS
+  struct _stat stat_buf;
   int retval = _stat(file, &stat_buf);
 #else
+  struct stat stat_buf;
   int retval = stat(file, &stat_buf);
 #endif
 

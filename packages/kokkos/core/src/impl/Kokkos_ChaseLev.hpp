@@ -190,7 +190,7 @@ struct ChaseLevDeque {
       return_value = *static_cast<T*>(a[b]);  // relaxed load
       if (t == b) {
         /* single last element in the queue. */
-#ifdef _WIN32
+#ifdef _WINDOWS
         Kokkos::memory_fence();
         bool const success =
             Kokkos::atomic_compare_exchange_strong(&m_top, t, t + 1);
@@ -250,7 +250,7 @@ struct ChaseLevDeque {
       Kokkos::load_fence();  // TODO @tasking @memory_order DSH memory order
                              // instead of fence
       return_value = *static_cast<T*>(a[t]);  // relaxed
-#ifdef _WIN32
+#ifdef _WINDOWS
       Kokkos::memory_fence();
       bool const success =
           Kokkos::atomic_compare_exchange_strong(&m_top, t, t + 1);

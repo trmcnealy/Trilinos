@@ -41,7 +41,7 @@
 #define CHOLMOD_ALPHA
 #define CHOLMOD_ARCHITECTURE "Compaq Alpha"
 
-#elif defined (_WIN32) || defined (WIN32) || defined (_WIN64) || defined (WIN64)
+#elif defined (_WINDOWS) || defined (WIN32) || defined (_WIN64) || defined (WIN64)
 #if defined (__MINGW32__) || defined (__MINGW32__)
 #define CHOLMOD_MINGW
 #elif defined (__CYGWIN32__) || defined (__CYGWIN32__)

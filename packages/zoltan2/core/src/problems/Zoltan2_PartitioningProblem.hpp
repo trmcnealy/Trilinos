@@ -63,7 +63,7 @@
 #include <Zoltan2_TaskMapping.hpp>
 #endif
 
-#ifndef _WIN32
+#ifndef _WINDOWS
 #include <unistd.h>
 #else
 #include <process.h>
@@ -430,7 +430,7 @@ template <typename Adapter>
   this->env_->debug(DETAILED_STATUS, "PartitioningProblem::initializeProblem");
 
   if (getenv("DEBUGME")){
-#ifndef _WIN32
+#ifndef _WINDOWS
     std::cout << getpid() << std::endl;
     sleep(15);
 #else

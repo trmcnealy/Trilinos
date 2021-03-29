@@ -7,7 +7,7 @@
 #ifndef __exodusII_cfg_h
 #define __exodusII_cfg_h
 
-#if defined(_WIN32) && !defined(WIN32)
+#if defined(_WINDOWS) && !defined(WIN32)
 # define WIN32
 #endif
 

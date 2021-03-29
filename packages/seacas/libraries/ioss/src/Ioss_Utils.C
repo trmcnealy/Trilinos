@@ -27,7 +27,7 @@
 #include <tokenize.h>
 #include <vector>
 
-#ifndef _WIN32
+#ifndef _WINDOWS
 #include <sys/ioctl.h>
 #include <sys/utsname.h>
 #endif
@@ -43,7 +43,7 @@
 #endif
 
 // For memory utilities...
-#if defined(_WIN32)
+#if defined(_WINDOWS)
 #include <psapi.h>
 #include <windows.h>
 
@@ -863,7 +863,7 @@ void Ioss::Utils::get_fields(int64_t entity_count, // The number of objects in t
 
 std::string Ioss::Utils::platform_information()
 {
-#ifndef _WIN32
+#ifndef _WINDOWS
   struct utsname sys_info
   {
   };
@@ -881,7 +881,7 @@ size_t Ioss::Utils::get_memory_info()
 {
   // Code from http://nadeausoftware.com/sites/NadeauSoftware.com/files/getRSS.c
   size_t memory_usage = 0;
-#if defined(_WIN32)
+#if defined(_WINDOWS)
   /* Windows -------------------------------------------------- */
   PROCESS_MEMORY_COUNTERS info;
   GetProcessMemoryInfo(GetCurrentProcess(), &info, sizeof(info));
@@ -945,7 +945,7 @@ size_t Ioss::Utils::get_hwm_memory_info()
 {
   // Code from http://nadeausoftware.com/sites/NadeauSoftware.com/files/getRSS.c
   size_t memory_usage = 0;
-#if defined(_WIN32)
+#if defined(_WINDOWS)
   /* Windows -------------------------------------------------- */
   PROCESS_MEMORY_COUNTERS info;
   GetProcessMemoryInfo(GetCurrentProcess(), &info, sizeof(info));

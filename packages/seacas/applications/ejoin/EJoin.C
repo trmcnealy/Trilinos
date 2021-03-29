@@ -17,7 +17,7 @@
 #include <numeric>
 #include <set>
 #include <string>
-#ifndef _MSC_VER
+#if !defined(__CYGWIN__) && !defined(_MSC_VER) && (!defined(__MINGW32__) || !defined(__MINGW64__))
 #include <sys/times.h>
 #include <sys/utsname.h>
 #endif

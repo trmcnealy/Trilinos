@@ -26,7 +26,7 @@ namespace SAMIS {
 #include <fcntl.h>
 
 #ifndef ICL
-#ifndef _WIN32
+#ifndef _WINDOWS
 #include <unistd.h>
 #endif
 #endif

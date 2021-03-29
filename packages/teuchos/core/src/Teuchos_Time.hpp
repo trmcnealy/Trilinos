@@ -55,7 +55,7 @@
 #ifdef HAVE_MPI
 #include <mpi.h>
 #else
-#if ICL || defined(_WIN32)
+#if ICL || defined(_WINDOWS)
 #include <time.h>
 #else
 #include <sys/time.h>

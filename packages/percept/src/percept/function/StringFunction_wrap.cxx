@@ -95,7 +95,7 @@ private:
 #endif
 
 #ifndef SWIGEXPORT
-# if defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
+# if defined(_WINDOWS) || defined(__WIN32__) || defined(__CYGWIN__)
 #   if defined(STATIC_LINKED)
 #     define SWIGEXPORT
 #   else
@@ -112,7 +112,7 @@ private:
 
 /* calling conventions for Windows */
 #ifndef SWIGSTDCALL
-# if defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
+# if defined(_WINDOWS) || defined(__WIN32__) || defined(__CYGWIN__)
 #   define SWIGSTDCALL __stdcall
 # else
 #   define SWIGSTDCALL
@@ -1173,7 +1173,7 @@ extern "C" {
 #endif
 
 /*  How to access Py_None */
-#if defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
+#if defined(_WINDOWS) || defined(__WIN32__) || defined(__CYGWIN__)
 #  ifndef SWIG_PYTHON_NO_BUILD_NONE
 #    ifndef SWIG_PYTHON_BUILD_NONE
 #      define SWIG_PYTHON_BUILD_NONE

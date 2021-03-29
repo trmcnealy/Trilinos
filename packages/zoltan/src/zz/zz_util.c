@@ -379,7 +379,7 @@ char *Zoltan_mpi_gno_name()
  */
 long Zoltan_get_process_kilobytes()
 {
-#ifdef _WIN32
+#ifdef _WINDOWS
   return 0;
 #else
 pid_t pid;
@@ -416,7 +416,7 @@ int f, rc;
   totalPages = atol(buf);
 
   return totalPages * pageKBytes;
-#endif /* !_WIN32 */
+#endif /* !_WINDOWS */
 }
 
 /* On a linux node, try to write the contents of /proc/meminfo to a file.
@@ -427,7 +427,7 @@ int f, rc;
  */
 void Zoltan_write_linux_meminfo(int append, char *msg, int committedOnly)
 {
-#ifndef _WIN32
+#ifndef _WINDOWS
   static char * yo = "Zoltan_write_linux_meminfo";
   int rank;
   int f, n;
@@ -495,7 +495,7 @@ void Zoltan_write_linux_meminfo(int append, char *msg, int committedOnly)
 
   fsync(f);
   close(f);
-#endif /* !_WIN32 */
+#endif /* !_WINDOWS */
 }
 
 /* On a linux node, just get the committed line as a char string.
@@ -503,7 +503,7 @@ void Zoltan_write_linux_meminfo(int append, char *msg, int committedOnly)
  */
 void Zoltan_get_linux_meminfo(char *msg, char **result)
 {
-#ifndef _WIN32
+#ifndef _WINDOWS
 int f, n, got_it;
 size_t fsize, rc;
 char *c=NULL, *next=NULL, *c_end;
@@ -549,7 +549,7 @@ char buf[2048],label[64],value[64],units[64];
     strcpy(c, buf);
     *result = c;
   }
-#endif /* !_WIN32 */
+#endif /* !_WINDOWS */
 }
 
 int Zoltan_get_global_id_type(char **name)

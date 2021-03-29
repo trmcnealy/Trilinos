@@ -176,7 +176,7 @@ struct TestFind {
 
 // MSVC reports a syntax error for this test.
 // WORKAROUND MSVC
-#ifndef _WIN32
+#ifndef _MSC_VER
 template <typename Device>
 void test_insert(uint32_t num_nodes, uint32_t num_inserts,
                  uint32_t num_duplicates, bool near) {
@@ -298,7 +298,7 @@ void test_deep_copy(uint32_t num_nodes) {
 // FIXME_HIP deadlock
 #ifndef KOKKOS_ENABLE_HIP
 // WORKAROUND MSVC
-#ifndef _WIN32
+#ifndef _MSC_VER
 TEST(TEST_CATEGORY, UnorderedMap_insert) {
   for (int i = 0; i < 500; ++i) {
     test_insert<TEST_EXECSPACE>(100000, 90000, 100, true);

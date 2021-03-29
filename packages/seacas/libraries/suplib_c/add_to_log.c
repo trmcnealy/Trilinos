@@ -8,9 +8,11 @@
 
 #include <stdlib.h>
 #include <string.h>
-#ifndef _MSC_VER
+#if !defined(__CYGWIN__) && !defined(_MSC_VER) && (!defined(__MINGW32__) || !defined(__MINGW64__))
 #include <sys/utsname.h>
 #include <sys/times.h>
+#else
+#include <processthreadsapi.h>
 #endif
 #include <time.h>
 #include <unistd.h>
@@ -28,7 +30,9 @@ void add_to_log(const char *my_name, double elapsed)
   char log_string[LEN];
 
   double         u_time, s_time;
+#if !defined(_WINDOWS)
   struct utsname sys_info;
+#endif
 
   int    minutes;
   double seconds;
@@ -52,7 +56,14 @@ void add_to_log(const char *my_name, double elapsed)
       if (audit != NULL) {
         const char *codename = strrchr(my_name, '/');
 
+#if !defined(_WINDOWS)
         const char *username = getlogin();
+#else
+        const unsigned int username_length = 256;
+        const char *username = (char*) malloc(username_length);
+        GetUserNameA(username, &username_length);
+#endif
+        
         if (username == NULL) {
           username = getenv("LOGNAME");
         }
@@ -75,23 +86,46 @@ void add_to_log(const char *my_name, double elapsed)
 
         {
           int        ticks_per_second;
+
+#if defined(_SC_CLK_TCK)
           struct tms time_buf;
           times(&time_buf);
           ticks_per_second = sysconf(_SC_CLK_TCK);
-          u_time           = (double)(time_buf.tms_utime + time_buf.tms_cutime) / ticks_per_second;
-          s_time           = (double)(time_buf.tms_stime + time_buf.tms_cstime) / ticks_per_second;
-        }
 
-        uname(&sys_info);
+          /* user time */
+          u_time           = (double)(time_buf.tms_utime + time_buf.tms_cutime) / ticks_per_second;
+          /* system time */
+          s_time           = (double)(time_buf.tms_stime + time_buf.tms_cstime) / ticks_per_second;
+#else
+          ticks_per_second = GetTickCount();
+
+          HANDLE hProcess = GetCurrentProcess();
+          FILETIME lpCreationTime;
+          FILETIME lpExitTime;
+          FILETIME lpKernelTime;
+          FILETIME lpUserTime;
+
+          GetProcessTimes(hProcess, &lpCreationTime, &lpExitTime, &lpKernelTime, &lpUserTime);
+
+          u_time = ((long long)(lpUserTime.dwHighDateTime) << 32 | lpUserTime.dwLowDateTime) / ticks_per_second;
+          s_time = ((long long)(lpKernelTime.dwHighDateTime) << 32 | lpKernelTime.dwLowDateTime) / ticks_per_second;
+#endif          
+        }
 
         minutes = (int)(elapsed / 60.0);
         seconds = elapsed - minutes * 60.0;
 
+#if !defined(_WINDOWS)
+        uname(&sys_info);
+        
         snprintf(log_string, LEN, "%s %s %s %.3fu %.3fs %d:%5.2f 0.0%% 0+0k 0+0io 0pf+0w %s\n",
                  codename, username, time_string, u_time, s_time, minutes, seconds,
                  sys_info.nodename) < 0
             ? abort()
             : (void)0;
+#else
+        snprintf(log_string, LEN, "%s %s %.3fu %.3fs %d:%5.2f 0.0%% 0+0k 0+0io 0pf+0w\n", codename, time_string, u_time, s_time, minutes, seconds);
+#endif
 
         fprintf(audit, "%s", log_string);
         fclose(audit);

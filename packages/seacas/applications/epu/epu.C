@@ -33,7 +33,7 @@
 #include "smart_assert.h"
 
 #include <exodusII.h>
-#ifdef _WIN32
+#ifdef _WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #undef IN
@@ -56,7 +56,7 @@ using StringVector = std::vector<std::string>;
 #error "Requires exodusII version 4.68 or later"
 #endif
 
-#ifndef _WIN32
+#ifndef _WINDOWS
 #include "add_to_log.h"
 #endif
 
@@ -543,7 +543,7 @@ int main(int argc, char *argv[])
       }
     }
 
-#ifndef _WIN32
+#ifndef _WINDOWS
     time_t end_time = std::time(nullptr);
     if (rank == 0) {
       add_to_log(argv[0], static_cast<int>(end_time - begin_time));
@@ -3094,7 +3094,7 @@ namespace {
     // This is used as information data in the concatenated results file
     // to help in tracking when/where/... the file was created
 
-#ifdef _WIN32
+#ifdef _WINDOWS
     std::string info                                      = "EPU: ";
     char        machine_name[MAX_COMPUTERNAME_LENGTH + 1] = {0};
     DWORD       buf_len                                   = MAX_COMPUTERNAME_LENGTH + 1;

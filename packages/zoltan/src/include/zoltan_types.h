@@ -49,7 +49,7 @@
 
 #include <mpi.h>
 #include <stddef.h>
-#ifndef _WIN32
+#ifndef _WINDOWS
 #include <unistd.h>
 #endif
 #include <limits.h>

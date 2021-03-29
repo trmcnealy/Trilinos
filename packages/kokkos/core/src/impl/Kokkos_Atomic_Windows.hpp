@@ -41,123 +41,675 @@
 // ************************************************************************
 //@HEADER
 */
+#pragma once
+
 #ifndef KOKKOS_ATOMIC_WINDOWS_HPP
 #define KOKKOS_ATOMIC_WINDOWS_HPP
 
-#ifdef _WIN32
+#if (defined(_MSC_VER) || defined(WIN32) || defined(_WIN32) || \
+     defined(WIN64) || defined(_WIN64) || defined(_WINDOWS))
 
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include <winsock2.h>
-#include <windows.h>
 
-#undef VOID
+#include <type_traits>
+
+#include <intrin.h>
+
+#ifdef __MINGW64__
+#define _InterlockedCompareExchange128 _InterlockedCompare64Exchange128
+#endif
+
+#if !defined(KOKKOS_ATOMIC_ASSEMBLY_HPP)
+#include "Kokkos_Atomic_Assembly.hpp"
+#endif
 
 namespace Kokkos {
-namespace Impl {
-#ifdef _MSC_VER
-_declspec(align(16))
-#endif
-    struct cas128_t {
-  LONGLONG lower;
-  LONGLONG upper;
-  KOKKOS_INLINE_FUNCTION
-  bool operator!=(const cas128_t& a) const {
-    return (lower != a.lower) || upper != a.upper;
+
+namespace Windows {
+
+#if defined(WIN64) || defined(_WIN64) || defined(_AMD64) || \
+    defined(_AMD64_) || defined(__x86_64) || defined(__x86_64__)
+#define MemoryBarrier __faststorefence
+#elif defined(_IA64_)
+#define MemoryBarrier __mf
+#else
+__forceinline void MemoryBarrier() {
+  long Barrier;
+  __asm {
+        xchg Barrier, eax
   }
 }
-#ifdef __GNUC__
-__attribute__((aligned(16)))
 #endif
-;
-}  // namespace Impl
 
-template <typename T>
-KOKKOS_INLINE_FUNCTION T atomic_compare_exchange(
-    volatile T* const dest, const T& compare,
-    typename std::enable_if<sizeof(T) == sizeof(CHAR), const T&>::type val) {
-  union U {
-    CHAR i;
-    T t;
-    KOKKOS_INLINE_FUNCTION U(){};
-  } tmp;
+#pragma region SIGNED_INTERLOCKED
 
-  tmp.i = _InterlockedCompareExchange8((CHAR*)dest, *((CHAR*)&val),
-                                       *((CHAR*)&compare));
-  return tmp.t;
+#define SIGNED_INTERLOCKED(TYPE, INTERLOCKED_SUF)                             \
+  __inline TYPE Exchange(TYPE volatile *const dest, const TYPE value) {       \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedExchange##INTERLOCKED_SUF(dest, value)); \
+                                                                              \
+    return oldValue;                                                          \
+  }                                                                           \
+                                                                              \
+  template <typename T>                                                       \
+  __inline T Exchange(                                                        \
+      T volatile *const dest,                                                 \
+      typename std::enable_if<sizeof(T) == sizeof(TYPE) &&                    \
+                                  !std::is_same<T, TYPE>::value,              \
+                              const T &>::type value) {                       \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedExchange##INTERLOCKED_SUF(               \
+                             (TYPE volatile *)dest, *(TYPE *)&value));        \
+                                                                              \
+    return *(T *)&oldValue;                                                   \
+  }                                                                           \
+                                                                              \
+  __inline TYPE CompareExchange(TYPE volatile *const dest,                    \
+                                const TYPE &compare, const TYPE &value) {     \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedCompareExchange##INTERLOCKED_SUF(        \
+                             dest, value, compare));                          \
+                                                                              \
+    return oldValue;                                                          \
+  }                                                                           \
+                                                                              \
+  template <typename T>                                                       \
+  __inline T CompareExchange(                                                 \
+      T volatile *const dest, const T &compare,                               \
+      typename std::enable_if<sizeof(T) == sizeof(TYPE) &&                    \
+                                  !std::is_same<T, TYPE>::value,              \
+                              const T &>::type value) {                       \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue !=                                                      \
+             _InterlockedCompareExchange##INTERLOCKED_SUF(                    \
+                 (TYPE volatile *)dest, *(TYPE *)&value, *(TYPE *)&compare)); \
+                                                                              \
+    return *(T *)&oldValue;                                                   \
+  }                                                                           \
+                                                                              \
+  __inline TYPE ExchangeAdd(TYPE volatile *const dest, const TYPE &value) {   \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue !=                                                      \
+             _InterlockedExchangeAdd##INTERLOCKED_SUF(dest, value));          \
+                                                                              \
+    return oldValue;                                                          \
+  }                                                                           \
+                                                                              \
+  template <typename T>                                                       \
+  __inline T ExchangeAdd(                                                     \
+      T volatile *const dest,                                                 \
+      typename std::enable_if<sizeof(T) == sizeof(TYPE) &&                    \
+                                  !std::is_same<T, TYPE>::value,              \
+                              const T &>::type value) {                       \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedExchangeAdd##INTERLOCKED_SUF(            \
+                             (TYPE volatile *)dest, *(TYPE *)&value));        \
+                                                                              \
+    return *(T *)&oldValue;                                                   \
+  }                                                                           \
+                                                                              \
+  __inline TYPE And(TYPE volatile *const dest, const TYPE &value) {           \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedAnd##INTERLOCKED_SUF(dest, value));      \
+                                                                              \
+    return oldValue;                                                          \
+  }                                                                           \
+                                                                              \
+  template <typename T>                                                       \
+  __inline T And(T volatile *const dest,                                      \
+                 typename std::enable_if<sizeof(T) == sizeof(TYPE) &&         \
+                                             !std::is_same<T, TYPE>::value,   \
+                                         const T &>::type value) {            \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedAnd##INTERLOCKED_SUF(                    \
+                             (TYPE volatile *)dest, *(TYPE *)&value));        \
+                                                                              \
+    return *(T *)&oldValue;                                                   \
+  }                                                                           \
+                                                                              \
+  __inline TYPE Or(TYPE volatile *const dest, const TYPE &value) {            \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedOr##INTERLOCKED_SUF(dest, value));       \
+                                                                              \
+    return oldValue;                                                          \
+  }                                                                           \
+                                                                              \
+  template <typename T>                                                       \
+  __inline T Or(T volatile *const dest,                                       \
+                typename std::enable_if<sizeof(T) == sizeof(TYPE) &&          \
+                                            !std::is_same<T, TYPE>::value,    \
+                                        const T &>::type value) {             \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedOr##INTERLOCKED_SUF(                     \
+                             (TYPE volatile *)dest, *(TYPE *)&value));        \
+                                                                              \
+    return *(T *)&oldValue;                                                   \
+  }                                                                           \
+                                                                              \
+  __inline TYPE Xor(TYPE volatile *const dest, const TYPE &value) {           \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedXor##INTERLOCKED_SUF(dest, value));      \
+                                                                              \
+    return oldValue;                                                          \
+  }                                                                           \
+                                                                              \
+  template <typename T>                                                       \
+  __inline T Xor(T volatile *const dest, const TYPE &value) {                 \
+    const TYPE oldValue = *dest;                                              \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedXor##INTERLOCKED_SUF(                    \
+                             (TYPE volatile *)dest, *(TYPE *)&value));        \
+                                                                              \
+    return *(T *)&oldValue;                                                   \
+  }                                                                           \
+                                                                              \
+  __inline TYPE Add(TYPE volatile *const dest, const TYPE &value) {           \
+    const TYPE oldValue = *dest;                                              \
+    const TYPE calcVal  = (oldValue + value);                                 \
+    const TYPE newVal   = calcVal;                                            \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedCompareExchange##INTERLOCKED_SUF(        \
+                             dest, newVal, oldValue));                        \
+                                                                              \
+    return oldValue;                                                          \
+  }                                                                           \
+                                                                              \
+  template <typename T>                                                       \
+  __inline T Add(T volatile *const dest,                                      \
+                 typename std::enable_if<sizeof(T) == sizeof(TYPE) &&         \
+                                             !std::is_same<T, TYPE>::value,   \
+                                         const T &>::type value) {            \
+    const TYPE oldValue = *dest;                                              \
+    const T calcVal     = (oldValue + value);                                 \
+    const TYPE newVal   = *(TYPE *)&calcVal;                                  \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedCompareExchange##INTERLOCKED_SUF(        \
+                             (TYPE volatile *)dest, newVal, oldValue));       \
+                                                                              \
+    return *(T *)&oldValue;                                                   \
+  }                                                                           \
+                                                                              \
+  __inline TYPE Sub(TYPE volatile *const dest, const TYPE &value) {           \
+    const TYPE oldValue = *dest;                                              \
+    const TYPE calcVal  = (oldValue - value);                                 \
+    const TYPE newVal   = calcVal;                                            \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedCompareExchange##INTERLOCKED_SUF(        \
+                             dest, newVal, oldValue));                        \
+                                                                              \
+    return oldValue;                                                          \
+  }                                                                           \
+  template <typename T>                                                       \
+  __inline T Sub(T volatile *const dest,                                      \
+                 typename std::enable_if<sizeof(T) == sizeof(TYPE) &&         \
+                                             !std::is_same<T, TYPE>::value,   \
+                                         const T &>::type value) {            \
+    const TYPE oldValue = *dest;                                              \
+    const T calcVal     = (oldValue - value);                                 \
+    const TYPE newVal   = *(TYPE *)&calcVal;                                  \
+                                                                              \
+    do {                                                                      \
+      ;                                                                       \
+    } while (oldValue != _InterlockedCompareExchange##INTERLOCKED_SUF(        \
+                             (TYPE volatile *)dest, newVal, oldValue));       \
+                                                                              \
+    return *(T *)&oldValue;                                                   \
+  }
+#pragma endregion
+
+SIGNED_INTERLOCKED(char, 8)
+
+SIGNED_INTERLOCKED(short, 16)
+
+SIGNED_INTERLOCKED(long, )
+
+SIGNED_INTERLOCKED(long long, 64)
+
+#undef SIGNED_INTERLOCKED
+
+#define UNSIGNED_INTERLOCKED(TYPE, SIGNED_TYPE, INTERLOCKED_SUF)             \
+  __inline TYPE Exchange(TYPE volatile *const dest, const TYPE value) {      \
+    union V {                                                                \
+      SIGNED_TYPE i;                                                         \
+      TYPE t;                                                                \
+      __inline V() {}                                                        \
+    } newval, oldval;                                                        \
+                                                                             \
+    newval.t = value;                                                        \
+                                                                             \
+    union Vol {                                                              \
+      SIGNED_TYPE volatile *i;                                               \
+      TYPE volatile *t;                                                      \
+      __inline Vol() {}                                                      \
+    } newdest;                                                               \
+                                                                             \
+    oldval.t  = *dest;                                                       \
+    newdest.t = dest;                                                        \
+                                                                             \
+    do {                                                                     \
+      ;                                                                      \
+    } while (oldval.i !=                                                     \
+             _InterlockedExchange##INTERLOCKED_SUF(newdest.i, newval.i));    \
+    return oldval.t;                                                         \
+  }                                                                          \
+                                                                             \
+  __inline TYPE CompareExchange(TYPE volatile *const dest,                   \
+                                const TYPE &compare, const TYPE &value) {    \
+    union V {                                                                \
+      SIGNED_TYPE i;                                                         \
+      TYPE t;                                                                \
+      __inline V() {}                                                        \
+    } newval, oldval, assume;                                                \
+                                                                             \
+    newval.t = value;                                                        \
+    assume.t = compare;                                                      \
+                                                                             \
+    union Vol {                                                              \
+      SIGNED_TYPE volatile *i;                                               \
+      TYPE volatile *t;                                                      \
+      __inline Vol() {}                                                      \
+    } newdest;                                                               \
+                                                                             \
+    oldval.t  = *dest;                                                       \
+    newdest.t = dest;                                                        \
+                                                                             \
+    do {                                                                     \
+      ;                                                                      \
+    } while (oldval.i != _InterlockedCompareExchange##INTERLOCKED_SUF(       \
+                             newdest.i, newval.i, assume.i));                \
+    return oldval.t;                                                         \
+  }                                                                          \
+                                                                             \
+  __inline TYPE ExchangeAdd(TYPE volatile *const dest, const TYPE &value) {  \
+    union V {                                                                \
+      SIGNED_TYPE i;                                                         \
+      TYPE t;                                                                \
+      __inline V() {}                                                        \
+    } newval, oldval;                                                        \
+                                                                             \
+    newval.t = value;                                                        \
+                                                                             \
+    union Vol {                                                              \
+      SIGNED_TYPE volatile *i;                                               \
+      TYPE volatile *t;                                                      \
+      __inline Vol() {}                                                      \
+    } newdest;                                                               \
+                                                                             \
+    oldval.t  = *dest;                                                       \
+    newdest.t = dest;                                                        \
+                                                                             \
+    do {                                                                     \
+      ;                                                                      \
+    } while (oldval.i !=                                                     \
+             _InterlockedExchangeAdd##INTERLOCKED_SUF(newdest.i, newval.i)); \
+                                                                             \
+    return oldval.t;                                                         \
+  }                                                                          \
+                                                                             \
+  __inline TYPE And(TYPE volatile *const dest, const TYPE &value) {          \
+    union V {                                                                \
+      SIGNED_TYPE i;                                                         \
+      TYPE t;                                                                \
+      __inline V() {}                                                        \
+    } newval, oldval;                                                        \
+                                                                             \
+    newval.t = value;                                                        \
+                                                                             \
+    union Vol {                                                              \
+      SIGNED_TYPE volatile *i;                                               \
+      TYPE volatile *t;                                                      \
+      __inline Vol() {}                                                      \
+    } newdest;                                                               \
+                                                                             \
+    oldval.t  = *dest;                                                       \
+    newdest.t = dest;                                                        \
+                                                                             \
+    do {                                                                     \
+      ;                                                                      \
+    } while (oldval.i !=                                                     \
+             _InterlockedAnd##INTERLOCKED_SUF(newdest.i, newval.i));         \
+                                                                             \
+    return oldval.t;                                                         \
+  }                                                                          \
+                                                                             \
+  __inline TYPE Or(TYPE volatile *const dest, const TYPE &value) {           \
+    union V {                                                                \
+      SIGNED_TYPE i;                                                         \
+      TYPE t;                                                                \
+      __inline V() {}                                                        \
+    } newval, oldval;                                                        \
+                                                                             \
+    newval.t = value;                                                        \
+                                                                             \
+    union Vol {                                                              \
+      SIGNED_TYPE volatile *i;                                               \
+      TYPE volatile *t;                                                      \
+      __inline Vol() {}                                                      \
+    } newdest;                                                               \
+                                                                             \
+    oldval.t  = *dest;                                                       \
+    newdest.t = dest;                                                        \
+                                                                             \
+    do {                                                                     \
+      ;                                                                      \
+    } while (oldval.i !=                                                     \
+             _InterlockedOr##INTERLOCKED_SUF(newdest.i, newval.i));          \
+                                                                             \
+    return oldval.t;                                                         \
+  }                                                                          \
+                                                                             \
+  __inline TYPE Xor(TYPE volatile *const dest, const TYPE &value) {          \
+    union V {                                                                \
+      SIGNED_TYPE i;                                                         \
+      TYPE t;                                                                \
+      __inline V() {}                                                        \
+    } newval, oldval;                                                        \
+                                                                             \
+    newval.t = value;                                                        \
+                                                                             \
+    union Vol {                                                              \
+      SIGNED_TYPE volatile *i;                                               \
+      TYPE volatile *t;                                                      \
+      __inline Vol() {}                                                      \
+    } newdest;                                                               \
+                                                                             \
+    oldval.t  = *dest;                                                       \
+    newdest.t = dest;                                                        \
+                                                                             \
+    do {                                                                     \
+      ;                                                                      \
+    } while (oldval.i !=                                                     \
+             _InterlockedXor##INTERLOCKED_SUF(newdest.i, newval.i));         \
+                                                                             \
+    return oldval.t;                                                         \
+  }                                                                          \
+                                                                             \
+  __inline TYPE Add(TYPE volatile *const dest, const TYPE &value) {          \
+    union V {                                                                \
+      SIGNED_TYPE i;                                                         \
+      TYPE t;                                                                \
+      __inline V() {}                                                        \
+    } newval, oldval;                                                        \
+                                                                             \
+    union Vol {                                                              \
+      SIGNED_TYPE volatile *i;                                               \
+      TYPE volatile *t;                                                      \
+      __inline Vol() {}                                                      \
+    } newdest;                                                               \
+                                                                             \
+    oldval.t  = *dest;                                                       \
+    newdest.t = dest;                                                        \
+                                                                             \
+    do {                                                                     \
+      newval.t = oldval.t + value;                                           \
+    } while (oldval.i != _InterlockedCompareExchange##INTERLOCKED_SUF(       \
+                             newdest.i, newval.i, oldval.i));                \
+    return oldval.t;                                                         \
+  }                                                                          \
+                                                                             \
+  __inline TYPE Sub(TYPE volatile *const dest, const TYPE &value) {          \
+    union V {                                                                \
+      SIGNED_TYPE i;                                                         \
+      TYPE t;                                                                \
+      __inline V() {}                                                        \
+    } newval, oldval;                                                        \
+                                                                             \
+    union Vol {                                                              \
+      SIGNED_TYPE volatile *i;                                               \
+      TYPE volatile *t;                                                      \
+      __inline Vol() {}                                                      \
+    } newdest;                                                               \
+                                                                             \
+    oldval.t  = *dest;                                                       \
+    newdest.t = dest;                                                        \
+                                                                             \
+    do {                                                                     \
+      newval.t = oldval.t - value;                                           \
+    } while (oldval.i != _InterlockedCompareExchange##INTERLOCKED_SUF(       \
+                             newdest.i, newval.i, oldval.i));                \
+    return oldval.t;                                                         \
+  }
+#pragma endregion
+
+UNSIGNED_INTERLOCKED(unsigned char, char, 8)
+
+UNSIGNED_INTERLOCKED(unsigned short, short, 16)
+
+UNSIGNED_INTERLOCKED(unsigned long, long, )
+
+UNSIGNED_INTERLOCKED(unsigned long long, long long, 64)
+
+#undef UNSIGNED_INTERLOCKED
+
+__inline static float Add(float volatile *const dest, const float &value) {
+  union V {
+    long i;
+    float t;
+    __inline V() {}
+  } newval, oldval;
+
+  union Vol {
+    long volatile *i;
+    float volatile *t;
+    __inline Vol() {}
+  } newdest;
+
+  oldval.t  = *dest;
+  newdest.t = dest;
+
+  do {
+    newval.t = oldval.t + value;
+  } while (oldval.i !=
+           _InterlockedCompareExchange(newdest.i, newval.i, oldval.i));
+  return oldval.t;
 }
 
-template <typename T>
-KOKKOS_INLINE_FUNCTION T atomic_compare_exchange(
-    volatile T* const dest, const T& compare,
-    typename std::enable_if<sizeof(T) == sizeof(SHORT), const T&>::type val) {
-  union U {
-    SHORT i;
-    T t;
-    KOKKOS_INLINE_FUNCTION U(){};
-  } tmp;
+__inline static double Add(double volatile *const dest, const double &value) {
+  union V {
+    long long i;
+    double t;
+    __inline V() {}
+  } newval, oldval;
 
-  tmp.i = _InterlockedCompareExchange16((SHORT*)dest, *((SHORT*)&val),
-                                        *((SHORT*)&compare));
-  return tmp.t;
+  union Vol {
+    long long volatile *i;
+    double volatile *t;
+    __inline Vol() {}
+  } newdest;
+
+  oldval.t  = *dest;
+  newdest.t = dest;
+
+  do {
+    newval.t = oldval.t + value;
+  } while (oldval.i !=
+           _InterlockedCompareExchange64(newdest.i, newval.i, oldval.i));
+  return oldval.t;
 }
 
-template <typename T>
-KOKKOS_INLINE_FUNCTION T atomic_compare_exchange(
-    volatile T* const dest, const T& compare,
-    typename std::enable_if<sizeof(T) == sizeof(LONG), const T&>::type val) {
-  union U {
-    LONG i;
-    T t;
-    KOKKOS_INLINE_FUNCTION U() {}
-  } tmp;
+__inline static float Sub(float volatile *const dest, const float &value) {
+  union V {
+    long i;
+    float t;
+    __inline V() {}
+  } newval, oldval;
 
-  tmp.i = _InterlockedCompareExchange((LONG*)dest, *((LONG*)&val),
-                                      *((LONG*)&compare));
-  return tmp.t;
+  union Vol {
+    long volatile *i;
+    float volatile *t;
+    __inline Vol() {}
+  } newdest;
+
+  oldval.t  = *dest;
+  newdest.t = dest;
+
+  do {
+    newval.t = oldval.t - value;
+  } while (oldval.i !=
+           _InterlockedCompareExchange(newdest.i, newval.i, oldval.i));
+  return oldval.t;
 }
 
-template <typename T>
-KOKKOS_INLINE_FUNCTION T atomic_compare_exchange(
-    volatile T* const dest, const T& compare,
-    typename std::enable_if<sizeof(T) == sizeof(LONGLONG), const T&>::type
-        val) {
-  union U {
-    LONGLONG i;
-    T t;
-    KOKKOS_INLINE_FUNCTION U() {}
-  } tmp;
+__inline static double Sub(double volatile *const dest, const double &value) {
+  union V {
+    long long i;
+    double t;
+    __inline V() {}
+  } newval, oldval;
 
-  tmp.i = _InterlockedCompareExchange64((LONGLONG*)dest, *((LONGLONG*)&val),
-                                        *((LONGLONG*)&compare));
-  return tmp.t;
+  union Vol {
+    long long volatile *i;
+    double volatile *t;
+    __inline Vol() {}
+  } newdest;
+
+  oldval.t  = *dest;
+  newdest.t = dest;
+
+  do {
+    newval.t = oldval.t - value;
+  } while (oldval.i !=
+           _InterlockedCompareExchange64(newdest.i, newval.i, oldval.i));
+  return oldval.t;
 }
 
+#pragma region Interlocked 128
+
 template <typename T>
-KOKKOS_INLINE_FUNCTION T atomic_compare_exchange(
-    volatile T* const dest, const T& compare,
-    typename std::enable_if<sizeof(T) == sizeof(Impl::cas128_t), const T&>::type
-        val) {
-  T compare_and_result(compare);
-  union U {
+__inline T CompareExchange(
+    T volatile *const dest, const T &compare,
+    typename std::enable_if<sizeof(T) == sizeof(Impl::cas128_t),
+                            const T &>::type value) {
+  union V {
     Impl::cas128_t i;
     T t;
-    KOKKOS_INLINE_FUNCTION U(){};
-  } newval;
-  newval.t = val;
-  _InterlockedCompareExchange128((LONGLONG*)dest, newval.i.upper,
-                                 newval.i.lower,
-                                 ((LONGLONG*)&compare_and_result));
-  return compare_and_result;
+    __inline V() {}
+  } newval, oldval, assume;
+
+  newval.t = value;
+  assume.t = compare;
+
+  union Vol {
+    Impl::cas128_t volatile *i;
+    long long volatile *l;
+    T volatile *t;
+    __inline Vol() {}
+  } newdest;
+
+  oldval.t  = *dest;
+  newdest.t = dest;
+
+  do {
+    ;
+  } while (_InterlockedCompareExchange128(newdest.l, newval.i.upper,
+                                          newval.i.lower, &assume.i) == 0);
+
+  return oldval.t;
 }
 
 template <typename T>
-KOKKOS_INLINE_FUNCTION T atomic_compare_exchange_strong(volatile T* const dest,
-                                                        const T& compare,
-                                                        const T& val) {
-  return atomic_compare_exchange(dest, compare, val);
+__inline T Add(T volatile *const dest,
+               typename std::enable_if<sizeof(T) == sizeof(Impl::cas128_t),
+                                       const T &>::type value) {
+  union V {
+    Impl::cas128_t i;
+    T t;
+    __inline V() {}
+  } newval, oldval;
+
+  oldval.t = *dest;
+
+  do {
+    newval.t = oldval.t + value;
+  } while (oldval.i != CompareExchange(dest, newval.i, oldval.i));
+
+  return oldval.t;
 }
+
+template <typename T>
+__inline T Sub(T volatile *const dest,
+               typename std::enable_if<sizeof(T) == sizeof(Impl::cas128_t),
+                                       const T &>::type value) {
+  union V {
+    Impl::cas128_t i;
+    T t;
+    __inline V() {}
+  } newval, oldval;
+
+  oldval.t = *dest;
+
+  do {
+    newval.t = oldval.t - value;
+  } while (oldval.i != CompareExchange(dest, newval.i, oldval.i));
+
+  return oldval.t;
+}
+
+// TODO
+template <typename T>
+__inline T Exchange(
+    void *volatile *dest,
+    typename std::enable_if<(sizeof(T) != 4) && (sizeof(T) != 8), void *>::type
+        &val) {
+  while (!Impl::lock_address_host_space(*dest))
+    ;
+  MemoryBarrier();
+
+  const long long oldValue = *reinterpret_cast<long long *>(*dest);
+  *dest                    = val;
+
+  MemoryBarrier();
+  Impl::unlock_address_host_space(*dest);
+
+  return oldValue;
+}
+
+#pragma endregion
+
+}  // namespace Windows
 
 }  // namespace Kokkos
 #endif

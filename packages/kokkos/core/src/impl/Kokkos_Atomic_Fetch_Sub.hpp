@@ -59,7 +59,8 @@ namespace Kokkos {
 //----------------------------------------------------------------------------
 
 #if defined(KOKKOS_ENABLE_CUDA)
-#if defined(__CUDA_ARCH__) || defined(KOKKOS_IMPL_CUDA_CLANG_WORKAROUND)
+#if (defined(__CUDA_ARCH__) || defined(KOKKOS_IMPL_CUDA_CLANG_WORKAROUND)) && \
+    !defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
 
 // Support for int, unsigned int, unsigned long long int, and float
 
@@ -154,8 +155,10 @@ atomic_fetch_sub(volatile T* const dest,
   while (active != done_active) {
     if (!done) {
       if (Impl::lock_address_cuda_space((void*)dest)) {
+        Kokkos::memory_fence();
         return_val = *dest;
         *dest      = return_val - val;
+        Kokkos::memory_fence();
         Impl::unlock_address_cuda_space((void*)dest);
         done = 1;
       }
@@ -168,11 +171,152 @@ atomic_fetch_sub(volatile T* const dest,
   }
   return return_val;
 }
+
+#elif defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
+
+__inline __device__ __host__ int atomic_fetch_sub(volatile int* const dest,
+                                                  const int val) {
+#if defined(__CUDA_ARCH__)
+  return atomicSub((int*)dest, val);
+#else
+  return Windows::Sub(dest, val);
+#endif
+}
+
+__inline__ __device__ __host__ __host__ unsigned int atomic_fetch_sub(
+    volatile unsigned int* const dest, const unsigned int val) {
+#if defined(__CUDA_ARCH__)
+  return atomicSub((unsigned int*)dest, val);
+#else
+  return Windows::Sub(dest, val);
+#endif
+}
+
+__inline__ __device__ __host__ unsigned int atomic_fetch_sub(
+    volatile int64_t* const dest, const int64_t val) {
+#if defined(__CUDA_ARCH__)
+  return atomic_fetch_add(dest, -val);
+#else
+  return Windows::Sub(dest, val);
+#endif
+}
+
+__inline__ __device__ __host__ unsigned int atomic_fetch_sub(
+    volatile float* const dest, const float val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((float*)dest, -val);
+#else
+  return Windows::Sub(dest, val);
+#endif
+}
+
+#if (600 <= __CUDA_ARCH__)
+__inline__ __device__ __host__ unsigned int atomic_fetch_sub(
+    volatile double* const dest, const double val) {
+#if defined(__CUDA_ARCH__)
+  return atomicAdd((double*)dest, -val);
+#else
+  return Windows::Sub(dest, val);
+#endif
+}
+#endif
+
+template <typename T>
+__inline__ __device__ __host__ T atomic_fetch_sub(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) == sizeof(int), const T>::type val) {
+#if defined(__CUDA_ARCH__)
+  union U {
+    int i;
+    T t;
+    KOKKOS_INLINE_FUNCTION U() {}
+  } oldval, assume, newval;
+
+  oldval.t = *dest;
+
+  do {
+    assume.i = oldval.i;
+    newval.t = assume.t - val;
+    oldval.i = atomicCAS((int*)dest, assume.i, newval.i);
+  } while (assume.i != oldval.i);
+
+  return oldval.t;
+#else
+  return Windows::Sub(dest, val);
+#endif
+}
+
+template <typename T>
+__inline __device__ __host__ T atomic_fetch_sub(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) != sizeof(int) &&
+                                sizeof(T) == sizeof(unsigned long long int),
+                            const T>::type val) {
+#if defined(__CUDA_ARCH__)
+  union U {
+    unsigned long long int i;
+    T t;
+    KOKKOS_INLINE_FUNCTION U() {}
+  } oldval, assume, newval;
+
+  oldval.t = *dest;
+
+  do {
+    assume.i = oldval.i;
+    newval.t = assume.t - val;
+    oldval.i = atomicCAS((unsigned long long int*)dest, assume.i, newval.i);
+  } while (assume.i != oldval.i);
+
+  return oldval.t;
+#else
+  return Windows::Sub(dest, val);
+#endif
+}
+
+//----------------------------------------------------------------------------
+
+template <typename T>
+__inline __device__ __host__ T
+atomic_fetch_sub(volatile T* const dest,
+                 typename std::enable_if<(sizeof(T) != 4) && (sizeof(T) != 8),
+                                         const T>::type& val) {
+  T return_val;
+  // This is a way to (hopefully) avoid dead lock in a warp
+  int done = 0;
+#ifdef KOKKOS_IMPL_CUDA_SYNCWARP_NEEDS_MASK
+  unsigned int mask   = KOKKOS_IMPL_CUDA_ACTIVEMASK;
+  unsigned int active = KOKKOS_IMPL_CUDA_BALLOT_MASK(mask, 1);
+#else
+  unsigned int active = KOKKOS_IMPL_CUDA_BALLOT(1);
+#endif
+  unsigned int done_active = 0;
+  while (active != done_active) {
+    if (!done) {
+      if (Impl::lock_address_cuda_space((void*)dest)) {
+        Kokkos::memory_fence();
+        return_val = *dest;
+        *dest      = return_val - val;
+        Kokkos::memory_fence();
+        Impl::unlock_address_cuda_space((void*)dest);
+        done = 1;
+      }
+    }
+#ifdef KOKKOS_IMPL_CUDA_SYNCWARP_NEEDS_MASK
+    done_active = KOKKOS_IMPL_CUDA_BALLOT_MASK(mask, done);
+#else
+    done_active = KOKKOS_IMPL_CUDA_BALLOT(done);
+#endif
+  }
+  return return_val;
+}
+
+//----------------------------------------------------------------------------
 #endif
 #endif
 //----------------------------------------------------------------------------
 #if !defined(KOKKOS_ENABLE_ROCM_ATOMICS) || !defined(KOKKOS_ENABLE_HIP_ATOMICS)
-#if !defined(__CUDA_ARCH__) || defined(KOKKOS_IMPL_CUDA_CLANG_WORKAROUND)
+#if (!defined(__CUDA_ARCH__) || defined(KOKKOS_IMPL_CUDA_CLANG_WORKAROUND)) && \
+    !defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
 #if defined(KOKKOS_ENABLE_GNU_ATOMICS) || defined(KOKKOS_ENABLE_INTEL_ATOMICS)
 
 inline int atomic_fetch_sub(volatile int* const dest, const int val) {
@@ -274,9 +418,91 @@ inline T atomic_fetch_sub(
 
   while (!Impl::lock_address_host_space((void*)dest))
     ;
+  Kokkos::memory_fence();
   T return_val = *dest;
   *dest        = return_val - val;
+  Kokkos::memory_fence();
   Impl::unlock_address_host_space((void*)dest);
+  return return_val;
+}
+
+//----------------------------------------------------------------------------
+#elif defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
+
+__inline int atomic_fetch_sub(volatile int* const dest, const int val) {}
+
+__inline__ __host__ unsigned int atomic_fetch_sub(
+    volatile unsigned int* const dest, const unsigned int val) {
+  return Windows::Sub(dest, val);
+}
+
+__inline__ unsigned int atomic_fetch_sub(volatile int64_t* const dest,
+                                         const int64_t val) {
+  return Windows::Sub(dest, val);
+}
+
+__inline__ unsigned int atomic_fetch_sub(volatile float* const dest,
+                                         const float val) {
+  return Windows::Sub(dest, val);
+}
+
+#if (600 <= __CUDA_ARCH__)
+__inline__ unsigned int atomic_fetch_sub(volatile double* const dest,
+                                         const double val) {
+  return Windows::Sub(dest, val);
+}
+#endif
+
+template <typename T>
+__inline__ T atomic_fetch_sub(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) == sizeof(int), const T>::type val) {
+  return Windows::Sub(dest, val);
+}
+
+template <typename T>
+__inline T atomic_fetch_sub(
+    volatile T* const dest,
+    typename std::enable_if<sizeof(T) != sizeof(int) &&
+                                sizeof(T) == sizeof(unsigned long long int),
+                            const T>::type val) {
+  return Windows::Sub(dest, val);
+}
+
+//----------------------------------------------------------------------------
+
+template <typename T>
+__inline T atomic_fetch_sub(
+    volatile T* const dest,
+    typename std::enable_if<(sizeof(T) != 4) && (sizeof(T) != 8),
+                            const T>::type& val) {
+  T return_val;
+  // This is a way to (hopefully) avoid dead lock in a warp
+  int done = 0;
+#ifdef KOKKOS_IMPL_CUDA_SYNCWARP_NEEDS_MASK
+  unsigned int mask = KOKKOS_IMPL_CUDA_ACTIVEMASK;
+  unsigned int active = KOKKOS_IMPL_CUDA_BALLOT_MASK(mask, 1);
+#else
+  unsigned int active = KOKKOS_IMPL_CUDA_BALLOT(1);
+#endif
+  unsigned int done_active = 0;
+  while (active != done_active) {
+    if (!done) {
+      if (Impl::lock_address_cuda_space((void*)dest)) {
+        Kokkos::memory_fence();
+        return_val = *dest;
+        *dest = return_val - val;
+        Kokkos::memory_fence();
+        Impl::unlock_address_cuda_space((void*)dest);
+        done = 1;
+      }
+    }
+#ifdef KOKKOS_IMPL_CUDA_SYNCWARP_NEEDS_MASK
+    done_active = KOKKOS_IMPL_CUDA_BALLOT_MASK(mask, done);
+#else
+    done_active = KOKKOS_IMPL_CUDA_BALLOT(done);
+#endif
+  }
   return return_val;
 }
 
@@ -312,8 +538,8 @@ T atomic_fetch_sub(volatile T* const dest_v, const T val) {
 // dummy for non-CUDA Kokkos headers being processed by NVCC
 #if defined(__CUDA_ARCH__) && !defined(KOKKOS_ENABLE_CUDA)
 template <typename T>
-__inline__ __device__ T atomic_fetch_sub(volatile T* const,
-                                         Kokkos::Impl::identity_t<T>) {
+__inline__ __device__ __host__ T atomic_fetch_sub(volatile T* const,
+                                                  Kokkos::Impl::identity_t<T>) {
   return T();
 }
 #endif

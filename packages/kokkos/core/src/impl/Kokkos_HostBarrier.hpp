@@ -211,7 +211,7 @@ class HostBarrier {
     bool result = test_equal(ptr, v);
     for (int i = 0; !result && i < iterations_till_backoff; ++i) {
 #if defined(KOKKOS_ENABLE_ASM)
-#if defined(_WIN32)
+#if defined(_WINDOWS)
       for (int j = 0; j < num_nops; ++j) {
         __asm__ __volatile__("nop\n");
       }

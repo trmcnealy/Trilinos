@@ -49,9 +49,9 @@
 #include <impl/Kokkos_Spinwait.hpp>
 #include <impl/Kokkos_BitOps.hpp>
 
-#if defined(KOKKOS_ENABLE_STDTHREAD) || defined(_WIN32)
+#if defined(KOKKOS_ENABLE_STDTHREAD) || defined(_WINDOWS)
 #include <thread>
-#elif !defined(_WIN32)
+#elif !defined(_WINDOWS)
 #include <sched.h>
 #include <time.h>
 #else
@@ -75,7 +75,7 @@ void host_thread_yield(const uint32_t i, const WaitMode mode) {
     if (sleep_limit < i) {
       // Attempt to put the thread to sleep for 'c' milliseconds
 
-#if defined(KOKKOS_ENABLE_STDTHREAD) || defined(_WIN32)
+#if defined(KOKKOS_ENABLE_STDTHREAD) || defined(_WINDOWS)
       auto start = std::chrono::high_resolution_clock::now();
       std::this_thread::yield();
       std::this_thread::sleep_until(start + std::chrono::nanoseconds(c * 1000));
@@ -90,7 +90,7 @@ void host_thread_yield(const uint32_t i, const WaitMode mode) {
     else if (mode == WaitMode::PASSIVE || yield_limit < i) {
       // Attempt to yield thread resources to runtime
 
-#if defined(KOKKOS_ENABLE_STDTHREAD) || defined(_WIN32)
+#if defined(KOKKOS_ENABLE_STDTHREAD) || defined(_WINDOWS)
       std::this_thread::yield();
 #else
       sched_yield();
@@ -105,7 +105,7 @@ void host_thread_yield(const uint32_t i, const WaitMode mode) {
       for (int k = 0; k < c; ++k) {
 #if defined(__amd64) || defined(__amd64__) || defined(__x86_64) || \
     defined(__x86_64__)
-#if !defined(_WIN32) /* IS NOT Microsoft Windows */
+#if !defined(_WINDOWS) /* IS NOT Microsoft Windows */
         asm volatile("nop\n");
 #else
         __asm__ __volatile__("nop\n");
@@ -123,7 +123,7 @@ void host_thread_yield(const uint32_t i, const WaitMode mode) {
     for (int k = 0; k < c; ++k) {
 #if defined(__amd64) || defined(__amd64__) || defined(__x86_64) || \
     defined(__x86_64__)
-#if !defined(_WIN32) /* IS NOT Microsoft Windows */
+#if !defined(_WINDOWS) /* IS NOT Microsoft Windows */
       asm volatile("nop\n");
 #else
       __asm__ __volatile__("nop\n");
@@ -138,7 +138,7 @@ void host_thread_yield(const uint32_t i, const WaitMode mode) {
     // Insert memory pause
 #if defined(__amd64) || defined(__amd64__) || defined(__x86_64) || \
     defined(__x86_64__)
-#if !defined(_WIN32) /* IS NOT Microsoft Windows */
+#if !defined(_WINDOWS) /* IS NOT Microsoft Windows */
     asm volatile("pause\n" ::: "memory");
 #else
     __asm__ __volatile__("pause\n" ::: "memory");

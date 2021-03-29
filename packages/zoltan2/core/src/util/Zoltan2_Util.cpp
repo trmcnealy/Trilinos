@@ -61,7 +61,7 @@
 
 namespace Zoltan2{
 
-#ifndef _WIN32
+#ifndef _WINDOWS
 /* On a linux node, find the total memory currently allocated
  * to this process.
  * Return the number of kilobytes allocated to this process.

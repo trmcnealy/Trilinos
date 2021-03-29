@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#if !defined(_WIN32)
+#if !defined(_WINDOWS)
 #include <unistd.h>
 #endif
 
@@ -340,7 +340,7 @@ size_t Excn::ExodusFile::get_free_descriptor_count()
 // at one time. (POSIX)
 #if defined(__PUMAGON__)
   int fdmax = FOPEN_MAX;
-#elif defined(_WIN32)
+#elif defined(_WINDOWS)
   int fdmax = _getmaxstdio();
 #else
   int fdmax = sysconf(_SC_OPEN_MAX);
