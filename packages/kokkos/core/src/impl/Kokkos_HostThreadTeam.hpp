@@ -512,9 +512,8 @@ class HostThreadTeamMember {
   //--------------------------------------------------------------------------
 
   template <typename T>
-  KOKKOS_INLINE_FUNCTION void team_broadcast(T& value,
-                                             const int source_team_rank) const
-      noexcept
+  KOKKOS_INLINE_FUNCTION void team_broadcast(
+      T& value, const int source_team_rank) const noexcept
 #if defined(KOKKOS_ACTIVE_EXECUTION_MEMORY_SPACE_HOST)
   {
     if (1 < m_data.m_team_size) {
@@ -548,9 +547,8 @@ class HostThreadTeamMember {
   //--------------------------------------------------------------------------
 
   template <class Closure, typename T>
-  KOKKOS_INLINE_FUNCTION void team_broadcast(Closure const& f, T& value,
-                                             const int source_team_rank) const
-      noexcept
+  KOKKOS_INLINE_FUNCTION void team_broadcast(
+      Closure const& f, T& value, const int source_team_rank) const noexcept
 #if defined(KOKKOS_ACTIVE_EXECUTION_MEMORY_SPACE_HOST)
   {
     T volatile* const shared_value = (T*)m_data.team_reduce();

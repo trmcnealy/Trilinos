@@ -96,9 +96,9 @@ namespace Impl{
 
     if (std::is_same<idx, int>::value){
 
-      const idx *a_xadj = (int *)row_mapA.data();
-      const idx *b_xadj = (int *)row_mapB.data();
-      idx *c_xadj = (int *)row_mapC.data();
+      const idx *a_xadj = (idx *)row_mapA.data();
+      const idx *b_xadj = (idx *)row_mapB.data();
+      idx *c_xadj = (idx *)row_mapC.data();
 
       const idx *a_adj = entriesA.data();
       const idx *b_adj = entriesB.data();

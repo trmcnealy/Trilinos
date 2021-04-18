@@ -62,7 +62,7 @@
 namespace Kokkos {
 namespace Impl {
 
-void host_abort(const char *const);
+[[noreturn]] void host_abort(const char *const);
 
 void throw_runtime_exception(const std::string &);
 
@@ -164,15 +164,42 @@ class RawMemoryAllocationFailure : public std::bad_alloc {
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
-namespace Kokkos {
-KOKKOS_INLINE_FUNCTION
-void abort(const char *const message) {
 #if defined(KOKKOS_ENABLE_CUDA) && defined(__CUDA_ARCH__)
-  Kokkos::Impl::cuda_abort(message);
+
+#if defined(__APPLE__) || defined(KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK)
+// cuda_abort does not abort when building for macOS.
+// required to workaround failures in random number generator unit tests with
+// pre-volta architectures
+#define KOKKOS_IMPL_ABORT_NORETURN
+#else
+// cuda_abort aborts when building for other platforms than macOS
+#define KOKKOS_IMPL_ABORT_NORETURN [[noreturn]]
+#endif
+
+#elif defined(KOKKOS_ENABLE_HIP) && defined(__HIP_DEVICE_COMPILE__)
+// HIP aborts
+#define KOKKOS_IMPL_ABORT_NORETURN [[noreturn]]
+#elif !defined(KOKKOS_ENABLE_OPENMPTARGET) && !defined(__HCC_ACCELERATOR__)
+// Host aborts
+#define KOKKOS_IMPL_ABORT_NORETURN [[noreturn]]
+#else
+// Everything else does not abort
+#define KOKKOS_IMPL_ABORT_NORETURN
+#endif
+
+namespace Kokkos {
+KOKKOS_IMPL_ABORT_NORETURN KOKKOS_INLINE_FUNCTION void abort(
+    const char *const message, const char* file = __FILE__, const unsigned line = __LINE__) {
+#if defined(KOKKOS_ENABLE_CUDA) && defined(__CUDA_ARCH__)
+  //Kokkos::Impl::cuda_abort(message);
+  printf("\033[31m%s in %s @ %u\n%s\n\033[0m", "Cuda Exception", file, line, message);
+  asm("trap;");
 #elif defined(KOKKOS_ENABLE_HIP) && defined(__HIP_DEVICE_COMPILE__)
   Kokkos::Impl::hip_abort(message);
 #elif !defined(KOKKOS_ENABLE_OPENMPTARGET) && !defined(__HCC_ACCELERATOR__)
-  Kokkos::Impl::host_abort(message);
+  //Kokkos::Impl::host_abort(message);
+  printf("\033[31m%s in %s @ %u\n%s\n\033[0m", "Host Exception", file, line, message);
+  throw message;
 #endif
 }
 
@@ -210,7 +237,7 @@ void abort(const char *const message) {
     }                                                                  \
   }
 #endif  // ifndef KOKKOS_ASSERT
-#else   // not debug mode
+#else  // not debug mode
 #define KOKKOS_EXPECTS(...)
 #define KOKKOS_ENSURES(...)
 #ifndef KOKKOS_ASSERT

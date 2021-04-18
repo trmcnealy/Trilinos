@@ -331,7 +331,7 @@
 # define GTEST_OS_CYGWIN 1
 #elif defined __SYMBIAN32__
 # define GTEST_OS_SYMBIAN 1
-#elif defined _WINDOWS
+#elif defined _WIN32
 # define GTEST_OS_WINDOWS 1
 # ifdef _WIN32_WCE
 #  define GTEST_OS_WINDOWS_MOBILE 1

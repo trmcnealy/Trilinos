@@ -53,9 +53,11 @@ KOKKOS_FORCEINLINE_FUNCTION
 void memory_fence() {
 #if defined(__CUDA_ARCH__)
   __threadfence();
+#elif defined(KOKKOS_ENABLE_OPENMPTARGET)
+#pragma omp flush
 #elif defined(KOKKOS_ENABLE_ROCM_ATOMICS)
   amp_barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
-#elif defined(KOKKOS_ENABLE_HIP_ATOMICS)
+#elif defined(__HIP_DEVICE_COMPILE__)
   __threadfence();
 #elif defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64)
   asm volatile("mfence" ::: "memory");
@@ -67,7 +69,7 @@ void memory_fence() {
 #elif defined(KOKKOS_ENABLE_OPENMP_ATOMICS)
 #pragma omp flush
 #elif defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
-  MemoryBarrier();
+  Windows::MemoryBarrier();
 #elif !defined(KOKKOS_ENABLE_SERIAL_ATOMICS)
 #error "Error: memory_fence() not defined"
 #endif

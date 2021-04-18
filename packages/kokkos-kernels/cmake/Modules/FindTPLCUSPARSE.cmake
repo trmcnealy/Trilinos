@@ -1,4 +1,4 @@
-FIND_PACKAGE(CUDA)
+# FIND_PACKAGE(CUDA)
 
 INCLUDE(FindPackageHandleStandardArgs)
 IF (NOT CUDA_FOUND)

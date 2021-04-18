@@ -45,6 +45,8 @@
 #define KOKKOS_KOKKOS_EXTENTS_HPP
 
 #include <cstddef>
+#include <type_traits>
+#include <Kokkos_Macros.hpp>
 
 namespace Kokkos {
 namespace Experimental {
@@ -149,7 +151,7 @@ struct ApplyExtent<ValueType[N], Ext> {
 
 template <class ValueType, ptrdiff_t Ext>
 struct ApplyExtent<ValueType*, Ext> {
-  using type = ValueType * [Ext];
+  using type = ValueType* [Ext];
 };
 
 template <class ValueType>

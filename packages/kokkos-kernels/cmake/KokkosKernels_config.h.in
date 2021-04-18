@@ -117,7 +117,7 @@
  * mean both better performance overall, and more uniform performance
  * for corner cases.
  */
-#define KOKKOSLINALG_OPT_LEVEL @KokkosLinAlg_Opt_Level@
+#define KOKKOSLINALG_OPT_LEVEL @KokkosKernels_LINALG_OPT_LEVEL@
 
 #ifndef KOKKOSKERNELS_IMPL_COMPILE_LIBRARY
 #define KOKKOSKERNELS_IMPL_COMPILE_LIBRARY false

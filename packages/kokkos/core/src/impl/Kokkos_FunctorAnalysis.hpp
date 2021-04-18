@@ -50,6 +50,10 @@
 #include <impl/Kokkos_Traits.hpp>
 #include <impl/Kokkos_Tags.hpp>
 
+#ifdef VOID
+#undef VOID
+#endif
+
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
@@ -391,8 +395,8 @@ struct FunctorAnalysis {
 
   template <class F>
   struct has_join_function<F, NO_TAG_NOT_ARRAY> {
-    typedef volatile ValueType& vref_type;
-    typedef volatile const ValueType& cvref_type;
+    using vref_type  = volatile ValueType&;
+    using cvref_type = const volatile ValueType&;
 
     KOKKOS_INLINE_FUNCTION static void enable_if(void (F::*)(vref_type,
                                                              cvref_type) const);
@@ -409,8 +413,8 @@ struct FunctorAnalysis {
 
   template <class F>
   struct has_join_function<F, NO_TAG_IS_ARRAY> {
-    typedef volatile ValueType* vref_type;
-    typedef volatile const ValueType* cvref_type;
+    using vref_type  = volatile ValueType*;
+    using cvref_type = const volatile ValueType*;
 
     KOKKOS_INLINE_FUNCTION static void enable_if(void (F::*)(vref_type,
                                                              cvref_type) const);
@@ -427,8 +431,8 @@ struct FunctorAnalysis {
 
   template <class F>
   struct has_join_function<F, HAS_TAG_NOT_ARRAY> {
-    typedef volatile ValueType& vref_type;
-    typedef volatile const ValueType& cvref_type;
+    using vref_type  = volatile ValueType&;
+    using cvref_type = const volatile ValueType&;
 
     KOKKOS_INLINE_FUNCTION static void enable_if(void (F::*)(WTag, vref_type,
                                                              cvref_type) const);
@@ -453,8 +457,8 @@ struct FunctorAnalysis {
 
   template <class F>
   struct has_join_function<F, HAS_TAG_IS_ARRAY> {
-    typedef volatile ValueType* vref_type;
-    typedef volatile const ValueType* cvref_type;
+    using vref_type  = volatile ValueType*;
+    using cvref_type = const volatile ValueType*;
 
     KOKKOS_INLINE_FUNCTION static void enable_if(void (F::*)(WTag, vref_type,
                                                              cvref_type) const);
@@ -773,8 +777,8 @@ struct FunctorAnalysis {
     }
 
     KOKKOS_INLINE_FUNCTION
-    void join(ValueType volatile* dst, ValueType volatile const* src) const
-        noexcept {
+    void join(ValueType volatile* dst,
+              ValueType volatile const* src) const noexcept {
       DeduceJoin<>::join(m_functor, dst, src);
     }
 

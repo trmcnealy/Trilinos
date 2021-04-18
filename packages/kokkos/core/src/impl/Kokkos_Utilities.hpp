@@ -253,77 +253,62 @@ constexpr T at(const unsigned i, integer_sequence<T, h0, h1, h2>) noexcept {
 
 template <typename T, T h0, T h1, T h2, T h3>
 constexpr T at(const unsigned i, integer_sequence<T, h0, h1, h2, h3>) noexcept {
-  return i == 0u
-             ? h0
-             : i == 1u ? h1 : i == 2u ? h2 : i == 3u ? h3 : ~static_cast<T>(0);
+  return i == 0u   ? h0
+         : i == 1u ? h1
+         : i == 2u ? h2
+         : i == 3u ? h3
+                   : ~static_cast<T>(0);
 }
 
 template <typename T, T h0, T h1, T h2, T h3, T h4>
 constexpr T at(const unsigned i,
                integer_sequence<T, h0, h1, h2, h3, h4>) noexcept {
-  return i == 0u
-             ? h0
-             : i == 1u
-                   ? h1
-                   : i == 2u ? h2
-                             : i == 3u ? h3 : i == 4u ? h4 : ~static_cast<T>(0);
+  return i == 0u   ? h0
+         : i == 1u ? h1
+         : i == 2u ? h2
+         : i == 3u ? h3
+         : i == 4u ? h4
+                   : ~static_cast<T>(0);
 }
 
 template <typename T, T h0, T h1, T h2, T h3, T h4, T h5>
 constexpr T at(const unsigned i,
                integer_sequence<T, h0, h1, h2, h3, h4, h5>) noexcept {
-  return i == 0u
-             ? h0
-             : i == 1u
-                   ? h1
-                   : i == 2u ? h2
-                             : i == 3u ? h3
-                                       : i == 4u ? h4
-                                                 : i == 5u ? h5
-                                                           : ~static_cast<T>(0);
+  return i == 0u   ? h0
+         : i == 1u ? h1
+         : i == 2u ? h2
+         : i == 3u ? h3
+         : i == 4u ? h4
+         : i == 5u ? h5
+                   : ~static_cast<T>(0);
 }
 
 template <typename T, T h0, T h1, T h2, T h3, T h4, T h5, T h6>
 constexpr T at(const unsigned i,
                integer_sequence<T, h0, h1, h2, h3, h4, h5, h6>) noexcept {
-  return i == 0u
-             ? h0
-             : i == 1u
-                   ? h1
-                   : i == 2u
-                         ? h2
-                         : i == 3u
-                               ? h3
-                               : i == 4u
-                                     ? h4
-                                     : i == 5u
-                                           ? h5
-                                           : i == 6u ? h6 : ~static_cast<T>(0);
+  return i == 0u   ? h0
+         : i == 1u ? h1
+         : i == 2u ? h2
+         : i == 3u ? h3
+         : i == 4u ? h4
+         : i == 5u ? h5
+         : i == 6u ? h6
+                   : ~static_cast<T>(0);
 }
 
 template <typename T, T h0, T h1, T h2, T h3, T h4, T h5, T h6, T h7, T... tail>
 constexpr T at(
     const unsigned i,
     integer_sequence<T, h0, h1, h2, h3, h4, h5, h6, h7, tail...>) noexcept {
-  return i == 0u
-             ? h0
-             : i == 1u
-                   ? h1
-                   : i == 2u
-                         ? h2
-                         : i == 3u
-                               ? h3
-                               : i == 4u
-                                     ? h4
-                                     : i == 5u
-                                           ? h5
-                                           : i == 6u
-                                                 ? h6
-                                                 : i == 7u
-                                                       ? h7
-                                                       : at(i - 8u,
-                                                            integer_sequence<
-                                                                T, tail...>{});
+  return i == 0u   ? h0
+         : i == 1u ? h1
+         : i == 2u ? h2
+         : i == 3u ? h3
+         : i == 4u ? h4
+         : i == 5u ? h5
+         : i == 6u ? h6
+         : i == 7u ? h7
+                   : at(i - 8u, integer_sequence<T, tail...>{});
 }
 
 //----------------------------------------

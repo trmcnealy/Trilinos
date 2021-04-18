@@ -148,6 +148,42 @@ struct SuperScalar {
 };
 
 template <int N>
+KOKKOS_INLINE_FUNCTION static SuperScalar<N> operator+(const SuperScalar<N>& lhs, const SuperScalar<N>& rhs) {
+  SuperScalar<N> tmp;
+  for (int i = 0; i < N; i++) {
+    tmp.val[i] = lhs.val[i] + rhs.val[i];
+  }
+  return tmp;
+}
+
+template <int N>
+KOKKOS_INLINE_FUNCTION static SuperScalar<N> operator-(const SuperScalar<N>& lhs, const SuperScalar<N>& rhs) {
+  SuperScalar<N> tmp;
+  for (int i = 0; i < N; i++) {
+    tmp.val[i] = lhs.val[i] - rhs.val[i];
+  }
+  return tmp;
+}
+
+template <int N>
+KOKKOS_INLINE_FUNCTION static SuperScalar<N> operator*(const SuperScalar<N>& lhs, const SuperScalar<N>& rhs) {
+  SuperScalar<N> tmp;
+  for (int i = 0; i < N; i++) {
+    tmp.val[i] = lhs.val[i] * rhs.val[i];
+  }
+  return tmp;
+}
+
+template <int N>
+KOKKOS_INLINE_FUNCTION static SuperScalar<N> operator/(const SuperScalar<N>& lhs, const SuperScalar<N>& rhs) {
+  SuperScalar<N> tmp;
+  for (int i = 0; i < N; i++) {
+    tmp.val[i] = lhs.val[i] / rhs.val[i];
+  }
+  return tmp;
+}
+
+template <int N>
 std::ostream& operator<<(std::ostream& os, const SuperScalar<N>& dt) {
   os << "{ ";
   for (int i = 0; i < N - 1; i++) {
@@ -160,9 +196,9 @@ std::ostream& operator<<(std::ostream& os, const SuperScalar<N>& dt) {
 
 template <class T, class DEVICE_TYPE>
 struct ZeroFunctor {
-  typedef DEVICE_TYPE execution_space;
-  typedef typename Kokkos::View<T, execution_space> type;
-  typedef typename Kokkos::View<T, execution_space>::HostMirror h_type;
+  using execution_space = DEVICE_TYPE;
+  using type            = typename Kokkos::View<T, execution_space>;
+  using h_type          = typename Kokkos::View<T, execution_space>::HostMirror;
 
   type data;
 
@@ -176,8 +212,8 @@ struct ZeroFunctor {
 
 template <class T, class DEVICE_TYPE>
 struct AddFunctor {
-  typedef DEVICE_TYPE execution_space;
-  typedef Kokkos::View<T, execution_space> type;
+  using execution_space = DEVICE_TYPE;
+  using type            = Kokkos::View<T, execution_space>;
 
   type data;
 
@@ -187,8 +223,8 @@ struct AddFunctor {
 
 template <class T, class DEVICE_TYPE>
 struct AddFunctorReduce {
-  typedef DEVICE_TYPE execution_space;
-  typedef Kokkos::View<T, execution_space> type;
+  using execution_space = DEVICE_TYPE;
+  using type            = Kokkos::View<T, execution_space>;
 
   type data;
 
@@ -246,8 +282,8 @@ T AddLoopSerial(int loop) {
 
 template <class T, class DEVICE_TYPE>
 struct CASFunctor {
-  typedef DEVICE_TYPE execution_space;
-  typedef Kokkos::View<T, execution_space> type;
+  using execution_space = DEVICE_TYPE;
+  using type            = Kokkos::View<T, execution_space>;
 
   type data;
 
@@ -266,8 +302,8 @@ struct CASFunctor {
 
 template <class T, class DEVICE_TYPE>
 struct CASFunctorReduce {
-  typedef DEVICE_TYPE execution_space;
-  typedef Kokkos::View<T, execution_space> type;
+  using execution_space = DEVICE_TYPE;
+  using type            = Kokkos::View<T, execution_space>;
 
   type data;
 
@@ -341,8 +377,8 @@ T CASLoopSerial(int loop) {
 
 template <class T, class DEVICE_TYPE>
 struct ExchFunctor {
-  typedef DEVICE_TYPE execution_space;
-  typedef Kokkos::View<T, execution_space> type;
+  using execution_space = DEVICE_TYPE;
+  using type            = Kokkos::View<T, execution_space>;
 
   type data, data2;
 
@@ -355,8 +391,8 @@ struct ExchFunctor {
 
 template <class T, class DEVICE_TYPE>
 struct ExchFunctorReduce {
-  typedef DEVICE_TYPE execution_space;
-  typedef Kokkos::View<T, execution_space> type;
+  using execution_space = DEVICE_TYPE;
+  using type            = Kokkos::View<T, execution_space>;
 
   type data, data2;
 
@@ -555,7 +591,7 @@ TEST(TEST_CATEGORY, atomics) {
       (TestAtomic::Loop<Kokkos::complex<double>, TEST_EXECSPACE>(100, 3)));
 
 // WORKAROUND MSVC
-#ifndef _WINDOWS
+#ifndef _MSC_VER
   ASSERT_TRUE(
       (TestAtomic::Loop<TestAtomic::SuperScalar<4>, TEST_EXECSPACE>(100, 1)));
   ASSERT_TRUE(

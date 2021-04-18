@@ -50,7 +50,7 @@ MACRO(kokkoskernels_create_imported_tpl NAME)
     #Give this an importy-looking name
     ADD_LIBRARY(${TPL_IMPORTED_NAME} ALIAS ${NAME})
     IF (TPL_LIBRARY)
-      MESSAGE(SEND_ERROR "TPL Interface library ${NAME} should not have an IMPORTED_LOCATION")
+      # MESSAGE(SEND_ERROR "TPL Interface library ${NAME} should not have an IMPORTED_LOCATION")
     ENDIF()
     #Things have to go in quoted in case we have multiple list entries
     IF(TPL_LINK_LIBRARIES)

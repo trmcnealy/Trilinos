@@ -59,11 +59,11 @@ TEST(TEST_CATEGORY, view_remap) {
   std::conditional<std::is_same<TEST_EXECSPACE, Kokkos::Cuda>::value, \
                    Kokkos::CudaHostPinnedSpace, TEST_EXECSPACE>::type
 #else
-#ifdef KOKKOS_ENABLE_ROCM
-#define EXECSPACE                                                      \
-  std::conditional<                                                    \
-      std::is_same<TEST_EXECSPACE, Kokkos::Experimental::ROCm>::value, \
-      Kokkos::Experimental::ROCmHostPinnedSpace, TEST_EXECSPACE>::type
+#ifdef KOKKOS_ENABLE_HIP
+#define EXECSPACE                                                     \
+  std::conditional<                                                   \
+      std::is_same<TEST_EXECSPACE, Kokkos::Experimental::HIP>::value, \
+      Kokkos::Experimental::HIPHostPinnedSpace, TEST_EXECSPACE>::type
 #else
 #if defined(KOKKOS_ENABLE_OPENMPTARGET)
 #define EXECSPACE Kokkos::HostSpace
@@ -73,14 +73,14 @@ TEST(TEST_CATEGORY, view_remap) {
 #endif
 #endif
 
-  typedef Kokkos::View<double * [N1][N2][N3], Kokkos::LayoutRight, EXECSPACE>
-      output_type;
+  using output_type =
+      Kokkos::View<double* [N1][N2][N3], Kokkos::LayoutRight, EXECSPACE>;
 
-  typedef Kokkos::View<int* * [N2][N3], Kokkos::LayoutLeft, EXECSPACE>
-      input_type;
+  using input_type =
+      Kokkos::View<int** [N2][N3], Kokkos::LayoutLeft, EXECSPACE>;
 
-  typedef Kokkos::View<int * [N0][N2][N3], Kokkos::LayoutLeft, EXECSPACE>
-      diff_type;
+  using diff_type =
+      Kokkos::View<int* [N0][N2][N3], Kokkos::LayoutLeft, EXECSPACE>;
 
   output_type output("output", N0);
   input_type input("input", N0, N1);
@@ -209,8 +209,8 @@ struct TestViewOverloadResolution {
   static int foo(Kokkos::View<const double***, ExecSpace> /*a*/) { return 3; }
 
   // Overload based on compile time dimensions
-  static int bar(Kokkos::View<double * [3], ExecSpace> /*a*/) { return 4; }
-  static int bar(Kokkos::View<double * [4], ExecSpace> /*a*/) { return 5; }
+  static int bar(Kokkos::View<double* [3], ExecSpace> /*a*/) { return 4; }
+  static int bar(Kokkos::View<double* [4], ExecSpace> /*a*/) { return 5; }
 
   static void test_function_overload() {
     Kokkos::View<double**, typename ExecSpace::execution_space::array_layout,
@@ -225,8 +225,8 @@ struct TestViewOverloadResolution {
                  ExecSpace>
         b("B", 10, 3, 4);
     int data_type_2 = foo(b);
-    Kokkos::View<double * [3],
-                 typename ExecSpace::execution_space::array_layout, ExecSpace>
+    Kokkos::View<double* [3], typename ExecSpace::execution_space::array_layout,
+                 ExecSpace>
         c(a);
     int static_extent = bar(c);
     ASSERT_EQ(1, data_type_1);

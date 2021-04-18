@@ -58,7 +58,7 @@ namespace Kokkos {
 template <>
 KOKKOS_INLINE_FUNCTION void atomic_decrement<char>(volatile char* a) {
 #if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64) && \
-    !defined(_WIN32) && !defined(__CUDA_ARCH__)
+    !defined(_MSC_VER) && !defined(__CUDA_ARCH__)
 #if defined(KOKKOS_ENABLE_RFO_PREFETCH)
   _mm_prefetch((const char*)a, _MM_HINT_ET0);
 #endif
@@ -77,7 +77,7 @@ KOKKOS_INLINE_FUNCTION void atomic_decrement<char>(volatile char* a) {
 template <>
 KOKKOS_INLINE_FUNCTION void atomic_decrement<short>(volatile short* a) {
 #if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64) && \
-    !defined(_WIN32) && !defined(__CUDA_ARCH__)
+    !defined(_MSC_VER) && !defined(__CUDA_ARCH__)
 #if defined(KOKKOS_ENABLE_RFO_PREFETCH)
   _mm_prefetch((const char*)a, _MM_HINT_ET0);
 #endif
@@ -96,7 +96,7 @@ KOKKOS_INLINE_FUNCTION void atomic_decrement<short>(volatile short* a) {
 template <>
 KOKKOS_INLINE_FUNCTION void atomic_decrement<int>(volatile int* a) {
 #if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64) && \
-    !defined(_WIN32) && !defined(__CUDA_ARCH__)
+    !defined(_MSC_VER) && !defined(__CUDA_ARCH__)
 #if defined(KOKKOS_ENABLE_RFO_PREFETCH)
   _mm_prefetch((const char*)a, _MM_HINT_ET0);
 #endif
@@ -116,7 +116,7 @@ template <>
 KOKKOS_INLINE_FUNCTION void atomic_decrement<long long int>(
     volatile long long int* a) {
 #if defined(KOKKOS_ENABLE_ASM) && defined(KOKKOS_ENABLE_ISA_X86_64) && \
-    !defined(_WIN32) && !defined(__CUDA_ARCH__)
+    !defined(_MSC_VER) && !defined(__CUDA_ARCH__)
 #if defined(KOKKOS_ENABLE_RFO_PREFETCH)
   _mm_prefetch((const char*)a, _MM_HINT_ET0);
 #endif
