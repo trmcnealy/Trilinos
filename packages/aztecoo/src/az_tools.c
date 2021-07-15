@@ -75,6 +75,9 @@
 
 #include <float.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* After disabling the wrappers in az_fortran_wrap.c, this is always set to
    false.  I kept the value around, rather than ripping out code ifdef'ed to
@@ -5135,3 +5138,6 @@ void AZ_revert_to_global(int proc_config[],
   /* end AZ_revert_to_global
    */
 }
+#ifdef __cplusplus
+}
+#endif

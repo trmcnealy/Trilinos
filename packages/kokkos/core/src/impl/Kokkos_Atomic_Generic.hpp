@@ -169,7 +169,7 @@ KOKKOS_INLINE_FUNCTION T atomic_fetch_oper(
   do {
     assume.i = oldval.i;
     newval.t = op.apply(assume.t, val);
-    oldval.i = Kokkos::atomic_compare_exchange((unsigned long long int*)dest,
+    oldval.i = Kokkos::atomic_compare_exchange((volatile unsigned long long int* const)dest,
                                                assume.i, newval.i);
   } while (assume.i != oldval.i);
 
@@ -193,7 +193,7 @@ KOKKOS_INLINE_FUNCTION T atomic_oper_fetch(
   do {
     assume.i = oldval.i;
     newval.t = op.apply(assume.t, val);
-    oldval.i = Kokkos::atomic_compare_exchange((unsigned long long int*)dest,
+    oldval.i = Kokkos::atomic_compare_exchange((volatile unsigned long long int* const)dest,
                                                assume.i, newval.i);
   } while (assume.i != oldval.i);
 
@@ -215,7 +215,7 @@ KOKKOS_INLINE_FUNCTION T atomic_fetch_oper(
   do {
     assume.i = oldval.i;
     newval.t = op.apply(assume.t, val);
-    oldval.i = Kokkos::atomic_compare_exchange((int*)dest, assume.i, newval.i);
+    oldval.i = Kokkos::atomic_compare_exchange((volatile int* const)dest, assume.i, newval.i);
   } while (assume.i != oldval.i);
 
   return oldval.t;
@@ -236,7 +236,7 @@ KOKKOS_INLINE_FUNCTION T atomic_oper_fetch(
   do {
     assume.i = oldval.i;
     newval.t = op.apply(assume.t, val);
-    oldval.i = Kokkos::atomic_compare_exchange((int*)dest, assume.i, newval.i);
+    oldval.i = Kokkos::atomic_compare_exchange((volatile int* const)dest, assume.i, newval.i);
   } while (assume.i != oldval.i);
 
   return newval.t;

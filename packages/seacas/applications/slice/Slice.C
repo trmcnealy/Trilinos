@@ -135,6 +135,10 @@ namespace {
 } // namespace
 // ========================================================================
 
+#ifdef _WINDOWS
+#define mkdir(PATH, MODE) _mkdir(PATH)
+#endif
+
 int main(int argc, char *argv[])
 {
 #ifdef SEACAS_HAVE_MPI
@@ -228,6 +232,10 @@ int main(int argc, char *argv[])
   fmt::print(stderr, "\nSlice execution successful.\n");
   return EXIT_SUCCESS;
 }
+
+#ifdef _WINDOWS
+#undef mkdir
+#endif
 
 namespace {
 

@@ -131,9 +131,9 @@ namespace KokkosSparse {
 
 // Include the actual specialization declarations
 #include<KokkosSparse_gauss_seidel_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_gauss_seidel_symbolic_eti_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_gauss_seidel_numeric_eti_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_gauss_seidel_apply_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_gauss_seidel_symbolic_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_gauss_seidel_numeric_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_gauss_seidel_apply_eti_spec_avail.hpp>
 
 namespace KokkosSparse {
   namespace Impl {
@@ -525,9 +525,9 @@ namespace KokkosSparse {
                       false, true > ;
 
 #include<KokkosSparse_gauss_seidel_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_gauss_seidel_symbolic_eti_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_gauss_seidel_numeric_eti_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_gauss_seidel_apply_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_gauss_seidel_symbolic_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_gauss_seidel_numeric_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_gauss_seidel_apply_eti_spec_decl.hpp>
 
 
 

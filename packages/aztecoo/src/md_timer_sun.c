@@ -59,6 +59,9 @@
 
 #include <sys/time.h>
 #include <sys/resource.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************/
 /******************************************************************************/
@@ -82,3 +85,7 @@ double machine_dependent_second(void)
   return mytime;
 
 } /* machine_dependent_second */
+
+#ifdef __cplusplus
+}
+#endif

@@ -61,6 +61,9 @@
 #include <stdio.h>
 #include <math.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
   /* externals */
 
@@ -779,3 +782,7 @@ void AZ_sort_msr(int bindx[], double val[], int N)
       AZ_sort( &(bindx[start]), last - start , NULL, &(val[start]));
    }
 }
+
+#ifdef __cplusplus
+}
+#endif

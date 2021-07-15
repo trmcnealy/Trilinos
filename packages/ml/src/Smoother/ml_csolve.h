@@ -66,10 +66,8 @@ struct ML_CSolve_Struct
 /* ******************************************************************** */
 /* ******************************************************************** */
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 extern int ML_CSolve_Create(ML_CSolve **);
 extern int ML_CSolve_Set_Label(ML_CSolve *, char *label);
@@ -89,10 +87,8 @@ extern int ML_CSolve_Apply(ML_CSolve *, int, Epetra_MultiVector &, int,
 extern int ML_CSolve_Aggr(ML_Solver *, int, double *, int, double *);
 extern int ML_CSolve_Clean_Aggr(void *, ML_CSolveFunc *);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

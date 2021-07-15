@@ -29,7 +29,9 @@
 #include <iostream>
 #include <numeric>
 #include <string>
+#if !defined(_WINDOWS)
 #include <sys/select.h>
+#endif
 #include <tokenize.h>
 #include <vector>
 

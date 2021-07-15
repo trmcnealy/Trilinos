@@ -298,17 +298,19 @@ class AtomicDataElement {
     return *ptr >> val;
   }
 
-#if __cplusplus < 202002L
+  KOKKOS_INLINE_FUNCTION
+  bool operator==(const AtomicDataElement& val) const { return *ptr == val; }
+  KOKKOS_INLINE_FUNCTION
+  bool operator==(volatile const AtomicDataElement& val) const {
+    return *ptr == val;
+  }
 
   KOKKOS_INLINE_FUNCTION
-  bool operator==(const_value_type& val) const { return *ptr == val; }
+  bool operator!=(const AtomicDataElement& val) const { return *ptr != val; }
   KOKKOS_INLINE_FUNCTION
-  bool operator==(volatile const_value_type& val) const { return *ptr == val; }
-
-  KOKKOS_INLINE_FUNCTION
-  bool operator!=(const_value_type& val) const { return *ptr != val; }
-  KOKKOS_INLINE_FUNCTION
-  bool operator!=(volatile const_value_type& val) const { return *ptr != val; }
+  bool operator!=(volatile const AtomicDataElement& val) const {
+    return *ptr != val;
+  }
 
   KOKKOS_INLINE_FUNCTION
   bool operator>=(const_value_type& val) const { return *ptr >= val; }
@@ -329,20 +331,6 @@ class AtomicDataElement {
   bool operator>(const_value_type& val) const { return *ptr > val; }
   KOKKOS_INLINE_FUNCTION
   bool operator>(volatile const_value_type& val) const { return *ptr > val; }
-
-#else
-
-  KOKKOS_INLINE_FUNCTION
-  constexpr auto operator<=>(const_value_type& val) const {
-      return *ptr <=> val;
-  }
-
-  KOKKOS_INLINE_FUNCTION
-  constexpr auto operator<=>(volatile const_value_type& val) const {
-      return *ptr <=> val;
-  }
-  
-#endif
 
   KOKKOS_INLINE_FUNCTION
   operator const_value_type() const {
@@ -375,7 +363,7 @@ class AtomicViewDataHandle {
   }
 
   KOKKOS_INLINE_FUNCTION
-  operator typename ViewTraits::value_type *() const { return ptr; }
+  operator typename ViewTraits::value_type*() const { return ptr; }
 };
 
 template <unsigned Size>

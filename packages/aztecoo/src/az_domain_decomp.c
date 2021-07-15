@@ -62,6 +62,9 @@
 #include <math.h>
 #include <float.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /****************************************************************************/
 /****************************************************************************/
@@ -935,5 +938,9 @@ void AZ_mat2_reorder(int N, int first_row, int bindx2[], double val2[],
    for (i = 0 ; i < N; i++) ordering[i] = inv_ordering[i];
    AZ_sort(ordering, N, NULL, &(val2[first_row]));
 
+}
+#endif
+
+#ifdef __cplusplus
 }
 #endif

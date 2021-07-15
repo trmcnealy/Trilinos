@@ -58,6 +58,9 @@
  *====================================================================*/
 
 #include <sys/time.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 double machine_dependent_second()
 
@@ -70,3 +73,7 @@ double machine_dependent_second()
   time += (double) itime.tv_nsec / (double) NS_PER_SEC;
   return time;
 }
+
+#ifdef __cplusplus
+}
+#endif

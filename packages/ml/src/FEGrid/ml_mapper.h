@@ -45,10 +45,8 @@ struct ML_Mapper_Struct {
 /* function for accessing the ML_Mapper Class                           */
 /* ******************************************************************** */
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 extern int ML_Mapper_Create(ML_Mapper **);
@@ -67,10 +65,8 @@ extern int ML_Mapper_Apply(ML_Mapper *, double *, double *);
 extern int ML_Mapper_Apply(ML_Mapper *, Epetra_MultiVector & , Epetra_MultiVector &);
 #endif
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

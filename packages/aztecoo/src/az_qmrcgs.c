@@ -63,6 +63,9 @@
 #include <float.h>
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int az_iterate_id;
 
@@ -514,3 +517,7 @@ void AZ_pqmrs(double b[], double x[], double weight[], int options[],
                             proc_config);
 
 } /* pqmrs */
+
+#ifdef __cplusplus
+}
+#endif

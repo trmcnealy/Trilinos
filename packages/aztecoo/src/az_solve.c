@@ -66,6 +66,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define AZ_oldprecond         0
 #define AZ_oldsubdomain_solve 1
@@ -1847,3 +1850,7 @@ void AZ_finalize(double x[], double b[], int options[], int
   AZ_oldsolve_finish(x, b, options, proc_config, Amat, save_old_values,scaling);
   AZ_iterate_finish(options, Amat, precond);
 }
+
+#ifdef __cplusplus
+}
+#endif

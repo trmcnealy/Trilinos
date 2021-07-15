@@ -63,6 +63,9 @@
 #include <float.h>
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int az_iterate_id;
 
@@ -463,3 +466,6 @@ char *T2 = "N";
 #endif
 } /* AZ_pgmres */
 
+#ifdef __cplusplus
+}
+#endif

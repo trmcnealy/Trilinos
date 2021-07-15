@@ -44,6 +44,9 @@
 #include <stdio.h>
 #include <float.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 void AZ_matvec_mult(double *val, int *indx, int *bindx, int *rpntr, int *cpntr,
                     int *bpntr, double *b, register double *c,
                     int exchange_flag, int *data_org)
@@ -139,6 +142,6 @@ void AZ_matvec_mult(double *val, int *indx, int *bindx, int *rpntr, int *cpntr,
    Amat.matvec(b, c, &Amat, proc_config);
 }
 
-
-
-
+#ifdef __cplusplus
+}
+#endif

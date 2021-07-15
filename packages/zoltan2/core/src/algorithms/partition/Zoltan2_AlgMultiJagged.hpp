@@ -4381,7 +4381,7 @@ void AlgMJ<mj_scalar_t, mj_lno_t, mj_gno_t, mj_part_t, mj_node_t>::
  */
 template <typename mj_scalar_t, typename mj_lno_t, typename mj_gno_t,
   typename mj_part_t, typename mj_node_t>
-void AlgMJ<mj_scalar_t, mj_lno_t, mj_gno_t, mj_part_t,
+KOKKOS_INLINE_FUNCTION void AlgMJ<mj_scalar_t, mj_lno_t, mj_gno_t, mj_part_t,
   mj_node_t>::mj_calculate_new_cut_position(mj_scalar_t cut_upper_bound,
   mj_scalar_t cut_lower_bound,
   mj_scalar_t cut_upper_weight,

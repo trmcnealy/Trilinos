@@ -181,23 +181,23 @@ atomic_fetch_add(volatile T* const dest,
 
 #elif defined(KOKKOS_ENABLE_WINDOWS_ATOMICS)
 
-__inline __device__ __host__ char atomic_fetch_add(volatile char* const dest,
-                                                   const char& val) {
-#if defined(__CUDA_ARCH__)
-  return atomicAdd((int*)dest, (int)val);
-#else
-  return Windows::Add(dest, val);
-#endif
-}
+// __inline __device__ __host__ char atomic_fetch_add(volatile char* const dest,
+                                                   // const char& val) {
+// #if defined(__CUDA_ARCH__)
+  // return atomicAdd((int*)dest, (int)val);
+// #else
+  // return Windows::Add(dest, val);
+// #endif
+// }
 
-__inline __device__ __host__ short atomic_fetch_add(volatile short* const dest,
-                                                    const short& val) {
-#if defined(__CUDA_ARCH__)
-  return atomicAdd((int*)dest, (int)val);
-#else
-  return Windows::Add(dest, val);
-#endif
-}
+// __inline __device__ __host__ short atomic_fetch_add(volatile short* const dest,
+                                                    // const short& val) {
+// #if defined(__CUDA_ARCH__)
+  // return atomicAdd((int*)dest, (int)val);
+// #else
+  // return Windows::Add(dest, val);
+// #endif
+// }
 
 __inline __device__ __host__ int atomic_fetch_add(volatile int* const dest,
                                                   const int& val) {

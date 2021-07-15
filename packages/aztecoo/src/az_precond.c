@@ -64,6 +64,9 @@
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
 #include "az_lapack_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 /*---------------- External Definitions -------------------------------------*/
 
 #ifdef eigen
@@ -1110,5 +1113,9 @@ int N;
        exit(-1);
     }
 
+}
+#endif
+
+#ifdef __cplusplus
 }
 #endif

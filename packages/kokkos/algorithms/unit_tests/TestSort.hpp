@@ -84,13 +84,13 @@ struct bin3d_is_sorted_struct {
   using value_type      = unsigned int;
   using execution_space = ExecutionSpace;
 
-  Kokkos::View<Scalar* [3], ExecutionSpace> keys;
+  Kokkos::View<Scalar * [3], ExecutionSpace> keys;
 
   int max_bins;
   Scalar min;
   Scalar max;
 
-  bin3d_is_sorted_struct(Kokkos::View<Scalar* [3], ExecutionSpace> keys_,
+  bin3d_is_sorted_struct(Kokkos::View<Scalar * [3], ExecutionSpace> keys_,
                          int max_bins_, Scalar min_, Scalar max_)
       : keys(keys_), max_bins(max_bins_), min(min_), max(max_) {}
   KOKKOS_INLINE_FUNCTION
@@ -118,9 +118,9 @@ struct sum3D {
   using value_type      = double;
   using execution_space = ExecutionSpace;
 
-  Kokkos::View<Scalar* [3], ExecutionSpace> keys;
+  Kokkos::View<Scalar * [3], ExecutionSpace> keys;
 
-  sum3D(Kokkos::View<Scalar* [3], ExecutionSpace> keys_) : keys(keys_) {}
+  sum3D(Kokkos::View<Scalar * [3], ExecutionSpace> keys_) : keys(keys_) {}
   KOKKOS_INLINE_FUNCTION
   void operator()(int i, double& count) const {
     count += keys(i, 0);
@@ -166,7 +166,7 @@ void test_1D_sort_impl(unsigned int n, bool force_kokkos) {
 
 template <class ExecutionSpace, typename KeyType>
 void test_3D_sort_impl(unsigned int n) {
-  using KeyViewType = Kokkos::View<KeyType* [3], ExecutionSpace>;
+  using KeyViewType = Kokkos::View<KeyType * [3], ExecutionSpace>;
 
   KeyViewType keys("Keys", n * n * n);
 

@@ -90,13 +90,16 @@
 #ifndef JANUS_STLPORT
 #ifdef HAVE_CSTDLIB
 #include <cstdlib>
-using std::calloc;
+#if !defined(__CUDA__) && !defined(__clang__)
+using std::malloc;
 using std::free;
+#endif
+using std::calloc;
+				
 using std::exit;
 using std::rand;
 using std::abort;
-using std::malloc;
-using std::free;
+
 #else /* HAVE_STDLIB_H */
 #include <stdlib.h>
 #endif

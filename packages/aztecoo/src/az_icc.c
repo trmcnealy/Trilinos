@@ -44,6 +44,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**************************************************************/
 /**************************************************************/
@@ -189,3 +192,7 @@ void AZ_fact_chol(int bindx[], double val[], int N, double rthresh,
    AZ_free(mark);
    AZ_free(diag);
 }
+
+#ifdef __cplusplus
+}
+#endif

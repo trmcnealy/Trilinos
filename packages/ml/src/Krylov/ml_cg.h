@@ -16,10 +16,8 @@
 #include "ml_common.h"
 #include "ml_krylov.h"
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 extern int ML_CG_Solve(ML_Krylov *, int, double *, double *);
@@ -30,10 +28,8 @@ extern int ML_SubspaceIteration_ComputeEigenvalues(ML_Krylov *data,
 
 
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 #endif
 

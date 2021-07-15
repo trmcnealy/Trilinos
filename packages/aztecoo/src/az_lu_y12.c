@@ -67,6 +67,9 @@
 #include "az_aztec.h"
 #ifdef HAVE_AZLU
 #include "az_y12m_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************/
 /******************************************************************************/
@@ -302,5 +305,8 @@ void AZ_msr2lu(int oldN, AZ_MATRIX *A_overlapped, int *rnr)
   }
 
 } /* AZ_msr2lu */
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* HAVE_AZLU */
+

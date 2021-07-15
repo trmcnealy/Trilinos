@@ -362,7 +362,7 @@ int ML_Smoother_Clean(ML_Smoother *ml_sm)
 #ifdef ML_CPP
       ilut_data = (ML_Sm_ILUT_Data *)ml_sm->smoother->data;
 #else
-      ilut_data = ml_sm->smoother->data;
+      ilut_data = (ML_Sm_ILUT_Data *)ml_sm->smoother->data;
 #endif
       ML_Smoother_Destroy_ILUT_Data(ilut_data);
       ml_sm->smoother->data = NULL;

@@ -64,6 +64,9 @@
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
 #include "az_lapack_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int az_iterate_id;
 
@@ -614,3 +617,7 @@ static void compute_condnum_tridiag_sym( int N, double *diag, double *offdiag,
   return;
   
 } /* compute_condnum_tridiag_sym */
+
+#ifdef __cplusplus
+}
+#endif

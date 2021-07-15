@@ -59,6 +59,9 @@
 
 #include <sys/time.h>
 #include <sys/resource.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* SUN SOLARIS timer */
 
@@ -69,3 +72,7 @@ double machine_dependent_second()
 
   return( (double) clock() / 1.0e+06);
 }
+
+#ifdef __cplusplus
+}
+#endif

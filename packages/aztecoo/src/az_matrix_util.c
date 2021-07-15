@@ -64,6 +64,9 @@
 
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************/
 /******************************************************************************/
@@ -1828,3 +1831,7 @@ void AZ_abs_matvec_mult(double *b, double *c,AZ_MATRIX *Amat,int proc_config[])
   }
  
 } /* AZ_abs_matvec_mult */
+
+#ifdef __cplusplus
+}
+#endif

@@ -365,7 +365,7 @@ KOKKOSKERNELS_ADD_LIBRARY(
 # It does not seem to be possible to automatically have headers installed
 # in the correct subdirectory structure using HEADERS and ADD_LIBRARY with tribits
 # Force the specializations to be installed in a subdirectory
-INSTALL(FILES ${ETI_HEADERS} DESTINATION ${KOKKOSKERNELS_HEADER_INSTALL_DIR}/generated_specializations_hpp/)
+INSTALL(FILES ${ETI_HEADERS} DESTINATION ${KOKKOSKERNELS_HEADER_INSTALL_DIR}/gen_hpp/)
 
 IF (KOKKOSKERNELS_HAS_TRILINOS)
   #no linking commands required - tribits does this

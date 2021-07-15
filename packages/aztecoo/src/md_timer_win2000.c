@@ -45,6 +45,9 @@
    author: rbl */
 
 #include <time.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 double machine_dependent_second(void) {
    clock_t start;
@@ -53,3 +56,7 @@ double machine_dependent_second(void) {
    start = clock();
   return (double)( start ) / CLOCKS_PER_SEC;
 }
+
+#ifdef __cplusplus
+}
+#endif

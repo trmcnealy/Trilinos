@@ -40,10 +40,8 @@ struct ML_Sm_Schwarz_Data_Struct
 #endif
 };
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 extern int ML_SuperLU_Solve(ML_Solver *vsolver,int ilen,double *x,int olen,
@@ -64,10 +62,8 @@ extern  int ML_Smoother_VBlockSchwarzDecomposition(ML_Sm_Schwarz_Data *,
 extern void ML_SuperLU_Set_Tile( int nprocs, int* tsz, int* stile,
                                  int* mtile, int* ltile);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

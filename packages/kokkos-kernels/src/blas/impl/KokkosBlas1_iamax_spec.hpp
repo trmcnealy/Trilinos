@@ -128,8 +128,8 @@ struct iamax_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosBlas1_iamax_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_iamax_eti_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_iamax_mv_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_iamax_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_iamax_mv_eti_spec_avail.hpp>
 
 namespace KokkosBlas {
 namespace Impl {
@@ -335,7 +335,7 @@ template struct Iamax< \
     KOKKOSBLAS1_IAMAX_MV_ETI_SPEC_INST_INDEX( int, SCALAR, LAYOUT, EXEC_SPACE, MEM_SPACE)
 
 #include<KokkosBlas1_iamax_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_iamax_eti_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_iamax_mv_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_iamax_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_iamax_mv_eti_spec_decl.hpp>
 
 #endif // KOKKOSBLAS1_IAMAX_SPEC_HPP_

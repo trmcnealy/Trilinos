@@ -246,7 +246,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                                     &Request ))
 #else
-                                    (void *)&Request ))
+                                    &Request ))
 #endif
     {
       (void) fprintf(stderr, "ERROR on node %d\nread failed, message type = %d\n", mypid, msgtype);
@@ -281,7 +281,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                                     &Request );
 #else
-                                    (void *)&Request );
+                                    &Request );
 #endif
     (*cur_length) += (nbytes / sizeof(int));
 }
@@ -299,7 +299,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                                     &Request ))
 #else
-                                    (void *)&Request ))
+                                    &Request ))
 #endif
       {
         (void) fprintf(stderr, "ERROR on node %d\nread failed, message type = %d\n", mypid, msgtype);
@@ -318,7 +318,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                                     &Request );
 #else
-                                    (void *)&Request );
+                                    &Request );
 #endif
       (*cur_length) += (nbytes / sizeof(int));
 }
@@ -335,7 +335,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                                     &Request ))
 #else
-                                    (void *)&Request ))
+                                    &Request ))
 #endif
     {
       (void) fprintf(stderr, "ERROR on node %d\nread failed, message type = %d\n", mypid, msgtype);
@@ -361,7 +361,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                                     &Request );
 #else
-                                    (void *)&Request );
+                                    &Request );
 #endif
     (*cur_length) = (nbytes / sizeof(int));
 }

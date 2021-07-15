@@ -8,10 +8,8 @@
 #include "ml_common.h"
 #include "ml_operator.h"
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 
@@ -42,10 +40,8 @@ extern int ML_xytComm_subGappendInt(ML_Comm *com_ptr, int *vals, int *cur_length
 extern int ML_Comm_subGappendInt(ML_Comm *com_ptr, int *vals, int *cur_length,
                     int total_length,int sub_mask);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

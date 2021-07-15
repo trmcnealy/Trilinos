@@ -54,6 +54,9 @@
 */
 
 #include "AztecOO_config.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define SSWAP_F77 F77_BLAS_MANGLE(sswap,SSWAP)
 #define SDOT_F77 F77_BLAS_MANGLE(sdot,SDOT)
@@ -1064,7 +1067,7 @@ double az_r_sign(real * a, real * b) {
 
   /* Local variables */
   static integer i__, ip, ix;
-  extern /* Subroutine */ int sswap_c(integer *, real *, integer *, real *, 
+  extern /* Subroutine */ int SSWAP_F77(integer *, real *, integer *, real *, 
     integer *);
 
 
@@ -1177,3 +1180,7 @@ double az_r_sign(real * a, real * b) {
 
 } /* az_slaswp */
 
+
+#ifdef __cplusplus
+}
+#endif

@@ -46,6 +46,9 @@
 #include <stdarg.h>
 
 #include <az_aztec.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** The following function pointers are initialized to 0 (NULL), and
    remain 0 unless a C++ user (such as the AztecOO class) calls the
@@ -114,3 +117,6 @@ int AZ_printf_err(const char* format, ...)
   return( vfprintf(stderr, format, aptr) );
 }
 
+#ifdef __cplusplus
+}
+#endif

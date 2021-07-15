@@ -43,10 +43,8 @@ struct ML_BdryPts_Struct {
 /* function for accessing the ML_BdryPts Class                          */
 /* ******************************************************************** */
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 extern int ML_BdryPts_Create(ML_BdryPts **);
@@ -63,10 +61,8 @@ extern int ML_BdryPts_Copy_Dirichlet_GridToEqn(ML_BdryPts *);
 extern int ML_BdryPts_ApplyZero_Dirichlet_Grid(ML_BdryPts *, double *);
 extern int ML_BdryPts_ApplyZero_Dirichlet_Eqn(ML_BdryPts *, double *);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

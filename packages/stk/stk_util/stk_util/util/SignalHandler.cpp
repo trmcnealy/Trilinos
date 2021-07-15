@@ -1,9 +1,8 @@
 /*
-// Copyright 2002 - 2008, 2010, 2011 National Technology Engineering
-// Solutions of Sandia, LLC (NTESS). Under the terms of Contract
-// DE-NA0003525 with NTESS, the U.S. Government retains certain rights
-// in this software.
-//
+// Copyright (c) 2013, Sandia Corporation.
+// Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
+// the U.S. Government retains certain rights in this software.
+// 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -16,10 +15,10 @@
 //       disclaimer in the documentation and/or other materials provided
 //       with the distribution.
 // 
-//     * Neither the name of NTESS nor the names of its contributors
-//       may be used to endorse or promote products derived from this
-//       software without specific prior written permission.
-//
+//     * Neither the name of Sandia Corporation nor the names of its
+//       contributors may be used to endorse or promote products derived
+//       from this software without specific prior written permission.
+// 
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -41,11 +40,36 @@
 #include <stdexcept>                    // for runtime_error, logic_error
 #include <utility>                      // for pair
 #include <vector>                       // for vector, etc
+#include <memory.h>
 #include "stk_util/util/Callback.hpp"   // for CallbackBase, Callback
 
 
 
 extern "C" {
+    int __sigaction(int sig, const struct sigaction* act, struct sigaction* oact)
+    {
+        if(sig <= 0 || sig >= NSIG)
+        {
+            _set_errno(EINVAL);
+            return -1;
+        }
+
+        _set_errno(ENOSYS);
+        return -1;
+    }
+
+    int __sigemptyset(sigset_t* set)
+    {
+        if(set == NULL)
+        {
+            _set_errno(EINVAL);
+            return -1;
+        }
+
+        memset(set, 0, sizeof(sigset_t));
+
+        return 0;
+    }
   static void signal_handler(int signal, siginfo_t *sip, void *ucp)
   {
     // This routine is called for all signals...
@@ -176,9 +200,9 @@ SignalHandler::add_handler(
     struct sigaction *old_action = new struct sigaction;
 
     action.sa_sigaction = signal_handler;
-    sigemptyset(&action.sa_mask);
+    __sigemptyset(&action.sa_mask);
     action.sa_flags = SA_SIGINFO;
-    ::sigaction(signal, &action, old_action);
+    __sigaction(signal, &action, old_action);
     m_oldActionMap.insert(OldActionMap::value_type(signal, old_action));
   }
   m_handlerMap.insert(HandlerMap::value_type(signal, &callback));
@@ -204,7 +228,7 @@ SignalHandler::remove_handler(
   if (m_handlerMap.find(signal) == m_handlerMap.end()) {
     OldActionMap::iterator it = m_oldActionMap.find(signal);
     if (it != m_oldActionMap.end()) {
-      ::sigaction(signal, (*it).second, NULL);
+      __sigaction(signal, (*it).second, NULL);
       delete (*it).second;
       m_oldActionMap.erase(it);
     }
@@ -236,7 +260,7 @@ SignalHandler::remove_all_handlers()
   m_handlerMap.clear();
 
   for (OldActionMap::iterator it = m_oldActionMap.begin(); it != m_oldActionMap.end(); ++it) {
-    ::sigaction((*it).first, (*it).second, NULL);
+    __sigaction((*it).first, (*it).second, NULL);
     delete (*it).second;
   }
   m_oldActionMap.clear();

@@ -251,7 +251,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                        &msgtype, com_ptr->USR_comm, &Request) ) {
 #else
-                       &msgtype, com_ptr->USR_comm, (void *)&Request) ) {
+                       &msgtype, com_ptr->USR_comm, &Request) ) {
 #endif
       (void) fprintf(stderr, "ERROR on node %d\nread failed, message type = %d\n", mypid, msgtype);
       exit(-1);
@@ -284,7 +284,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                        &msgtype, com_ptr->USR_comm, &Request);
 #else
-                       &msgtype, com_ptr->USR_comm, (void *)&Request);
+                       &msgtype, com_ptr->USR_comm, &Request);
 #endif
     (*cur_length) += (nbytes / sizeof(int));
 }
@@ -301,7 +301,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                        &msgtype, com_ptr->USR_comm, &Request) ){
 #else
-                       &msgtype, com_ptr->USR_comm, (void *)&Request) ){
+                       &msgtype, com_ptr->USR_comm, &Request) ){
 #endif
         (void) fprintf(stderr, "ERROR on node %d\nread failed, message type = %d\n", mypid, msgtype);
         exit(-1);
@@ -318,7 +318,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                        &msgtype, com_ptr->USR_comm, &Request);
 #else
-                       &msgtype, com_ptr->USR_comm, (void *)&Request);
+                       &msgtype, com_ptr->USR_comm, &Request);
 #endif
       (*cur_length) += (nbytes / sizeof(int));
 }
@@ -334,7 +334,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                        &partner , &msgtype, com_ptr->USR_comm, &Request) ){
 #else
-                       &partner , &msgtype, com_ptr->USR_comm, (void *)&Request) ){
+                       &partner , &msgtype, com_ptr->USR_comm, &Request) ){
 #endif
       (void) fprintf(stderr, "ERROR on node %d\nread failed, message type = %d\n", mypid, msgtype);
       exit(-1);
@@ -358,7 +358,7 @@ if ((sub_mask & partner) == sub_cube) {
 #ifdef ML_CPP
                     &partner , &msgtype, com_ptr->USR_comm, &Request);
 #else
-                    &partner , &msgtype, com_ptr->USR_comm, (void *)&Request);
+                    &partner , &msgtype, com_ptr->USR_comm, &Request);
 #endif
     (*cur_length) = (nbytes / sizeof(int));
 }

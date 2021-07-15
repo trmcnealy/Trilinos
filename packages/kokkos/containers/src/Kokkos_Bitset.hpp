@@ -74,7 +74,7 @@ template <typename Device>
 class Bitset {
  public:
   using execution_space = Device;
-  using size_type       = unsigned;
+  using size_type       = unsigned int;
 
   enum { BIT_SCAN_REVERSE = 1u };
   enum { MOVE_HINT_BACKWARD = 2u };
@@ -260,7 +260,7 @@ class Bitset {
     offset = !(scan_direction & BIT_SCAN_REVERSE)
                  ? offset
                  : (offset + block_mask) & block_mask;
-    block  = Impl::rotate_right(block, offset);
+    block = Impl::rotate_right(block, offset);
     return (((!(scan_direction & BIT_SCAN_REVERSE)
                   ? Impl::bit_scan_forward(block)
                   : ::Kokkos::log2(block)) +
@@ -309,7 +309,7 @@ template <typename Device>
 class ConstBitset {
  public:
   using execution_space = Device;
-  using size_type       = unsigned;
+  using size_type       = unsigned int;
 
  private:
   enum { block_size = static_cast<unsigned>(sizeof(unsigned) * CHAR_BIT) };

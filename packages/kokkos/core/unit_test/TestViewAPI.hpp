@@ -70,7 +70,7 @@ struct TestViewOperator {
   enum { N = 1000 };
   enum { D = 3 };
 
-  using view_type = Kokkos::View<T *[D], execution_space>;
+  using view_type = Kokkos::View<T * [D], execution_space>;
 
   const view_type v1;
   const view_type v2;
@@ -940,10 +940,10 @@ class TestViewAPI {
 
   using dView0       = Kokkos::View<T, device>;
   using dView1       = Kokkos::View<T *, device>;
-  using dView2       = Kokkos::View<T *[N1], device>;
-  using dView3       = Kokkos::View<T *[N1][N2], device>;
-  using dView4       = Kokkos::View<T *[N1][N2][N3], device>;
-  using const_dView4 = Kokkos::View<const T *[N1][N2][N3], device>;
+  using dView2       = Kokkos::View<T * [N1], device>;
+  using dView3       = Kokkos::View<T * [N1][N2], device>;
+  using dView4       = Kokkos::View<T * [N1][N2][N3], device>;
+  using const_dView4 = Kokkos::View<const T * [N1][N2][N3], device>;
   using dView4_unmanaged =
       Kokkos::View<T ****, device, Kokkos::MemoryUnmanaged>;
   using host = typename dView0::host_mirror_space;
@@ -1292,8 +1292,8 @@ class TestViewAPI {
 
     // Check Deep Copy of two empty 2D views
     {
-      Kokkos::View<double *[3], Kokkos::LayoutRight> d;
-      Kokkos::View<double *[3], Kokkos::LayoutRight, Kokkos::HostSpace> h;
+      Kokkos::View<double * [3], Kokkos::LayoutRight> d;
+      Kokkos::View<double * [3], Kokkos::LayoutRight, Kokkos::HostSpace> h;
       Kokkos::deep_copy(d, h);
       Kokkos::deep_copy(h, d);
     }
@@ -1495,10 +1495,21 @@ class TestViewAPI {
       // quickly.
       if (msg.find("is not a valid size") != std::string::npos) {
         ASSERT_PRED_FORMAT2(::testing::IsSubstring, "is not a valid size", msg);
-      } else {
-        // Otherwise, there has to be some sort of "insufficient memory" error
+      } else
+#ifdef KOKKOS_ENABLE_SYCL
+          if (msg.find("insufficient memory") != std::string::npos)
+#endif
+      {
         ASSERT_PRED_FORMAT2(::testing::IsSubstring, "insufficient memory", msg);
       }
+      // SYCL cannot tell the reason why a memory allocation failed
+#ifdef KOKKOS_ENABLE_SYCL
+      else {
+        // Otherwise, there has to be some sort of "unknown error" error
+        ASSERT_PRED_FORMAT2(::testing::IsSubstring,
+                            "because of an unknown error.", msg);
+      }
+#endif
     }
   }
 };

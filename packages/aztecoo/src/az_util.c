@@ -64,6 +64,9 @@
 #include <float.h>
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
  * File containing utility functions for solvers.  Note: Some of the fem high
@@ -2174,7 +2177,7 @@ AZ_print_it();
 
 char *AZ_allocate(unsigned int size) {
 char *temp;
-temp = malloc (size);
+temp = (char *)malloc (size);
 if (temp != NULL) allo_count++;
 return ( temp );
 }
@@ -2183,7 +2186,7 @@ void AZ_free(void *ptr) {
 free_count++; free(ptr); }
 
 char *AZ_realloc(void *ptr, unsigned int size) {
-   return( realloc(ptr, size) );
+   return( (char *)realloc(ptr, size) );
 }
 extern void spit_it_out(void);
 
@@ -3688,3 +3691,6 @@ double AZ_condest(int n, struct context *context)
 
   return(condest);
 }
+#ifdef __cplusplus
+}
+#endif

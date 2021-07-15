@@ -13,8 +13,9 @@
 #endif
 #include "MLAPI_Error.h"
 #include "MLAPI_Workspace.h"
-#ifdef _MSC_VER
-#include "winprocess.h"
+#ifdef _WINDOWS
+# include <Winsock2.h>
+#include <process.h>
 #endif
 
 namespace MLAPI {
@@ -115,14 +116,14 @@ void Init()
 #else
         gethostname(hostname, sizeof(hostname));
         sprintf(buf, "Host: %s\tMyPID(): %d\tPID: %d",
-                hostname, GetMyPID(), getpid());
+                hostname, GetMyPID(), _getpid());
 #endif
         printf("%s\n",buf);
         fflush(stdout);
 #ifdef ICL
         Sleep(1);
 #else
-        sleep(1);
+        _sleep(1);
 #endif
       }
     }

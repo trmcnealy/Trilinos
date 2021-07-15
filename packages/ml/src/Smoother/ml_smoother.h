@@ -223,10 +223,8 @@ struct ML_Sm_BlockHiptmair_Data_Struct
 /* ******************************************************************** */
 /* ******************************************************************** */
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 extern  int ML_Smoother_Create(ML_Smoother **, ML_1Level *level_ptr );
@@ -392,10 +390,8 @@ extern void ML_Smoother_Clean_MSR_GS(void *data);
 extern int DinvA(ML_Operator *data,  int in, double p[], int out, double ap[]);
 
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 #endif
 

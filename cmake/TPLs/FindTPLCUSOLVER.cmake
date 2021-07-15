@@ -56,13 +56,13 @@
 IF (NOT TPL_ENABLE_CUDA)
   MESSAGE(FATAL_ERROR "\nCUSOLVER: This TPL requires CUDA")
 ELSE()
-  find_library(CUDA_cusolver_LIBRARY
-    cusolver
-    HINTS ${CUDA_TOOLKIT_ROOT_DIR}/lib
-  )
-  IF(CUDA_cusolver_LIBRARY STREQUAL "CUDA_cusolver_LIBRARY-NOTFOUND") 
-    MESSAGE(FATAL_ERROR "\nCUSOLVER: could not find cusolver library.")
-  ENDIF()
+  # find_library(CUDA_cusolver_LIBRARY
+    # cusolver
+    # HINTS ${CUDA_TOOLKIT_ROOT_DIR}/lib
+  # )
+  # IF(CUDA_cusolver_LIBRARY STREQUAL "CUDA_cusolver_LIBRARY-NOTFOUND") 
+    # MESSAGE(FATAL_ERROR "\nCUSOLVER: could not find cusolver library.")
+  # ENDIF()
   GLOBAL_SET(TPL_CUSOLVER_LIBRARY_DIRS)
   GLOBAL_SET(TPL_CUSOLVER_INCLUDE_DIRS ${TPL_CUDA_INCLUDE_DIRS})
   GLOBAL_SET(TPL_CUSOLVER_LIBRARIES ${CUDA_cusolver_LIBRARY})

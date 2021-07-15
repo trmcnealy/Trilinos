@@ -1394,7 +1394,7 @@ public:
     const unsigned long long maxVal = std::numeric_limits<unsigned long long>::max ();
 
     TEUCHOS_TEST_FOR_EXCEPTION(
-      t < minVal || t > maxVal,
+      t < (double)minVal || t > (double)maxVal,
       std::range_error,
       "Teuchos::ValueTypeConversionTraits<unsigned long long, double>::safeConvert: "
       "Input double t = " << t << " is out of the valid range [" << minVal
@@ -1544,7 +1544,7 @@ public:
     const unsigned int maxVal = std::numeric_limits<unsigned int>::max ();
 
     TEUCHOS_TEST_FOR_EXCEPTION(
-      t < minVal || t > maxVal,
+      t < (float)minVal || t > (float)maxVal,
       std::range_error,
       "Teuchos::ValueTypeConversionTraits<unsigned int, float>::safeConvert: "
       "Input double t = " << t << " is out of the valid range [" << minVal
@@ -1621,7 +1621,7 @@ public:
     const unsigned long maxVal = std::numeric_limits<unsigned long>::max ();
 
     TEUCHOS_TEST_FOR_EXCEPTION(
-      t < minVal || t > maxVal,
+      t < (float)minVal || t > (float)maxVal,
       std::range_error,
       "Teuchos::ValueTypeConversionTraits<unsigned long, float>::safeConvert: "
       << "Input float t = " << t << " is out of the valid range [" << minVal
@@ -1664,7 +1664,7 @@ public:
     const unsigned long long maxVal = std::numeric_limits<unsigned long long>::max ();
 
     TEUCHOS_TEST_FOR_EXCEPTION(
-      t < minVal || t > maxVal,
+      t < (float)minVal || t > (float)maxVal,
       std::range_error,
       "Teuchos::ValueTypeConversionTraits<unsigned long long, float>::safeConvert: "
       "Input float t = " << t << " is out of the valid range [" << minVal

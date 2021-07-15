@@ -212,8 +212,13 @@ void CommNeighbors::perform_neighbor_communication(MPI_Comm neighborComm,
   const int* sendCountsPtr = sendCounts.size() > 0 ? sendCounts.data() : nullptr;
   const int* recvCountsPtr = recvCounts.size() > 0 ? recvCounts.data() : nullptr;
 
+#if defined(_WINDOWS)
+  MPI_Alltoall((void*)sendCountsPtr, 1, MPI_INT,
+               (void*)recvCountsPtr, 1, MPI_INT, neighborComm);
+#else
   MPI_Neighbor_alltoall((void*)sendCountsPtr, 1, MPI_INT,
                         (void*)recvCountsPtr, 1, MPI_INT, neighborComm);
+#endif
 #endif
 
   int totalRecv = 0;
@@ -228,9 +233,15 @@ void CommNeighbors::perform_neighbor_communication(MPI_Comm neighborComm,
   const unsigned char* recvBufPtr = recvBuf.size() > 0 ? recvBuf.data() : nullptr;
   const int* sendDisplsPtr = sendDispls.size() > 0 ? sendDispls.data() : nullptr;
   const int* recvDisplsPtr = recvDispls.size() > 0 ? recvDispls.data() : nullptr;
+#if defined(_WINDOWS)
+  PMPI_Alltoallv(
+      (void*)sendBufPtr, sendCountsPtr, sendDisplsPtr, MPI_BYTE,
+      (void*)recvBufPtr, recvCountsPtr, recvDisplsPtr, MPI_BYTE, neighborComm);
+#else
   MPI_Neighbor_alltoallv(
       (void*)sendBufPtr, sendCountsPtr, sendDisplsPtr, MPI_BYTE,
       (void*)recvBufPtr, recvCountsPtr, recvDisplsPtr, MPI_BYTE, neighborComm);
+#endif
 #endif
 }
 

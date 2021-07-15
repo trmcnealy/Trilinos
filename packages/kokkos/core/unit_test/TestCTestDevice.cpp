@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <stdlib.h>
 
 namespace Kokkos {
 namespace Impl {
@@ -9,15 +8,14 @@ int get_ctest_gpu(const char *local_rank_str);
 }  // namespace Impl
 }  // namespace Kokkos
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 int setenv(const char *name, const char *value, int overwrite) {
-  // int errcode = 0;
-  // if (!overwrite) {
-  // size_t envsize = 0;
-  // //errcode        = getenv_s(&envsize, NULL, 0, name);
-  // errcode        = getenv(name);
-  // if (errcode || envsize) return errcode;
-  // }
+  int errcode = 0;
+  if (!overwrite) {
+    size_t envsize = 0;
+    errcode        = getenv_s(&envsize, NULL, 0, name);
+    if (errcode || envsize) return errcode;
+  }
   return _putenv_s(name, value);
 }
 

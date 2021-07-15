@@ -56,8 +56,8 @@ static void assign_out_inv(int   nvtxs,  /* number of vertices to output */
     fout = stdout;
   }
 
-  size    = smalloc((nsets + 1) * sizeof(int));
-  inorder = smalloc(nvtxs * sizeof(int));
+  size    = (int*)smalloc((nsets + 1) * sizeof(int));
+  inorder = (int*)smalloc(nvtxs * sizeof(int));
 
   for (j = 0; j < nsets; j++) {
     size[j] = 0;

@@ -61,6 +61,9 @@
 #ifdef AZTEC_MPI
 #include <mpi.h>
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* MPI timer */
 
@@ -76,3 +79,7 @@ double machine_dependent_second(void)
 #endif
 
 } /* machine_dependent_second */
+
+#ifdef __cplusplus
+}
+#endif

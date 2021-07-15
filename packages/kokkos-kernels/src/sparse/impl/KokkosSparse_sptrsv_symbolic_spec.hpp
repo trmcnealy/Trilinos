@@ -85,7 +85,7 @@ struct sptrsv_symbolic_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosSparse_sptrsv_symbolic_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_sptrsv_symbolic_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_sptrsv_symbolic_eti_spec_avail.hpp>
 
 namespace KokkosSparse {
 namespace Impl {
@@ -179,7 +179,7 @@ struct SPTRSV_SYMBOLIC<KernelHandle, RowMapType, EntriesType, false, KOKKOSKERNE
                       false, true > ;
 
 #include<KokkosSparse_sptrsv_symbolic_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_sptrsv_symbolic_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_sptrsv_symbolic_eti_spec_decl.hpp>
 
 
 #endif

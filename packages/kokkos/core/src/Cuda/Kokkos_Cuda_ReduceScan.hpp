@@ -46,7 +46,7 @@
 #define KOKKOS_CUDA_REDUCESCAN_HPP
 
 #include <Kokkos_Macros.hpp>
-#if defined(__CUDACC__) && defined(KOKKOS_ENABLE_CUDA)
+#if defined(KOKKOS_ENABLE_CUDA)
 
 #include <utility>
 
@@ -165,7 +165,7 @@ __device__ bool cuda_inter_block_reduction(
     Cuda::size_type count;
 
     // Figure out whether this is the last block
-    if (id == 0) count = Kokkos::atomic_fetch_add(m_scratch_flags, Cuda::size_type(1));
+    if (id == 0) count = Kokkos::atomic_fetch_add(m_scratch_flags, 1);
     count = Kokkos::shfl(count, 0, 32);
 
     // Last block does the inter block reduction
@@ -362,7 +362,7 @@ __device__ inline
     Cuda::size_type count;
 
     // Figure out whether this is the last block
-    if (id == 0) count = Kokkos::atomic_fetch_add(m_scratch_flags, Cuda::size_type(1));
+    if (id == 0) count = Kokkos::atomic_fetch_add(m_scratch_flags, 1);
     count = Kokkos::shfl(count, 0, 32);
 
     // Last block does the inter block reduction
@@ -537,8 +537,8 @@ struct CudaReductionsFunctor<FunctorType, ArgTag, false, true> {
     // MSVC/NVCC
     if (threadIdx.x + threadIdx.y == 0) {
       num_teams_done =
-          Kokkos::atomic_fetch_add(global_flags, static_cast<Cuda::size_type>(1)) +
-          Cuda::size_type(1);
+          Kokkos::atomic_fetch_add(global_flags, static_cast<unsigned int>(1)) +
+          1;
     }
     bool is_last_block = false;
     if (__syncthreads_or(num_teams_done == gridDim.x)) {
@@ -643,8 +643,8 @@ struct CudaReductionsFunctor<FunctorType, ArgTag, false, false> {
     // MSVC/NVCC
     if (threadIdx.x + threadIdx.y == 0) {
       num_teams_done =
-          Kokkos::atomic_fetch_add(global_flags, static_cast<Cuda::size_type>(1)) +
-          Cuda::size_type(1);
+          Kokkos::atomic_fetch_add(global_flags, static_cast<unsigned int>(1)) +
+          1;
     }
     bool is_last_block = false;
     if (__syncthreads_or(num_teams_done == gridDim.x)) {
@@ -983,5 +983,5 @@ inline unsigned cuda_single_inter_block_reduce_scan_shmem(
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
-#endif /* #if defined( __CUDACC__ ) */
+#endif /* #if defined(KOKKOS_ENABLE_CUDA) */
 #endif /* KOKKOS_CUDA_REDUCESCAN_HPP */

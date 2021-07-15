@@ -86,7 +86,7 @@ int ML_Operator_blockmat_comm( double *x, void *data)
 #ifdef ML_CPP
   ML_exchange_bdry(temp, (ML_CommInfoOP *)ML_Operator_blockmat_data->Ke_comm_data, N_Ke,mat->comm,
 #else
-  ML_exchange_bdry(temp, ML_Operator_blockmat_data->Ke_comm_data, N_Ke,mat->comm,
+  ML_exchange_bdry(temp, (ML_CommInfoOP *)ML_Operator_blockmat_data->Ke_comm_data, N_Ke,mat->comm,
 #endif
                    ML_OVERWRITE,NULL);
 
@@ -102,7 +102,7 @@ int ML_Operator_blockmat_comm( double *x, void *data)
 #ifdef ML_CPP
   ML_exchange_bdry(temp, (ML_CommInfoOP *)ML_Operator_blockmat_data->Ke_comm_data, N_Ke,mat->comm,
 #else
-  ML_exchange_bdry(temp, ML_Operator_blockmat_data->Ke_comm_data, N_Ke,mat->comm,
+  ML_exchange_bdry(temp, (ML_CommInfoOP *)ML_Operator_blockmat_data->Ke_comm_data, N_Ke,mat->comm,
 #endif
                    ML_OVERWRITE,NULL);
 

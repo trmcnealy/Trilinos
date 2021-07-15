@@ -115,8 +115,8 @@ namespace KokkosSparse {
 
 // Include the actual specialization declarations
 #include<KokkosSparse_spmv_struct_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spmv_struct_eti_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spmv_mv_struct_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_spmv_struct_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_spmv_mv_struct_eti_spec_avail.hpp>
 
 namespace KokkosSparse {
   namespace Impl {
@@ -441,7 +441,7 @@ namespace KokkosSparse {
                  Kokkos::MemoryTraits<Kokkos::Unmanaged>, std::is_integral<typename std::decay<SCALAR_TYPE>::type>::value, false, true >;
 
 #include<KokkosSparse_spmv_struct_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spmv_struct_eti_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spmv_mv_struct_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_spmv_struct_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_spmv_mv_struct_eti_spec_decl.hpp>
 
 #endif // KOKKOSSPARSE_IMPL_SPMV_STRUCT_SPEC_HPP_

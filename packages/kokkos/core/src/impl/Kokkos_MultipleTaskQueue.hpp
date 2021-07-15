@@ -375,8 +375,8 @@ class MultipleTaskQueue final
   static constexpr int NumPriorities = 3;
 
   KOKKOS_INLINE_FUNCTION
-  constexpr typename vla_emulation_base_t::vla_entry_count_type n_queues()
-      const noexcept {
+  constexpr typename vla_emulation_base_t::vla_entry_count_type n_queues() const
+      noexcept {
     return this->n_vla_entries();
   }
 
@@ -458,8 +458,8 @@ class MultipleTaskQueue final
   // TODO @tasking @generalization DSH make this a property-based customization
   // point
   KOKKOS_INLINE_FUNCTION
-  team_scheduler_info_type initial_team_scheduler_info(
-      int rank_in_league) const noexcept {
+  team_scheduler_info_type initial_team_scheduler_info(int rank_in_league) const
+      noexcept {
     return team_scheduler_info_type{
         typename team_scheduler_info_type::team_queue_id_t(rank_in_league %
                                                            n_queues())};

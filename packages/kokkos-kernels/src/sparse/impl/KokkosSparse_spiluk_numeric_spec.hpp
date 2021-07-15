@@ -114,7 +114,7 @@ struct spiluk_numeric_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosSparse_spiluk_numeric_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spiluk_numeric_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_spiluk_numeric_eti_spec_avail.hpp>
 
 namespace KokkosSparse {
 namespace Impl {
@@ -288,7 +288,7 @@ struct SPILUK_NUMERIC<KernelHandle, ARowMapType, AEntriesType, AValuesType, LRow
                                Kokkos::MemoryTraits<Kokkos::Unmanaged|Kokkos::RandomAccess> >, false, true >;
 
 #include<KokkosSparse_spiluk_numeric_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spiluk_numeric_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_spiluk_numeric_eti_spec_decl.hpp>
 
 
 #endif

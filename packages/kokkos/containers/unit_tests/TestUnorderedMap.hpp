@@ -163,7 +163,8 @@ struct TestFind {
   KOKKOS_INLINE_FUNCTION
   void operator()(typename execution_space::size_type i,
                   value_type &errors) const {
-    const bool expect_to_find_i = (i < m_max_key);
+    const bool expect_to_find_i =
+        (i < typename execution_space::size_type(m_max_key));
 
     const bool exists = m_map.exists(i);
 
@@ -176,7 +177,7 @@ struct TestFind {
 
 // MSVC reports a syntax error for this test.
 // WORKAROUND MSVC
-#ifndef _MSC_VER
+#ifndef _WIN32
 template <typename Device>
 void test_insert(uint32_t num_nodes, uint32_t num_inserts,
                  uint32_t num_duplicates, bool near) {
@@ -293,17 +294,17 @@ void test_deep_copy(uint32_t num_nodes) {
   }
 }
 
-// FIXME_HIP wrong result in CI but works locally
-#ifndef KOKKOS_ENABLE_HIP
+// FIXME_SYCL wrong results on Nvidia GPUs but correct on Host and Intel GPUs
+// FIXME_HIP
 // WORKAROUND MSVC
-#ifndef _WINDOWS
+#if !(defined(KOKKOS_ENABLE_HIP) && (HIP_VERSION < 401)) && \
+    !defined(_WIN32) && !defined(KOKKOS_ENABLE_SYCL)
 TEST(TEST_CATEGORY, UnorderedMap_insert) {
   for (int i = 0; i < 500; ++i) {
     test_insert<TEST_EXECSPACE>(100000, 90000, 100, true);
     test_insert<TEST_EXECSPACE>(100000, 90000, 100, false);
   }
 }
-#endif
 #endif
 
 TEST(TEST_CATEGORY, UnorderedMap_failed_insert) {

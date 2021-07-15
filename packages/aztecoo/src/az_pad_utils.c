@@ -62,6 +62,9 @@
 #include <math.h>
 #include <float.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /****************************************************************************/
 /****************************************************************************/
@@ -306,3 +309,7 @@ void AZ_combine_overlapped_values(int sym_flag,int data_org[],int options[],
   }
 
 }
+
+#ifdef __cplusplus
+}
+#endif

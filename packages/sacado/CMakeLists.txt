@@ -116,19 +116,21 @@ TRIBITS_ADD_OPTION_AND_DEFINE(${PACKAGE_NAME}_ENABLE_RAD_NO_USING_STDCC
 
 # Checks for C99 TR1 math functions such as acosh, asinh, atanh ...
 INCLUDE(CheckCXXSourceCompiles)
-SET(SOURCE_C99_TR1_CMATH
-  "
-#include <cmath>
-int main()
-{
-  double x = 1.0;
-  double y = std::acosh(x);
-  return 0;
-}
-  "
-  )
-CHECK_CXX_SOURCE_COMPILES("${SOURCE_C99_TR1_CMATH}"
-  HAS_C99_TR1_CMATH)
+# SET(SOURCE_C99_TR1_CMATH
+  # "
+# #include <cmath>
+# int main()
+# {
+  # double x = 1.0;
+  # double y = std::acosh(x);
+  # return 0;
+# }
+  # "
+  # )
+# CHECK_CXX_SOURCE_COMPILES("${SOURCE_C99_TR1_CMATH}"
+  # HAS_C99_TR1_CMATH)
+
+SET(HAS_C99_TR1_CMATH ON)
 
 # FIXME: Remove this hard-coded setting.  We always have C++11 now.
 SET(HAVE_SACADO_CXX11 ON)

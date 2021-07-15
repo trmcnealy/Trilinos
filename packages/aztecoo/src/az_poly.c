@@ -62,6 +62,9 @@
 #include <stdio.h>
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int az_iterate_id;
 
@@ -423,3 +426,7 @@ void AZ_change_sign(double *lambda_max, double val[], int indx[], int bindx[],
   }
 
 } /* AZ_change_sign */
+
+#ifdef __cplusplus
+}
+#endif

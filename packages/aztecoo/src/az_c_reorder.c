@@ -57,6 +57,9 @@
 
 /* 1/15/2008 JW changed the first typedef from typedef long int integer; to
    typedef int integer; to prevent two tests from segfaulting */
+#ifdef __cplusplus
+extern "C" {
+#endif
 typedef int integer;
 typedef unsigned long int uinteger;
 typedef char *address;
@@ -622,3 +625,7 @@ L400:
     return 0;
 } /* az_rootls */
 
+
+#ifdef __cplusplus
+}
+#endif

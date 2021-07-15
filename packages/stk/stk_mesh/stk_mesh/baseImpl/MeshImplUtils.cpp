@@ -266,7 +266,7 @@ void delete_entities_and_upward_relations(stk::mesh::BulkData &bulkData, const s
 void connectUpwardEntityToEntity(stk::mesh::BulkData& mesh, stk::mesh::Entity upward_entity,
         stk::mesh::Entity entity, const stk::mesh::Entity* nodes)
 {
-    uint num_nodes = mesh.num_nodes(entity);
+    unsigned int num_nodes = mesh.num_nodes(entity);
     EntityRank entity_rank = mesh.entity_rank(entity);
 
     // scratch space

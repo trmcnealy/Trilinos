@@ -97,8 +97,8 @@ struct reciprocal_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosBlas1_reciprocal_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_reciprocal_eti_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_reciprocal_mv_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_reciprocal_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_reciprocal_mv_eti_spec_avail.hpp>
 
 namespace KokkosBlas {
 namespace Impl {
@@ -249,7 +249,7 @@ template struct Reciprocal< \
          2, false, true>;
 
 #include<KokkosBlas1_reciprocal_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_reciprocal_eti_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_reciprocal_mv_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_reciprocal_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_reciprocal_mv_eti_spec_decl.hpp>
 
 #endif // KOKKOS_BLAS1_MV_IMPL_RECIPROCAL_HPP_

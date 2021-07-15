@@ -151,7 +151,7 @@ struct ApplyExtent<ValueType[N], Ext> {
 
 template <class ValueType, ptrdiff_t Ext>
 struct ApplyExtent<ValueType*, Ext> {
-  using type = ValueType* [Ext];
+  using type = ValueType * [Ext];
 };
 
 template <class ValueType>

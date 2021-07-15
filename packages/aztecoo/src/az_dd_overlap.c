@@ -45,6 +45,9 @@
 #include <stdio.h>
 #include <math.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define ALLOCATE      1
 #define FREE_IT       2
@@ -1736,3 +1739,7 @@ void AZ_setup_sendlist(int N_ext, int externs[], int send_proc[],
       send_proc[processor]    = 1;
    }
 }
+
+#ifdef __cplusplus
+}
+#endif

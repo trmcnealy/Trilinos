@@ -20,74 +20,74 @@ TRIBITS_ADD_LIBRARY(
   )
 
 ASSERT_DEFINED(TPL_ENABLE_CGNS)
-IF (TPL_ENABLE_CGNS)
-TRIBITS_ADD_EXECUTABLE(
-  struc_to_unstruc
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES struc_to_unstruc.C
-  INSTALLABLE
-  )
+# IF (TPL_ENABLE_CGNS)
+# TRIBITS_ADD_EXECUTABLE(
+  # struc_to_unstruc
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES struc_to_unstruc.C
+  # INSTALLABLE
+  # )
 
-TRIBITS_ADD_EXECUTABLE(
-  cgns_decomp
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES cgns_decomp.C
-  INSTALLABLE
-  )
-ENDIF()
+# TRIBITS_ADD_EXECUTABLE(
+  # cgns_decomp
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES cgns_decomp.C
+  # INSTALLABLE
+  # )
+# ENDIF()
 
-TRIBITS_ADD_EXECUTABLE(
-  cth_pressure_map
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES cth_pressure_map.C vector3d.C
-  INSTALLABLE
-  )
-TRIBITS_ADD_EXECUTABLE(
-  io_shell
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES io_shell.C shell_interface.C
-  INSTALLABLE
-  )
-TRIBITS_ADD_EXECUTABLE(
-  shell_to_hex
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES shell_to_hex.C vector3d.C
-  INSTALLABLE
-  )
-TRIBITS_ADD_EXECUTABLE(
-  io_info
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES io_info_main.C
-  INSTALLABLE
-  )
-TRIBITS_ADD_EXECUTABLE(
-  io_modify
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES io_modify.C modify_interface.C
-  INSTALLABLE
-  )
-TRIBITS_ADD_EXECUTABLE(
-  sphgen
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES sphgen.C
-  INSTALLABLE
-  )
+# TRIBITS_ADD_EXECUTABLE(
+  # cth_pressure_map
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES cth_pressure_map.C vector3d.C
+  # INSTALLABLE
+  # )
+# TRIBITS_ADD_EXECUTABLE(
+  # io_shell
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES io_shell.C shell_interface.C
+  # INSTALLABLE
+  # )
+# TRIBITS_ADD_EXECUTABLE(
+  # shell_to_hex
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES shell_to_hex.C vector3d.C
+  # INSTALLABLE
+  # )
+# TRIBITS_ADD_EXECUTABLE(
+  # io_info
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES io_info_main.C
+  # INSTALLABLE
+  # )
+# TRIBITS_ADD_EXECUTABLE(
+  # io_modify
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES io_modify.C modify_interface.C
+  # INSTALLABLE
+  # )
+# TRIBITS_ADD_EXECUTABLE(
+  # sphgen
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES sphgen.C
+  # INSTALLABLE
+  # )
 
-TRIBITS_ADD_EXECUTABLE(
-  skinner
-  NOEXEPREFIX
-  NOEXESUFFIX
-  SOURCES skinner.C skinner_interface.C
-  INSTALLABLE
-  )
+# TRIBITS_ADD_EXECUTABLE(
+  # skinner
+  # NOEXEPREFIX
+  # NOEXESUFFIX
+  # SOURCES skinner.C skinner_interface.C
+  # INSTALLABLE
+  # )
 
 if (TPL_ENABLE_MPI)
   IF (TPL_Netcdf_PARALLEL)

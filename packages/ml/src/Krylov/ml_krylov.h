@@ -59,10 +59,8 @@ struct ML_Krylov_Struct
 /* ******************************************************************** */
 /* ******************************************************************** */
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 extern ML_Krylov *ML_Krylov_Create(ML_Comm *);
@@ -97,10 +95,8 @@ extern int ML_MGVSolve_Wrapper(void *, int, double *, int, double*);
 extern int ML_AMGVSolve_Wrapper(void *, int, double *, int, double*);
 extern int ML_DiagScale_Wrapper(void *, int, double *, int, double*);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

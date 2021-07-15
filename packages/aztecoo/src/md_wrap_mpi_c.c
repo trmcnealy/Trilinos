@@ -59,6 +59,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mpi.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int gl_rbuf = 3;
 int gl_sbuf = 3;
@@ -600,3 +603,7 @@ int md_wrap_request_free(MPI_Request *request)
   return err;
 
 } /* md_wrap_request_free */
+
+#ifdef __cplusplus
+}
+#endif

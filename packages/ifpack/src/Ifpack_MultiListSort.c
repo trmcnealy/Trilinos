@@ -48,8 +48,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-void ifpack_multilist_sort (int *const pbase, double *const daux, size_t total_elems);
+extern "C" {
+extern void ifpack_multilist_sort (int *const pbase, double *const daux, size_t total_elems);
+}
 #define QSORTLEN 20
 
 int main()
@@ -151,7 +152,8 @@ typedef struct
       smaller partition.  This *guarantees* no more than log (n)
       stack size is needed (actually O(1) in this case)!  */
 
-void ifpack_multilist_sort (int *const pbase, double *const daux, size_t total_elems)
+extern "C" {
+extern void ifpack_multilist_sort (int *const pbase, double *const daux, size_t total_elems)
 {
   int itemp;
   double dtemp;
@@ -321,4 +323,5 @@ void ifpack_multilist_sort (int *const pbase, double *const daux, size_t total_e
           }
       }
   }
+}
 }

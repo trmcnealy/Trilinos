@@ -63,6 +63,9 @@
 #include <stdio.h>
 #include <math.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Set this to 1 if you want to time communication in AZ_exhange_bdry. */
 #define AZ_TIME_BDRY_DEFAULT 0
@@ -3278,3 +3281,7 @@ int AZ_extract_comm_info(int **idata_org,int (*user_comm)(double *,AZ_MATRIX *),
    AZ_free(rcv_length);
    return 1;
 }
+
+#ifdef __cplusplus
+}
+#endif

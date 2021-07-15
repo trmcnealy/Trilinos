@@ -63,6 +63,9 @@
 #include <float.h>
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int az_iterate_id;
 
@@ -607,3 +610,7 @@ void AZ_converge_destroy(struct AZ_CONVERGE_STRUCT **temp)
   if (*temp != NULL) AZ_free(*temp);
   *temp = NULL;
 }
+
+#ifdef __cplusplus
+}
+#endif

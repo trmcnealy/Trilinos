@@ -40,9 +40,9 @@
 #include <stdexcept>
 #include <limits>
 
-#include <sys/times.h>
 #include <sys/time.h>
 #if !defined(__CYGWIN__) && !defined(_MSC_VER) && (!defined(__MINGW32__) || !defined(__MINGW64__))
+#include <sys/times.h>
 #include <sys/resource.h>
 #endif
 

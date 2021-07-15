@@ -1788,7 +1788,7 @@ namespace KB = KokkosBatched::Experimental;
     };
 
 #if defined(KOKKOS_ENABLE_CUDA)
-    static inline int ExtractAndFactorizeRecommendedCudaTeamSize(const int blksize,
+    static KOKKOS_INLINE_FUNCTION int ExtractAndFactorizeRecommendedCudaTeamSize(const int blksize,
                                                                  const int vector_length,
                                                                  const int internal_vector_length) {
       const int vector_size = vector_length/internal_vector_length;
@@ -2099,7 +2099,7 @@ namespace KB = KokkosBatched::Experimental;
         }
       }
 
-      void run() {
+      KOKKOS_FUNCTION void run() {
         IFPACK2_BLOCKTRIDICONTAINER_PROFILER_REGION_BEGIN;
         const local_ordinal_type team_size =
           ExtractAndFactorizeTridiagsDefaultModeAndAlgo<typename execution_space::memory_space>::
@@ -2196,7 +2196,7 @@ namespace KB = KokkosBatched::Experimental;
           packed_multivector(pmv) {}
 
       // TODO:: modify this routine similar to the team level functions
-      inline
+      KOKKOS_INLINE_FUNCTION
       void
       operator() (const local_ordinal_type &packidx) const {
         local_ordinal_type partidx = packptr(packidx);
@@ -2299,7 +2299,7 @@ namespace KB = KokkosBatched::Experimental;
     };
 
 #if defined(KOKKOS_ENABLE_CUDA)
-    static inline int SolveTridiagsRecommendedCudaTeamSize(const int blksize,
+    static KOKKOS_INLINE_FUNCTION int SolveTridiagsRecommendedCudaTeamSize(const int blksize,
                                                            const int vector_length,
                                                            const int internal_vector_length) {
       const int vector_size = vector_length/internal_vector_length;
@@ -2398,7 +2398,7 @@ namespace KB = KokkosBatched::Experimental;
       const bool compute_diff;
 
     public:
-      SolveTridiags(const PartInterface<MatrixType> &interf,
+      KOKKOS_FUNCTION SolveTridiags(const PartInterface<MatrixType> &interf,
                     const BlockTridiags<MatrixType> &btdm,
                     const vector_type_3d_view &pmv,
                     const impl_scalar_type damping_factor,
@@ -2844,7 +2844,7 @@ namespace KB = KokkosBatched::Experimental;
     ///
     /// compute local residula vector y = b - R x
     ///
-    static inline int ComputeResidualVectorRecommendedCudaVectorSize(const int blksize,
+    static KOKKOS_INLINE_FUNCTION int ComputeResidualVectorRecommendedCudaVectorSize(const int blksize,
                                                                      const int team_size) {
       int total_team_size(0);
       if      (blksize <=  5) total_team_size =  32;
@@ -2919,7 +2919,7 @@ namespace KB = KokkosBatched::Experimental;
 
     public:
       template<typename LocalCrsGraphType>
-      ComputeResidualVector(const AmD<MatrixType> &amd,
+      KOKKOS_FUNCTION ComputeResidualVector(const AmD<MatrixType> &amd,
                             const LocalCrsGraphType &graph,
                             const local_ordinal_type &blocksize_requested_,
                             const PartInterface<MatrixType> &interf,
@@ -2939,7 +2939,7 @@ namespace KB = KokkosBatched::Experimental;
           is_dm2cm_active(dm2cm_.span() > 0)
       {}
 
-      inline
+      KOKKOS_INLINE_FUNCTION
       void
       SerialGemv(const local_ordinal_type &blocksize,
                  const impl_scalar_type * const KOKKOS_RESTRICT AA,
@@ -3033,7 +3033,7 @@ namespace KB = KokkosBatched::Experimental;
 
       struct SeqTag {};
 
-      inline
+      KOKKOS_INLINE_FUNCTION
       void
       operator() (const SeqTag &, const local_ordinal_type& i) const {
         const local_ordinal_type blocksize = blocksize_requested;
@@ -3104,7 +3104,7 @@ namespace KB = KokkosBatched::Experimental;
       struct AsyncTag {};
 
       template<int B>
-      inline
+      KOKKOS_INLINE_FUNCTION
       void
       operator() (const AsyncTag<B> &, const local_ordinal_type &rowidx) const {
         const local_ordinal_type blocksize = (B == 0 ? blocksize_requested : B);
@@ -3208,7 +3208,7 @@ namespace KB = KokkosBatched::Experimental;
       template <int P, int B> struct OverlapTag {};
 
       template<int P, int B>
-      inline
+      KOKKOS_INLINE_FUNCTION
       void
       operator() (const OverlapTag<P,B> &, const local_ordinal_type& rowidx) const {
         const local_ordinal_type blocksize = (B == 0 ? blocksize_requested : B);
@@ -3330,7 +3330,7 @@ namespace KB = KokkosBatched::Experimental;
       template<typename MultiVectorLocalViewTypeY,
                typename MultiVectorLocalViewTypeB,
                typename MultiVectorLocalViewTypeX>
-      void run(const MultiVectorLocalViewTypeY &y_,
+      KOKKOS_FUNCTION void run(const MultiVectorLocalViewTypeY &y_,
                const MultiVectorLocalViewTypeB &b_,
                const MultiVectorLocalViewTypeX &x_) {
         IFPACK2_BLOCKTRIDICONTAINER_PROFILER_REGION_BEGIN;
@@ -3362,7 +3362,7 @@ namespace KB = KokkosBatched::Experimental;
       template<typename MultiVectorLocalViewTypeB,
                typename MultiVectorLocalViewTypeX,
                typename MultiVectorLocalViewTypeX_Remote>
-      void run(const vector_type_3d_view &y_packed_,
+      KOKKOS_FUNCTION void run(const vector_type_3d_view &y_packed_,
                const MultiVectorLocalViewTypeB &b_,
                const MultiVectorLocalViewTypeX &x_,
                const MultiVectorLocalViewTypeX_Remote &x_remote_) {
@@ -3442,7 +3442,7 @@ namespace KB = KokkosBatched::Experimental;
       template<typename MultiVectorLocalViewTypeB,
                typename MultiVectorLocalViewTypeX,
                typename MultiVectorLocalViewTypeX_Remote>
-      void run(const vector_type_3d_view &y_packed_,
+      KOKKOS_FUNCTION void run(const vector_type_3d_view &y_packed_,
                const MultiVectorLocalViewTypeB &b_,
                const MultiVectorLocalViewTypeX &x_,
                const MultiVectorLocalViewTypeX_Remote &x_remote_,
@@ -3535,7 +3535,7 @@ namespace KB = KokkosBatched::Experimental;
     };
 
     template<typename MatrixType>
-    void reduceVector(const ConstUnmanaged<typename ImplType<MatrixType>::impl_scalar_type_1d_view> zz,
+    KOKKOS_INLINE_FUNCTION void reduceVector(const ConstUnmanaged<typename ImplType<MatrixType>::impl_scalar_type_1d_view> zz,
                       /* */ typename ImplType<MatrixType>::magnitude_type *vals) {
       IFPACK2_BLOCKTRIDICONTAINER_PROFILER_REGION_BEGIN;
       IFPACK2_BLOCKTRIDICONTAINER_TIMER("BlockTriDi::ReduceVector");
@@ -3579,9 +3579,9 @@ namespace KB = KokkosBatched::Experimental;
       magnitude_type work_[3];
 
     public:
-      NormManager() = default;
-      NormManager(const NormManager &b) = default;
-      NormManager(const Teuchos::RCP<const Teuchos::Comm<int> >& comm) {
+      KOKKOS_FUNCTION NormManager() = default;
+      KOKKOS_FUNCTION NormManager(const NormManager &b) = default;
+      KOKKOS_FUNCTION NormManager(const Teuchos::RCP<const Teuchos::Comm<int> >& comm) {
         sweep_step_ = 1;
         sweep_step_upper_bound_ = 1;
         collective_ = comm->getSize() > 1;
@@ -3599,17 +3599,17 @@ namespace KB = KokkosBatched::Experimental;
       }
 
       // Check the norm every sweep_step sweeps.
-      void setCheckFrequency(const int sweep_step) {
+      KOKKOS_INLINE_FUNCTION void setCheckFrequency(const int sweep_step) {
         TEUCHOS_TEST_FOR_EXCEPT_MSG(sweep_step < 1, "sweep step must be >= 1");
         sweep_step_upper_bound_ = sweep_step;
         sweep_step_ = 1;
       }
 
       // Get the buffer into which to store rank-local squared norms.
-      magnitude_type* getBuffer() { return &work_[0]; }
+      KOKKOS_INLINE_FUNCTION magnitude_type* getBuffer() { return &work_[0]; }
 
       // Call MPI_Iallreduce to find the global squared norms.
-      void ireduce(const int sweep, const bool force = false) {
+      KOKKOS_INLINE_FUNCTION void ireduce(const int sweep, const bool force = false) {
         if ( ! force && sweep % sweep_step_) return;
 
         IFPACK2_BLOCKTRIDICONTAINER_TIMER("BlockTriDi::NormManager::Ireduce");
@@ -3637,7 +3637,7 @@ namespace KB = KokkosBatched::Experimental;
       // being checked, this function immediately returns false. If a check must
       // be done at this iteration, it waits for the reduction triggered by
       // ireduce to complete, then checks the global norm against the tolerance.
-      bool checkDone (const int sweep, const magnitude_type tol2, const bool force = false) {
+      KOKKOS_INLINE_FUNCTION bool checkDone (const int sweep, const magnitude_type tol2, const bool force = false) {
         // early return
         if (sweep <= 0) return false;
 
@@ -3673,7 +3673,7 @@ namespace KB = KokkosBatched::Experimental;
 
       // After termination has occurred, finalize the norms for use in
       // get_norms{0,final}.
-      void finalize () {
+      KOKKOS_INLINE_FUNCTION void finalize () {
         work_[0] = std::sqrt(work_[0]); // after converged
         if (work_[2] >= 0)
           work_[2] = std::sqrt(work_[2]); // first norm
@@ -3681,15 +3681,16 @@ namespace KB = KokkosBatched::Experimental;
       }
 
       // Report norms to the caller.
-      const magnitude_type getNorms0 () const { return work_[2]; }
-      const magnitude_type getNormsFinal () const { return work_[0]; }
+      KOKKOS_INLINE_FUNCTION const magnitude_type getNorms0 () const { return work_[2]; }
+      KOKKOS_INLINE_FUNCTION const magnitude_type getNormsFinal () const { return work_[0]; }
     };
 
     ///
     /// top level apply interface
     ///
     template<typename MatrixType>
-    int
+    KOKKOS_INLINE_FUNCTION
+	int
     applyInverseJacobi(// importer
                        const Teuchos::RCP<const typename ImplType<MatrixType>::tpetra_block_crs_matrix_type> &A,
                        const Teuchos::RCP<const typename ImplType<MatrixType>::tpetra_import_type> &tpetra_importer,

@@ -61,10 +61,8 @@ typedef struct ML_Matrix_DCSR_Struct
 
 #include "ml_operator.h"
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 
@@ -154,10 +152,8 @@ extern int  ML_Matrix_DCSR_Set_Comm(ML_Matrix_DCSR*,ML_CommInfoOP*,ML_Comm*);
 extern int  ML_Matrix_DCSR_Getrow(ML_Operator*,int,int*,int,int*,double*,int*);
 extern int  ML_Matrix_DCSR_Matvec(ML_Operator *,int,double*,int,double*);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 #endif
 

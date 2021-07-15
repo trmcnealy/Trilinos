@@ -241,11 +241,11 @@ namespace Sacado {
       }
 
       // Overload of addressof operator
-      KOKKOS_INLINE_FUNCTION
-      ViewFadPtr<ValueT,length,stride,BaseFadT> operator&() const {
-        return ViewFadPtr<ValueT,length,stride,BaseFadT>(
-          this->dx_, this->val_, this->sz_.value, this->stride_.value);
-      }
+      // KOKKOS_INLINE_FUNCTION
+      // ViewFadPtr<ValueT,length,stride,BaseFadT> operator&() const {
+        // return ViewFadPtr<ValueT,length,stride,BaseFadT>(
+          // this->dx_, this->val_, this->sz_.value, this->stride_.value);
+      // }
 
       //@}
 

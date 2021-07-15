@@ -114,14 +114,14 @@ struct ChunkedRoundRobinExecutor {
   template <typename F, typename... Ts>
   hpx::future<
       typename hpx::util::detail::invoke_deferred_result<F, Ts...>::type>
-  async_execute(F &&f, Ts &&...ts) const {
+  async_execute(F &&f, Ts &&... ts) const {
     return hpx::detail::async_launch_policy_dispatch<hpx::launch>::call(
         hpx::launch::async_policy{}, std::forward<F>(f),
         std::forward<Ts>(ts)...);
   }
 
   template <typename F, typename... Ts>
-  void post(F &&f, Ts &&...ts) const {
+  void post(F &&f, Ts &&... ts) const {
     hpx::util::thread_description const desc(
         f, "Kokkos::Impl::ChunkedRoundRobinExecutor::async_execute");
     hpx::threads::thread_schedule_hint const hint(
@@ -141,7 +141,7 @@ struct ChunkedRoundRobinExecutor {
   template <typename F, typename Shape, typename... Ts>
   std::vector<hpx::future<typename hpx::parallel::execution::detail::
                               bulk_function_result<F, Shape, Ts...>::type>>
-  bulk_async_execute(F &&f, Shape const &shape, Ts &&...ts) {
+  bulk_async_execute(F &&f, Shape const &shape, Ts &&... ts) {
     hpx::util::thread_description desc(
         f, "Kokkos::Impl::ChunkedRoundRobinExecutor::bulk_sync_execute");
 

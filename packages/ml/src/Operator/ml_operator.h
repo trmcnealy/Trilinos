@@ -228,10 +228,8 @@ struct ml_matvscale {
 /* ******************************************************************** */
 /* ******************************************************************** */
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 extern int ML_Operator_BlockPartition(ML_Operator *matrix, int n, int *nblks,
@@ -379,10 +377,8 @@ extern int ML_Operator_MisRootPts( ML_Operator *Amatrix,  int num_PDE_eqns,
 extern int ML_Epetra_CRSinsert(ML_Operator *, int, int *, double *, int);
 #endif
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

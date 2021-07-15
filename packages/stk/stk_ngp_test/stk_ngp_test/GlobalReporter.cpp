@@ -9,7 +9,7 @@ namespace global {
 static constexpr int numReports = 5;
 inline
 ReporterBase*& getHostReporter()
-{
+{  
   static ReporterBase* hostReporter = nullptr;
   return hostReporter;
 }
@@ -23,7 +23,12 @@ ReporterBase*& getDeviceReporterOnHost()
 
 NGP_TEST_INLINE ReporterBase*& getDeviceReporterOnDevice()
 {
+#if defined(__CUDA_ARCH__)
+  __shared__ ReporterBase* deviceReporterOnDevice;
+#else
   static ReporterBase* deviceReporterOnDevice = nullptr;
+#endif
+    
   return deviceReporterOnDevice;
 }
 

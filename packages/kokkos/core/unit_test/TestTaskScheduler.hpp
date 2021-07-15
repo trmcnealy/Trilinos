@@ -304,7 +304,7 @@ struct TestTaskTeam {
             TestTaskTeam(parfor_result, parreduce_check, parscan_result,
                          parscan_check, begin - 1));
 
-#if !defined(__HCC_ACCELERATOR__) && !defined(__CUDA_ARCH__)
+#if !defined(__HIP_DEVICE_COMPILE__) && !defined(__CUDA_ARCH__)
         assert(!future.is_null());
 #endif
 
@@ -508,7 +508,7 @@ struct TestTaskTeamValue {
         future = sched.task_spawn(TestTaskTeamValue(result, begin - 1),
                                   Kokkos::TaskTeam);
 
-#if !defined(__HCC_ACCELERATOR__) && !defined(__CUDA_ARCH__)
+#if !defined(__HIP_DEVICE_COMPILE__) && !defined(__CUDA_ARCH__)
         assert(!future.is_null());
 #endif
 
@@ -844,7 +844,7 @@ struct TestMultipleDependence {
 #undef TEST_SCHEDULER_SUFFIX
 
 // KOKKOS WORKAROUND WIN32: Theses tests hang with msvc
-#ifndef _WINDOWS
+#ifndef _WIN32
 #define TEST_SCHEDULER_SUFFIX _chase_lev
 #define TEST_SCHEDULER Kokkos::ChaseLevTaskScheduler<TEST_EXECSPACE>
 #include "TestTaskScheduler_single.hpp"

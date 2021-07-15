@@ -88,7 +88,7 @@ namespace Impl {
     if(mode[0] == Transpose[0]) {myCusparseOperation = CUSPARSE_OPERATION_TRANSPOSE;}
     else if(mode[0] == ConjugateTranspose[0]) {myCusparseOperation = CUSPARSE_OPERATION_CONJUGATE_TRANSPOSE;}
 
-#if defined(CUSPARSE_VERSION) && (10300 <= CUSPARSE_VERSION) && !defined(_WINDOWS)
+#if defined(CUSPARSE_VERSION) && (10300 <= CUSPARSE_VERSION)
 
     /* Check that cusparse can handle the types of the input Kokkos::CrsMatrix */
     cusparseIndexType_t myCusparseOffsetType;
@@ -142,7 +142,7 @@ namespace Impl {
       if(algName == "default")
         alg = CUSPARSE_MV_ALG_DEFAULT;
       else if(algName == "merge")
-        alg = CUSPARSE_CSRMV_ALG2;
+        alg = CUSPARSE_SPMV_CSR_ALG2;
     }
     KOKKOS_CUSPARSE_SAFE_CALL(cusparseSpMV_bufferSize(cusparseHandle, myCusparseOperation,
 						      &alpha, A_cusparse, vecX, &beta, vecY, myCudaDataType,

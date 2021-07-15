@@ -1063,8 +1063,8 @@ class TestDynViewAPI {
       (void)thing;
     }
 
-    dView0 d_uninitialized(Kokkos::ViewAllocateWithoutInitializing("uninit"),
-                           10, 20);
+    dView0 d_uninitialized(
+        Kokkos::view_alloc(Kokkos::WithoutInitializing, "uninit"), 10, 20);
     ASSERT_TRUE(d_uninitialized.data() != nullptr);
     ASSERT_EQ(d_uninitialized.rank(), 2);
     ASSERT_EQ(d_uninitialized.extent(0), 10);
@@ -1282,7 +1282,9 @@ class TestDynViewAPI {
         for (size_t i1 = 0; i1 < N1; ++i1) {
           for (size_t i2 = 0; i2 < N2; ++i2) {
             for (size_t i3 = 0; i3 < N3; ++i3) {
-              { ASSERT_EQ(hx(ip, i1, i2, i3), hy(ip, i1, i2, i3)); }
+              {
+                ASSERT_EQ(hx(ip, i1, i2, i3), hy(ip, i1, i2, i3));
+              }
             }
           }
         }
@@ -1296,7 +1298,9 @@ class TestDynViewAPI {
         for (size_t i1 = 0; i1 < N1; ++i1) {
           for (size_t i2 = 0; i2 < N2; ++i2) {
             for (size_t i3 = 0; i3 < N3; ++i3) {
-              { ASSERT_EQ(hx(ip, i1, i2, i3), T(0)); }
+              {
+                ASSERT_EQ(hx(ip, i1, i2, i3), T(0));
+              }
             }
           }
         }
@@ -1528,7 +1532,7 @@ class TestDynViewAPI {
     ASSERT_EQ(ds5.extent(5), ds5plus.extent(5));
 
 #if (!defined(KOKKOS_ENABLE_CUDA) || defined(KOKKOS_ENABLE_CUDA_UVM)) && \
-    !defined(KOKKOS_ENABLE_HIP)
+    !defined(KOKKOS_ENABLE_HIP) && !defined(KOKKOS_ENABLE_SYCL)
     ASSERT_EQ(&ds5(1, 1, 1, 1, 0) - &ds5plus(1, 1, 1, 1, 0), 0);
     ASSERT_EQ(&ds5(1, 1, 1, 1, 0, 0) - &ds5plus(1, 1, 1, 1, 0, 0),
               0);  // passing argument to rank beyond the view's rank is allowed

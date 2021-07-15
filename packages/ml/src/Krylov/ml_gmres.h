@@ -16,18 +16,14 @@
 #include "ml_common.h"
 #include "ml_krylov.h"
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 extern int ML_GMRES_Solve(ML_Krylov *,int length,double *rhs,double *sol);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 #endif
 

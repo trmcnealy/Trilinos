@@ -110,8 +110,8 @@ struct mult_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosBlas1_mult_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_mult_eti_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_mult_mv_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_mult_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_mult_mv_eti_spec_avail.hpp>
 
 namespace KokkosBlas {
 namespace Impl {
@@ -323,7 +323,7 @@ template struct Mult< \
 
 
 #include<KokkosBlas1_mult_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_mult_eti_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_mult_mv_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_mult_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_mult_mv_eti_spec_decl.hpp>
 
 #endif // KOKKOSBLAS1_MULT_SPEC_HPP_

@@ -28,9 +28,9 @@ void assign(struct vtx_data **graph,        /* data structure with vtx weights *
   double     theta, phi, gamma; /* angles for optimal rotation */
   double     temp;
   int        using_vwgts; /* are vertex weights active? */
-  double     tri_prod();
-  double     opt2d();
-  void       y2x(), mapper(), rotate2d(), opt3d(), rotate3d();
+  double     tri_prod(...);
+  double     opt2d(...);
+  void       y2x(...), mapper(...), rotate2d(...), opt3d(...), rotate3d(...);
 
   if (DEBUG_TRACE > 0) {
     printf("<Entering assign, nvtxs = %d, ndims = %d>\n", nvtxs, ndims);

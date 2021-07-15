@@ -59,6 +59,9 @@
 
 #include <stdlib.h>     /* these appear outside of ifdef */
 #include <stdio.h>      /* to avoid a lint warning       */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef PUMA_GSUMD       /* Only compiled in on request. */
 
@@ -214,3 +217,7 @@ double AZ_gsum_double(double val, int proc_config[])
 }
 
 #endif /* ifdef PUMA_GSUMD */
+
+#ifdef __cplusplus
+}
+#endif

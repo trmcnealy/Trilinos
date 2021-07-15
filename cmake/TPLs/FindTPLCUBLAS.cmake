@@ -56,13 +56,13 @@
 IF (NOT TPL_ENABLE_CUDA)
   MESSAGE(FATAL_ERROR "\nCUBLAS: This TPL requires CUDA")
 ELSE()
-  find_library(CUDA_cublas_LIBRARY
-    cublas
-    HINTS ${CUDA_TOOLKIT_ROOT_DIR}/lib
-  )
-  IF(CUDA_cublas_LIBRARY STREQUAL "CUDA_cublas_LIBRARY-NOTFOUND") 
-    MESSAGE(FATAL_ERROR "\nCUBLAS: could not find cublas library.")
-  ENDIF()
+  # find_library(CUDA_cublas_LIBRARY
+    # cublas
+    # HINTS ${CUDA_TOOLKIT_ROOT_DIR}/lib64
+  # )
+  # IF(CUDA_cublas_LIBRARY STREQUAL "CUDA_cublas_LIBRARY-NOTFOUND") 
+    # MESSAGE(FATAL_ERROR "\nCUBLAS: could not find cublas library.")
+  # ENDIF()
   GLOBAL_SET(TPL_CUBLAS_LIBRARY_DIRS)
   GLOBAL_SET(TPL_CUBLAS_INCLUDE_DIRS ${TPL_CUDA_INCLUDE_DIRS})
   GLOBAL_SET(TPL_CUBLAS_LIBRARIES ${CUDA_cublas_LIBRARY})

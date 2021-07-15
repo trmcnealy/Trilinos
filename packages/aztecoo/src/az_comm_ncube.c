@@ -61,6 +61,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int AZ_sys_msg_type;
 int AZ_little_type;
@@ -214,3 +217,6 @@ void AZ_read_local_info(int data_org[], char *message_recv_add[],
 
 } /* AZ_read_local_info */
 
+#ifdef __cplusplus
+}
+#endif

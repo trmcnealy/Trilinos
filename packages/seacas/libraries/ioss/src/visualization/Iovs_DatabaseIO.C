@@ -37,10 +37,14 @@
 #ifdef IOSS_DLOPEN_ENABLED
 #include <dlfcn.h>
 #endif
+ 
+#ifdef _WINDOWS
+#define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+#endif
 
 #include <cassert>
-
-#if defined(__APPLE__)
+ 
+#if defined(__APPLE__) 
 const char *CATALYST_PLUGIN_DYNAMIC_LIBRARY = "libParaViewCatalystIossAdapter.dylib";
 #else
 const char *CATALYST_PLUGIN_DYNAMIC_LIBRARY = "libParaViewCatalystIossAdapter.so";

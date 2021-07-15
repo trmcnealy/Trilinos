@@ -128,12 +128,12 @@ struct TestViewOperator_LeftAndRight<DataType, DeviceType, 1> {
       if (right(i0) != right.access(i0, 0, 0, 0, 0, 0, 0, 0)) {
         update |= 3;
       }
-      // if (left(i0) != left_stride(i0)) {
-      // update |= 4;
-      // }
-      // if (right(i0) != right_stride(i0)) {
-      // update |= 8;
-      // }
+      if (left(i0) != left_stride(i0)) {
+        update |= 4;
+      }
+      if (right(i0) != right_stride(i0)) {
+        update |= 8;
+      }
       /*
             if ( &left( i0 )  != &left( i0, 0, 0, 0, 0, 0, 0, 0 ) )  { update |=
          3; } if ( &right( i0 ) != &right( i0, 0, 0, 0, 0, 0, 0, 0 ) ) { update
@@ -153,10 +153,10 @@ class TestAtomicViewAPI {
 
   using dView0           = Kokkos::View<T, device>;
   using dView1           = Kokkos::View<T*, device>;
-  using dView2           = Kokkos::View<T* [N1], device>;
-  using dView3           = Kokkos::View<T* [N1][N2], device>;
-  using dView4           = Kokkos::View<T* [N1][N2][N3], device>;
-  using const_dView4     = Kokkos::View<const T* [N1][N2][N3], device>;
+  using dView2           = Kokkos::View<T * [N1], device>;
+  using dView3           = Kokkos::View<T * [N1][N2], device>;
+  using dView4           = Kokkos::View<T * [N1][N2][N3], device>;
+  using const_dView4     = Kokkos::View<const T * [N1][N2][N3], device>;
   using dView4_unmanaged = Kokkos::View<T****, device, Kokkos::MemoryUnmanaged>;
   using host             = typename dView0::host_mirror_space;
 
@@ -164,12 +164,12 @@ class TestAtomicViewAPI {
   using aView1 =
       Kokkos::View<T*, device, Kokkos::MemoryTraits<Kokkos::Atomic> >;
   using aView2 =
-      Kokkos::View<T* [N1], device, Kokkos::MemoryTraits<Kokkos::Atomic> >;
+      Kokkos::View<T * [N1], device, Kokkos::MemoryTraits<Kokkos::Atomic> >;
   using aView3 =
-      Kokkos::View<T* [N1][N2], device, Kokkos::MemoryTraits<Kokkos::Atomic> >;
-  using aView4       = Kokkos::View<T* [N1][N2][N3], device,
+      Kokkos::View<T * [N1][N2], device, Kokkos::MemoryTraits<Kokkos::Atomic> >;
+  using aView4       = Kokkos::View<T * [N1][N2][N3], device,
                               Kokkos::MemoryTraits<Kokkos::Atomic> >;
-  using const_aView4 = Kokkos::View<const T* [N1][N2][N3], device,
+  using const_aView4 = Kokkos::View<const T * [N1][N2][N3], device,
                                     Kokkos::MemoryTraits<Kokkos::Atomic> >;
 
   using aView4_unmanaged =
@@ -179,7 +179,10 @@ class TestAtomicViewAPI {
   using host_atomic = typename aView0::host_mirror_space;
 
   TestAtomicViewAPI() {
+    // FIXME_OPENMPTARGET
+#ifndef KOKKOS_ENABLE_OPENMPTARGET
     TestViewOperator_LeftAndRight<int[2], device>::testit();
+#endif
     run_test_rank0();
     run_test_rank4();
     run_test_const();

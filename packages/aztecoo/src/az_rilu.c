@@ -43,6 +43,9 @@
 
 #include <stdio.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void AZ_fact_rilu(int N, int *nz_used, int *iu, int *iw, 
                   AZ_MATRIX *A_overlapped, double omega,
@@ -148,3 +151,7 @@ void AZ_fact_rilu(int N, int *nz_used, int *iu, int *iw,
             msr_bindx[i] = msr_bindx[i] + 1 ;
        }
 }
+
+#ifdef __cplusplus
+}
+#endif

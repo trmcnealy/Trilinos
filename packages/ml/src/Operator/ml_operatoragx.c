@@ -252,7 +252,7 @@ int ML_OperatorAGX_Restrict(ML_Operator *vop, int inlen, double *din, int outlen
 #ifdef ML_CPP
                            comm->USR_comm, &Request[i]);
 #else
-                           comm->USR_comm, (void *)&Request[i]);
+                           comm->USR_comm, &Request[i]);
 #endif
    }
 
@@ -311,7 +311,7 @@ int ML_OperatorAGX_Restrict(ML_Operator *vop, int inlen, double *din, int outlen
 #ifdef ML_CPP
                            comm->USR_comm, &Request[i]);
 #else
-                           comm->USR_comm, (void *)&Request[i]);
+                           comm->USR_comm, &Request[i]);
 #endif
    }
 
@@ -454,7 +454,7 @@ int ML_OperatorAGX_Prolongate(ML_Operator *vop, int inlen, double *din,
 #ifdef ML_CPP
                            comm->USR_comm, &Request[i]);
 #else
-                           comm->USR_comm, (void *)&Request[i]);
+                           comm->USR_comm, &Request[i]);
 #endif
    }
 
@@ -510,7 +510,7 @@ int ML_OperatorAGX_Prolongate(ML_Operator *vop, int inlen, double *din,
 #ifdef ML_CPP
                            comm->USR_comm, &Request[i]);
 #else
-                           comm->USR_comm, (void *)&Request[i]);
+                           comm->USR_comm, &Request[i]);
 #endif
    }
 

@@ -1,8 +1,7 @@
-// Copyright 2002 - 2008, 2010, 2011 National Technology Engineering
-// Solutions of Sandia, LLC (NTESS). Under the terms of Contract
-// DE-NA0003525 with NTESS, the U.S. Government retains certain rights
-// in this software.
-//
+// Copyright (c) 2013, Sandia Corporation.
+// Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
+// the U.S. Government retains certain rights in this software.
+// 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -15,10 +14,10 @@
 //       disclaimer in the documentation and/or other materials provided
 //       with the distribution.
 // 
-//     * Neither the name of NTESS nor the names of its contributors
-//       may be used to endorse or promote products derived from this
-//       software without specific prior written permission.
-//
+//     * Neither the name of Sandia Corporation nor the names of its
+//       contributors may be used to endorse or promote products derived
+//       from this software without specific prior written permission.
+// 
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -39,8 +38,89 @@
 #include <stk_util/util/Callback.hpp>   // for CallbackBase
 #include <string>                       // for string
 
+#define _SIGSET_NWORDS (1024 / (8 * sizeof(unsigned long int)))
+typedef struct
+{
+    unsigned long int __val[_SIGSET_NWORDS];
+} __sigset_t;
 
-struct sigaction;
+typedef __sigset_t sigset_t;
+
+typedef void (*__sighandler_t)(int);
+
+union sigval {
+    int   sival_int;
+    void* sival_ptr;
+};
+
+typedef union sigval __sigval_t;
+
+typedef int          __pid_t;
+typedef unsigned int __uid_t;
+
+typedef struct
+{
+    int si_signo;         /* Signal number.  */
+    int si_errno;         /* If non-zero, an errno value associated with
+                     this signal, as defined in <errno.h>.  */
+    int        si_code;   /* Signal code.  */
+    __pid_t    si_pid;    /* Sending process ID.  */
+    __uid_t    si_uid;    /* Real user ID of sending process.  */
+    void*      si_addr;   /* Address of faulting instruction.  */
+    int        si_status; /* Exit value or signal.  */
+    long int   si_band;   /* Band event for SIGPOLL.  */
+    __sigval_t si_value;  /* Signal value.  */
+} siginfo_t;
+
+struct sigaction
+{
+#if 1
+    union {
+        /* Used if SA_SIGINFO is not set.  */
+        __sighandler_t sa_handler;
+        /* Used if SA_SIGINFO is set.  */
+        void (*sa_sigaction)(int, siginfo_t*, void*);
+    } __sigaction_handler;
+#    define sa_handler __sigaction_handler.sa_handler
+#    define sa_sigaction __sigaction_handler.sa_sigaction
+#else
+    __sighandler_t sa_handler;
+#endif
+
+    __sigset_t sa_mask;
+
+    int sa_flags;
+};
+
+/* Bits in `sa_flags'.  */
+#define SA_NOCLDSTOP 0x00000004 /* Don't send SIGCHLD when children stop.  */
+#define SA_NOCLDWAIT 0x00000020 /* Don't create zombie on child death.  */
+#define SA_SIGINFO                                     \
+    0x00000040 /* Invoke signal-catching function with \
+  three arguments instead of one.  */
+#if defined __USE_XOPEN_EXTENDED || defined __USE_MISC
+#    define SA_ONSTACK 0x00000001 /* Use signal stack by using `sa_restorer'. */
+#endif
+#if defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K8
+#    define SA_RESTART 0x00000002 /* Restart syscall on signal return.  */
+#    define SA_NODEFER                                                      \
+        0x00000008                  /* Don't automatically block the signal \
+                       when its handler is being executed.  */
+#    define SA_RESETHAND 0x00000010 /* Reset to SIG_DFL on entry to handler.  */
+#endif
+#ifdef __USE_MISC
+#    define SA_INTERRUPT 0x20000000 /* Historical no-op.  */
+
+/* Some aliases for the SA_ constants.  */
+#    define SA_NOMASK SA_NODEFER
+#    define SA_ONESHOT SA_RESETHAND
+#    define SA_STACK SA_ONSTACK
+#endif
+
+/* Values for the HOW argument to `sigprocmask'.  */
+#define SIG_BLOCK 1   /* Block signals.  */
+#define SIG_UNBLOCK 2 /* Unblock signals.  */
+#define SIG_SETMASK 3 /* Set the set of blocked signals.  */
 
 /**
  * @file

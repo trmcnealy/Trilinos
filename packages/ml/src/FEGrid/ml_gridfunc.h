@@ -49,11 +49,9 @@ struct ML_GridFunc_Struct
 /* definition of the functions                                          */
 /* -------------------------------------------------------------------- */
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C"
 {
-#endif
 #endif
 
 extern int ML_GridFunc_Create( ML_GridFunc ** );
@@ -83,10 +81,8 @@ int ML_compute_basis_coefficients3D(void *grid, double *coord,
 int ML_compute_basis_coefficients2D(void *grid, double *coord,
 				    int ncoord, double *coefs, int *coef_ptr);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

@@ -61,6 +61,9 @@
 #include <stdlib.h>
 #include "az_aztec.h"
 #include <string.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int divider;
 int type_size;
@@ -1494,3 +1497,7 @@ void AZ_direct_sort(int b[], int indx[], char buffer[], char a[], int *start,
   *ind_indices  = i;
 
 } /* AZ_direct_sort */
+
+#ifdef __cplusplus
+}
+#endif

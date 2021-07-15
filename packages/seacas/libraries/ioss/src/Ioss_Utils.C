@@ -37,7 +37,7 @@
 #endif
 #include <cstdio>
 
-#if defined(_MSC_VER)
+#if defined(_WINDOWS)
 #include <io.h>
 #define isatty _isatty
 #endif
@@ -1873,7 +1873,7 @@ void Ioss::Utils::copy_database(Ioss::Region &region, Ioss::Region &output_regio
     region.end_state(istep);
     output_region.end_state(ostep);
     if (options.delay > 0.0) {
-#ifndef _MSC_VER
+#ifndef _WINDOWS
       struct timespec delay;
       delay.tv_sec  = (int)options.delay;
       delay.tv_nsec = (options.delay - delay.tv_sec) * 1000000000L;

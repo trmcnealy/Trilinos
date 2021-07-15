@@ -641,7 +641,7 @@ extern void AZ_fortransolve(double x[], double b[], int options[],
 extern "C" {
 #endif
 
-#ifndef FORTRAN_DISABLED
+//#ifndef FORTRAN_DISABLED
 void PREFIX AZ_DLASWP_F77(int *, double *, int *, int *, int *, int *, int *);
 
 void PREFIX AZ_DLAIC1_F77(int * , int *, double *, double *, double *, double *,
@@ -650,7 +650,7 @@ void PREFIX AZ_SLASWP_F77(int *, float *, int *, int *, int *, int *, int *);
 
 void PREFIX AZ_SLAIC1_F77(int * , int *, float *, float *, float *, float *,
 			  float *, float *, float *);
-#endif /* FORTRAN_DISABLED */
+//#endif /* FORTRAN_DISABLED */
   /* Aztec function prototypes that can be called by the user */
 
   extern void AZ_solve(
@@ -1494,7 +1494,7 @@ extern unsigned int md_mpi_write(void *, unsigned int ,int , int , int *,int *);
 /*                    Auxilliary fortran rroutines needed by Aztec           */
 /*****************************************************************************/
 
-#ifndef FORTRAN_DISABLED
+//#ifndef FORTRAN_DISABLED
 extern void AZ_FNROOT_F77(int *,int *,int *,int *, int *, int *, int *);
 
 extern void MC64AD_F77(int *, int *, int *, int *, int *, double*,
@@ -1502,7 +1502,7 @@ extern void MC64AD_F77(int *, int *, int *, int *, int *, double*,
                     int *, int *);
 
 extern void AZ_RCM_F77(int *, int *,int *, int *,int *, int *, int *);
-#endif /* ndef FORTRAN_DISABLED */
+//#endif /* ndef FORTRAN_DISABLED */
 
 /*****************************************************************************/
 /*                    Auxilliary routines available to users                 */

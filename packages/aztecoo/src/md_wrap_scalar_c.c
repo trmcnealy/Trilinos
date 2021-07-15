@@ -63,6 +63,9 @@
 #else
 #define MPI_Request int
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -272,3 +275,7 @@ int md_wrap_request_free(MPI_Request *request)
 
 } /* md_wrap_request_free */
 
+
+#ifdef __cplusplus
+}
+#endif

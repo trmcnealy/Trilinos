@@ -816,7 +816,7 @@ namespace Belos {
 
     //Compute all absolute values and find maximum:
     for(int i = 0; i < dimN; i++){
-      absVal(i) = hypot(thetaN(i,0), thetaN(i,1)); 
+      absVal(i) = std::hypot(thetaN(i,0), thetaN(i,1)); 
     }
     MagnitudeType * maxPointer = std::max_element(absVal.values(), (absVal.values()+dimN));
     int maxIndex = int (maxPointer- absVal.values());
@@ -853,7 +853,7 @@ namespace Belos {
           a = thetaN(i,0) - sorted(k,0);
           b = thetaN(i,1) - sorted(k,1);
           if (a*a + b*b > MCT::zero())
-            prod(i) = prod(i) + log10(hypot(a,b));
+            prod(i) = prod(i) + log10(std::hypot(a,b));
           else {
             prod(i) = -std::numeric_limits<MagnitudeType>::infinity();
             break;

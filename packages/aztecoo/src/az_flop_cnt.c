@@ -61,6 +61,9 @@
 #include <math.h>
 
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************/
 /******************************************************************************/
@@ -419,3 +422,7 @@ double AZ_calc_precond_flops(int solver_flag, int options[],
   return flops;
 
 } /* AZ_calc_precond_flops */
+
+#ifdef __cplusplus
+}
+#endif

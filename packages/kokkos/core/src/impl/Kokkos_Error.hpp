@@ -54,6 +54,9 @@
 #ifdef KOKKOS_ENABLE_HIP
 #include <HIP/Kokkos_HIP_Abort.hpp>
 #endif
+#ifdef KOKKOS_ENABLE_SYCL
+#include <SYCL/Kokkos_SYCL_Abort.hpp>
+#endif
 
 #ifndef KOKKOS_ABORT_MESSAGE_BUFFER_SIZE
 #define KOKKOS_ABORT_MESSAGE_BUFFER_SIZE 2048
@@ -92,7 +95,9 @@ class RawMemoryAllocationFailure : public std::bad_alloc {
     CudaMallocManaged,
     CudaHostAlloc,
     HIPMalloc,
-    HIPHostMalloc
+    HIPHostMalloc,
+    SYCLMallocDevice,
+    SYCLMallocShared
   };
 
  private:
@@ -179,7 +184,10 @@ class RawMemoryAllocationFailure : public std::bad_alloc {
 #elif defined(KOKKOS_ENABLE_HIP) && defined(__HIP_DEVICE_COMPILE__)
 // HIP aborts
 #define KOKKOS_IMPL_ABORT_NORETURN [[noreturn]]
-#elif !defined(KOKKOS_ENABLE_OPENMPTARGET) && !defined(__HCC_ACCELERATOR__)
+#elif defined(KOKKOS_ENABLE_SYCL) && defined(__SYCL_DEVICE_ONLY__)
+// FIXME_SYCL SYCL doesn't abort
+#define KOKKOS_IMPL_ABORT_NORETURN
+#elif !defined(KOKKOS_ENABLE_OPENMPTARGET)
 // Host aborts
 #define KOKKOS_IMPL_ABORT_NORETURN [[noreturn]]
 #else
@@ -189,17 +197,17 @@ class RawMemoryAllocationFailure : public std::bad_alloc {
 
 namespace Kokkos {
 KOKKOS_IMPL_ABORT_NORETURN KOKKOS_INLINE_FUNCTION void abort(
-    const char *const message, const char* file = __FILE__, const unsigned line = __LINE__) {
+    const char *const message) {
 #if defined(KOKKOS_ENABLE_CUDA) && defined(__CUDA_ARCH__)
-  //Kokkos::Impl::cuda_abort(message);
-  printf("\033[31m%s in %s @ %u\n%s\n\033[0m", "Cuda Exception", file, line, message);
-  asm("trap;");
+  Kokkos::Impl::cuda_abort(message);
 #elif defined(KOKKOS_ENABLE_HIP) && defined(__HIP_DEVICE_COMPILE__)
   Kokkos::Impl::hip_abort(message);
-#elif !defined(KOKKOS_ENABLE_OPENMPTARGET) && !defined(__HCC_ACCELERATOR__)
-  //Kokkos::Impl::host_abort(message);
-  printf("\033[31m%s in %s @ %u\n%s\n\033[0m", "Host Exception", file, line, message);
-  throw message;
+#elif defined(KOKKOS_ENABLE_SYCL) && defined(__SYCL_DEVICE_ONLY__)
+  Kokkos::Impl::sycl_abort(message);
+#elif !defined(KOKKOS_ENABLE_OPENMPTARGET)
+  Kokkos::Impl::host_abort(message);
+#else
+  (void)message;  // FIXME_OPENMPTARGET
 #endif
 }
 
@@ -209,7 +217,7 @@ KOKKOS_IMPL_ABORT_NORETURN KOKKOS_INLINE_FUNCTION void abort(
 //----------------------------------------------------------------------------
 
 #if !defined(NDEBUG) || defined(KOKKOS_ENFORCE_CONTRACTS) || \
-    defined(KOKKOS_DEBUG)
+    defined(KOKKOS_ENABLE_DEBUG)
 #define KOKKOS_EXPECTS(...)                                               \
   {                                                                       \
     if (!bool(__VA_ARGS__)) {                                             \
@@ -237,7 +245,7 @@ KOKKOS_IMPL_ABORT_NORETURN KOKKOS_INLINE_FUNCTION void abort(
     }                                                                  \
   }
 #endif  // ifndef KOKKOS_ASSERT
-#else  // not debug mode
+#else   // not debug mode
 #define KOKKOS_EXPECTS(...)
 #define KOKKOS_ENSURES(...)
 #ifndef KOKKOS_ASSERT

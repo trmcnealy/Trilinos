@@ -67,6 +67,9 @@
 #include "az_ifpack.h"
 #include "az_blas_wrappers.h"
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* End Aztec 2.1 mheroux mod */
 
 extern int az_iterate_id;
@@ -960,3 +963,6 @@ void AZ_zero_out_context(struct context *context)
    context->Pmat_computed = 0;
 }
 
+#ifdef __cplusplus
+}
+#endif

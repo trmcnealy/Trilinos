@@ -40,8 +40,9 @@
 #include "Teuchos_Array.hpp"
 #include "Teuchos_ParameterList.hpp"
 #endif
-#ifdef _MSC_VER
-# include "winprocess.h"
+#ifdef _WINDOWS
+#include <Winsock2.h>
+#include <process.h>
 #endif
 
 #ifdef HAVE_ML_TEUCHOS
@@ -3673,7 +3674,7 @@ void ML_BreakForDebugger(const Epetra_Comm &Comm)
 #ifdef ICL
     Sleep(1);
 #else
-    sleep(1);
+    _sleep(1);
 #endif
       }
     }

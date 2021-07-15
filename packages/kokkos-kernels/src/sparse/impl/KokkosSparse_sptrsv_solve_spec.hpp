@@ -98,7 +98,7 @@ struct sptrsv_solve_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosSparse_sptrsv_solve_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_sptrsv_solve_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_sptrsv_solve_eti_spec_avail.hpp>
 
 namespace KokkosSparse {
 namespace Impl {
@@ -258,7 +258,7 @@ struct SPTRSV_SOLVE<KernelHandle, RowMapType, EntriesType, ValuesType, BType, XT
                                Kokkos::MemoryTraits<Kokkos::Unmanaged> >, false, true >;
 
 #include<KokkosSparse_sptrsv_solve_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_sptrsv_solve_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_sptrsv_solve_eti_spec_decl.hpp>
 
 
 #endif

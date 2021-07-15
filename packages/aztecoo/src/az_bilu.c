@@ -47,6 +47,9 @@
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
 #include "az_lapack_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**************************************************************/
 /**************************************************************/
@@ -322,3 +325,7 @@ void AZ_funswill(int *trash)
    *trash += 1;    *trash -= 1;
 }
 
+
+#ifdef __cplusplus
+}
+#endif

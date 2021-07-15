@@ -70,8 +70,8 @@ struct in_place_shfl_op {
   template <class Scalar>
   // requires _assignable_from_bits<Scalar>
   __device__ inline typename std::enable_if<sizeof(Scalar) < sizeof(int)>::type
-  operator()(Scalar& out, Scalar const& in, int lane_or_delta,
-             int width) const noexcept {
+  operator()(Scalar& out, Scalar const& in, int lane_or_delta, int width) const
+      noexcept {
     using shfl_type = int;
     union conv_type {
       Scalar orig;
@@ -93,8 +93,8 @@ struct in_place_shfl_op {
   template <class Scalar>
   // requires _assignable_from_bits<Scalar>
   __device__ inline typename std::enable_if<sizeof(Scalar) == sizeof(int)>::type
-  operator()(Scalar& out, Scalar const& in, int lane_or_delta,
-             int width) const noexcept {
+  operator()(Scalar& out, Scalar const& in, int lane_or_delta, int width) const
+      noexcept {
     reinterpret_cast<int&>(out) = self().do_shfl_op(
         reinterpret_cast<int const&>(in), lane_or_delta, width);
   }
@@ -128,7 +128,13 @@ struct in_place_shfl_fn : in_place_shfl_op<in_place_shfl_fn> {
   template <class T>
   __device__ KOKKOS_IMPL_FORCEINLINE T do_shfl_op(T& val, int lane,
                                                   int width) const noexcept {
-    return __shfl(val, lane, width);
+    // FIXME_HIP Not sure why there is a race condition here. Note that the
+    // problem was also found in the CUDA backend with CUDA clang
+    // (https://github.com/kokkos/kokkos/issues/941) but it seems more limited
+    // in CUDA clang.
+    auto return_val = __shfl(val, lane, width);
+    __threadfence();
+    return return_val;
   }
 };
 
@@ -141,7 +147,13 @@ struct in_place_shfl_up_fn : in_place_shfl_op<in_place_shfl_up_fn> {
   template <class T>
   __device__ KOKKOS_IMPL_FORCEINLINE T do_shfl_op(T& val, int lane,
                                                   int width) const noexcept {
-    return __shfl_up(val, lane, width);
+    // FIXME_HIP Not sure why there is a race condition here. Note that the
+    // problem was also found in the CUDA backend with CUDA clang
+    // (https://github.com/kokkos/kokkos/issues/941) but it seems more limited
+    // in CUDA clang.
+    auto return_val = __shfl_up(val, lane, width);
+    __threadfence();
+    return return_val;
   }
 };
 
@@ -155,7 +167,13 @@ struct in_place_shfl_down_fn : in_place_shfl_op<in_place_shfl_down_fn> {
   template <class T>
   __device__ KOKKOS_IMPL_FORCEINLINE T do_shfl_op(T& val, int lane,
                                                   int width) const noexcept {
-    return __shfl_down(val, lane, width);
+    // FIXME_HIP Not sure why there is a race condition here. Note that the
+    // problem was also found in the CUDA backend with CUDA clang
+    // (https://github.com/kokkos/kokkos/issues/941) but it seems more limited
+    // in CUDA clang.
+    auto return_val = __shfl_down(val, lane, width);
+    __threadfence();
+    return return_val;
   }
 };
 

@@ -82,6 +82,9 @@ namespace Teuchos {
  * indicate that the text stream being read is invalid, usually due to constraints
  * that can't be expressed in the Teuchos::Language.
  */
+
+#pragma comment(linker, "/export:_ZTVN7Teuchos6ReaderE")
+
 class Reader {
  public:
 

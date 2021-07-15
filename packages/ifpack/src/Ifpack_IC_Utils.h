@@ -49,9 +49,7 @@ typedef struct {
     int    *ptr;  /* also known as IA; with ptr[0] = 0 */
 } Ifpack_AIJMatrix;
 
-extern "C" {
-void ifpack_multilist_sort (int *const pbase, double *const daux, int total_elems);
-}
+extern "C" void ifpack_multilist_sort (int *const pbase, double *const daux, int total_elems);
 
 void Ifpack_AIJMatrix_dealloc(Ifpack_AIJMatrix *a);
 

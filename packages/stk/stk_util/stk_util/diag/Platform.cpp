@@ -34,7 +34,9 @@
 // 
  */
 
+#if !defined(_WINDOWS)
 #include <pwd.h>
+#endif
 #include <unistd.h>
 
 #include <iostream>
@@ -92,7 +94,11 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <netdb.h>
-
+#elif defined(_WINDOWS)
+#include <sys/utsname.h>
+#include <sys/time.h>
+#include <sys/unistd.h>
+#include <winsock.h>
 #else
 #include <sys/utsname.h>
 #include <sys/time.h>
@@ -242,6 +248,14 @@ username()
   }
 
   return user_name;
+#elif defined(_WINDOWS)
+    CHAR  UserName[100];
+    DWORD nUserName = sizeof(UserName);
+    if(GetUserName(UserName, &nUserName))
+    {
+        return std::string(UserName);
+    }
+    return std::string("unknown");	
 #else
   struct passwd *user_info = ::getpwuid(::geteuid());
   std::string user_name = (user_info ? user_info->pw_name : "unknown");
@@ -293,7 +307,11 @@ pid()
 int
 pgrp()
 {
+#if defined(_WINDOWS)
+  return ::getpid();
+#else
   return ::getpgrp();
+#endif
 }
 
 bool

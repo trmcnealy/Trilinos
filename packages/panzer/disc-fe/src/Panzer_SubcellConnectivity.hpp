@@ -244,7 +244,7 @@ subcellForCell(const int cell, const int local_subcell_index) const
   return _cell_to_subcells(index);
 }
 
-int
+KOKKOS_INLINE_FUNCTION int
 SubcellConnectivity::
 cellForSubcell(const int subcell, const int local_cell_index) const
 {

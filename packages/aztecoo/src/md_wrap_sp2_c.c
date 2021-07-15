@@ -65,6 +65,9 @@
 #include <sys/utsname.h>
 #include <mpi.h>
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void get_parallel_info(int *proc, int *nprocs, int *dim)
 
@@ -204,3 +207,7 @@ int md_wrap_request_free(MPI_Request *request)
 
 } /* md_wrap_request_free */
 
+
+#ifdef __cplusplus
+}
+#endif

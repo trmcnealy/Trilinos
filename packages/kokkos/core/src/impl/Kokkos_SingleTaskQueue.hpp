@@ -172,8 +172,8 @@ class SingleTaskQueue
   }
 
   KOKKOS_INLINE_FUNCTION
-  constexpr team_scheduler_info_type initial_team_scheduler_info(
-      int) const noexcept {
+  constexpr team_scheduler_info_type initial_team_scheduler_info(int) const
+      noexcept {
     return {};
   }
 };

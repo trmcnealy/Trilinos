@@ -65,6 +65,9 @@
 #else
 #define MPI_Request int
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define nCUBE 1
 #define INTEL 2
@@ -337,3 +340,7 @@ int md_wrap_request_free(MPI_Request *request)
 
 } /* md_wrap_request_free */
 
+
+#ifdef __cplusplus
+}
+#endif

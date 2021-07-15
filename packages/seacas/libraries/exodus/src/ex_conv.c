@@ -222,7 +222,7 @@ int ex__conv_init(int exoid, int *comp_wordsize, int *io_wordsize, int file_word
 
   nc_inq_format(exoid, &filetype);
 
-  if (!(new_file = malloc(sizeof(struct ex__file_item)))) {
+  if (!(new_file = (struct ex__file_item*)malloc(sizeof(struct ex__file_item)))) {
     snprintf(errmsg, MAX_ERR_LENGTH,
              "ERROR: failed to allocate memory for internal file "
              "structure storage file id %d",

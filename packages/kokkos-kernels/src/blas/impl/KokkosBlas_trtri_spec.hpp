@@ -75,7 +75,7 @@ struct trtri_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosBlas_trtri_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas_trtri_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas_trtri_eti_spec_avail.hpp>
 
 namespace KokkosBlas {
 namespace Impl {
@@ -156,6 +156,6 @@ template struct TRTRI< \
      false, true>;
 
 #include<KokkosBlas_trtri_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas_trtri_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas_trtri_eti_spec_decl.hpp>
 
 #endif // KOKKOSBLAS_TRTRI_SPEC_HPP_

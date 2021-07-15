@@ -23,7 +23,9 @@
 #include <numeric>
 #include <stddef.h>
 #include <string>
+#if !defined(_WINDOWS)
 #include <sys/select.h>
+#endif
 #include <time.h>
 #include <vector>
 

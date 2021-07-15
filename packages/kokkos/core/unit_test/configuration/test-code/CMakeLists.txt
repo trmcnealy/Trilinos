@@ -19,8 +19,8 @@
 # The CMake variables CMAKE_CXX_STANDARD and CMAKE_CXX_EXTENSIONS are
 # respected.  We recommend that you set CMAKE_CXX_EXTENSIONS to OFF.
 # Otherwise, CMake defaults to using extensions for the C++ standard, and the
-# GNU extensions (-std=gnu++11) will be used for compilers that support it
-# instead of standard C++11 (-std=c++11).
+# GNU extensions (-std=gnu++14) will be used for compilers that support it
+# instead of standard C++14 (-std=c++14).
 #
 # A bunch of build options are added as variables (all starting with KOKKOS_)
 # to the build.  Check them out using ccmake or the CMake GUI.
@@ -34,7 +34,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(Example CXX C Fortran)
 
-# list(APPEND CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -O3)
+list(APPEND CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -O3)
 
 add_subdirectory(${Example_SOURCE_DIR}/../../../.. ${Example_BINARY_DIR}/kokkos)
 

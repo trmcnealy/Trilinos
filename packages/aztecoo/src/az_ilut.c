@@ -46,6 +46,9 @@
 #include <math.h>
 #include <float.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 
@@ -547,3 +550,7 @@ void AZ_put_in_dbl_heap(int *row, double vals[], int heap[],
    heap[prev] = *row;
    (*length)++;
 }
+
+#ifdef __cplusplus
+}
+#endif

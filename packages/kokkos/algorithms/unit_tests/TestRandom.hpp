@@ -308,11 +308,11 @@ struct test_random_scalar {
           variance_expect / (result.variance / num_draws / 3) - 1.0;
       double covariance_eps =
           result.covariance / num_draws / 2 / variance_expect;
-      pass_mean  = ((-tolerance < mean_eps) && (tolerance > mean_eps)) ? 1 : 0;
-      pass_var   = ((-1.5 * tolerance < variance_eps) &&
+      pass_mean = ((-tolerance < mean_eps) && (tolerance > mean_eps)) ? 1 : 0;
+      pass_var  = ((-1.5 * tolerance < variance_eps) &&
                   (1.5 * tolerance > variance_eps))
-                       ? 1
-                       : 0;
+                     ? 1
+                     : 0;
       pass_covar = ((-2.0 * tolerance < covariance_eps) &&
                     (2.0 * tolerance > covariance_eps))
                        ? 1
@@ -491,6 +491,34 @@ void test_random(unsigned int num_draws) {
 }
 }  // namespace Impl
 
+template <typename ExecutionSpace>
+void test_random_xorshift64() {
+#if defined(KOKKOS_ENABLE_SYCL) || defined(KOKKOS_ENABLE_CUDA) || \
+    defined(KOKKOS_ENABLE_HIP)
+  const int num_draws = 132141141;
+#else  // SERIAL, HPX, OPENMP
+  const int num_draws = 10240000;
+#endif
+  Impl::test_random<Kokkos::Random_XorShift64_Pool<ExecutionSpace>>(num_draws);
+  Impl::test_random<Kokkos::Random_XorShift64_Pool<
+      Kokkos::Device<ExecutionSpace, typename ExecutionSpace::memory_space>>>(
+      num_draws);
+}
+
+template <typename ExecutionSpace>
+void test_random_xorshift1024() {
+#if defined(KOKKOS_ENABLE_SYCL) || defined(KOKKOS_ENABLE_CUDA) || \
+    defined(KOKKOS_ENABLE_HIP)
+  const int num_draws = 52428813;
+#else  // SERIAL, HPX, OPENMP
+  const int num_draws = 10130144;
+#endif
+  Impl::test_random<Kokkos::Random_XorShift1024_Pool<ExecutionSpace>>(
+      num_draws);
+  Impl::test_random<Kokkos::Random_XorShift1024_Pool<
+      Kokkos::Device<ExecutionSpace, typename ExecutionSpace::memory_space>>>(
+      num_draws);
+}
 }  // namespace Test
 
 #endif  // KOKKOS_TEST_UNORDERED_MAP_HPP

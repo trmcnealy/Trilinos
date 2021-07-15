@@ -37,11 +37,12 @@
 #include <set>
 #include <string>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <tokenize.h>
 #include <utility>
 #include <vector>
 
-#if defined SEACAS_HAVE_DATAWARP
+#if defined(SEACAS_HAVE_DATAWARP)
 extern "C" {
 #include <datawarp.h>
 }

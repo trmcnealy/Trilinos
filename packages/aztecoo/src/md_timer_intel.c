@@ -58,6 +58,9 @@
  *====================================================================*/
 
 /* INTEL timer */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern double dclock(void);
 extern double machine_dependent_second(void);
 
@@ -69,3 +72,7 @@ double machine_dependent_second(void)
   return (dclock());
 
 } /* machine_dependent_second */
+
+#ifdef __cplusplus
+}
+#endif

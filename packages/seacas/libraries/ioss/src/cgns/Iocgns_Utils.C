@@ -1552,7 +1552,11 @@ int Iocgns::Utils::find_solution_index(int cgns_file_ptr, int base, int zone, in
         // Try to decode the step from the FlowSolution_t name.
         // If `db_name` does not have `Step` or `step` in name,
         // then don't search
+#if defined(_WINDOWS)
+        if (_stricmp(db_name, "step") == 0) {
+#else
         if (strcasestr(db_name, "step") != NULL) {
+#endif
           int nstep = extract_trailing_int(db_name);
           if (nstep == step) {
             return i + 1;

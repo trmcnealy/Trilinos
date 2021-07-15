@@ -60,6 +60,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern double machine_dependent_second(void);
 extern void get_parallel_info(int *proc, int *nprocs, int *dim);
@@ -150,3 +153,7 @@ void AZ_set_comm(int proc_config[], MPI_AZComm comm)
 #endif
   proc_config[AZ_Comm_Set] = AZ_Done_by_User;
 }
+
+#ifdef __cplusplus
+}
+#endif

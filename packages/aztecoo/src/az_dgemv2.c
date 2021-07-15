@@ -57,6 +57,9 @@
  * $Name$
  *====================================================================*/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern void AZ_dgemv2(int, int, double *, double *, double *);
 
 
@@ -125,3 +128,7 @@ void AZ_dgemv2(int m, int n, double *a, double *x, double *y)
   }
 
 } /* AZ_dgemv2 */
+
+#ifdef __cplusplus
+}
+#endif

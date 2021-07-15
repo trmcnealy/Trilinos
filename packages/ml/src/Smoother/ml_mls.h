@@ -37,10 +37,8 @@ struct MLSthing {
                                     /* D is some block diagonal */
 };
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 int   ML_MLS_Smooth0( double b[], double vx[], double vy[], int deg,
@@ -54,10 +52,8 @@ int ML_MLS_SandwPost(void *sm, int inlen, double x[], int outlen, double y[]);
 int ML_MLS_SPrime_Apply(void *sm,int inlen,double x[],int outlen, double rhs[]);
 
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 }
-#endif
 #endif
 
 #endif

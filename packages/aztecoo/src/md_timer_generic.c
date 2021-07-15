@@ -58,6 +58,9 @@
  *====================================================================*/
 
 #include <time.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern double machine_dependent_second(void);
 double machine_dependent_second(void)
@@ -90,3 +93,6 @@ double machine_dependent_second(void)
   last_num_ticks = num_ticks;
   return(value);
 }
+#ifdef __cplusplus
+}
+#endif

@@ -61,6 +61,10 @@
 #include <stdlib.h>
 #include "az_aztec.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
@@ -926,3 +930,6 @@ void AZ_defaults(int options[], double params[])
   params[AZ_update_reduction] = 10e10;
   params[AZ_ill_cond_thresh] = 1.0e11;
 }
+#ifdef __cplusplus
+}
+#endif

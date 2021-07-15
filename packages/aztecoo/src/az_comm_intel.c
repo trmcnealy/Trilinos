@@ -63,6 +63,9 @@
 #include <stdio.h>
 #include <nx.h>
 #include "az_aztec.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int az_iterate_id;
 
@@ -396,3 +399,7 @@ void gather_and_send_mesgs(double x[], int data_org[], char *message_recv_add[],
   }
 
 } /* gather_and_send_mesgs */
+
+#ifdef __cplusplus
+}
+#endif

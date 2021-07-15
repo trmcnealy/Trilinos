@@ -170,8 +170,8 @@ struct dot_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosBlas1_dot_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_dot_eti_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_dot_mv_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_dot_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_dot_mv_eti_spec_avail.hpp>
 
 namespace KokkosBlas {
 namespace Impl {
@@ -504,7 +504,7 @@ template struct Dot< \
         1,2,false,true>;
 
 #include<KokkosBlas1_dot_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_dot_eti_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_dot_mv_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_dot_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_dot_mv_eti_spec_decl.hpp>
 
 #endif // KOKKOS_BLAS1_MV_IMPL_DOT_HPP_

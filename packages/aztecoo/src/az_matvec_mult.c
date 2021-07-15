@@ -61,6 +61,9 @@
 #include <float.h>
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Set this to 1 if you want to time pieces of mat-vec. */
 #define AZ_TIME_MATVEC_DEFAULT 0
@@ -528,3 +531,6 @@ void AZ_MSR_matvec_mult (double *b, double *c,AZ_MATRIX *Amat,int proc_config[])
 
 } /* AZ_MSR_matvec_mult */
 
+#ifdef __cplusplus
+}
+#endif

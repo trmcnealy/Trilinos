@@ -64,6 +64,9 @@
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
 #include "az_lapack_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int az_iterate_id;
 
@@ -738,3 +741,7 @@ void AZ_get_x_incr(int options[], int data_org[], int
   }
 
 } /* AZ_get_x_incr */
+
+#ifdef __cplusplus
+}
+#endif

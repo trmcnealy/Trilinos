@@ -65,6 +65,9 @@
 #include "az_aztec.h"
 #include "az_blas_wrappers.h"
 #include "az_lapack_wrappers.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* static functions */
 
@@ -2407,3 +2410,7 @@ void AZ_sum_bdry(double x[], int data_org[], int proc_config[])
   for ( j = 0 ; j < total; j++ )
        x[ data_org[AZ_send_list + j] ] += buffer[j];
 } /* AZ_sum_bdry */
+
+#ifdef __cplusplus
+}
+#endif

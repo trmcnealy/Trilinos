@@ -83,7 +83,7 @@ struct gesv_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosBlas_gesv_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas_gesv_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas_gesv_eti_spec_avail.hpp>
 
 namespace KokkosBlas {
 namespace Impl {
@@ -159,7 +159,7 @@ struct GESV<AMatrix, BXMV, IPIVV, false, KOKKOSKERNELS_IMPL_COMPILE_LIBRARY>{
                       false, true > ;
 
 #include<KokkosBlas_gesv_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas_gesv_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas_gesv_eti_spec_decl.hpp>
 
 
 #endif // KOKKOSBLAS_IMPL_GESV_SPEC_HPP_

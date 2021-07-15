@@ -34,6 +34,8 @@
 #ifndef KLU2_ORDINALTRAITS_H
 #define KLU2_ORDINALTRAITS_H
 
+#include <trilinos_colamd.h>
+
 template <typename T>
 struct KLU_OrdinalTraits
 {
@@ -110,35 +112,35 @@ struct KLU_OrdinalTraits<int>
 };
 
 template<>
-struct KLU_OrdinalTraits<long int>
+struct KLU_OrdinalTraits<UF_long>
 {
-    static inline long int btf_order (long int n, long int *Ap, long int *Ai,
-        double maxwork, double *work, long int *P, long int *Q, long int *R, long int *nmatch,
-        long int *Work)
+    static inline UF_long btf_order (UF_long n, UF_long *Ap, UF_long *Ai,
+        double maxwork, double *work, UF_long *P, UF_long *Q, UF_long *R, UF_long *nmatch,
+        UF_long *Work)
     {
         return (trilinos_btf_l_order (n, Ap, Ai, maxwork, work, P, Q, R, nmatch,
                     Work));
     }
 
-    static inline long int btf_strongcomp (long int n, long int *Ap, long int *Ai, long int *Q,
-        long int *P, long int *R, long int *Work)
+    static inline UF_long btf_strongcomp (UF_long n, UF_long *Ap, UF_long *Ai, UF_long *Q,
+        UF_long *P, UF_long *R, UF_long *Work)
     {
         return(trilinos_btf_l_strongcomp (n, Ap, Ai, Q, P, R, Work)) ;
     }
 
-    static inline long int amd_order (long int n, long int *Ap, long int *Ai, long int *P,
+    static inline UF_long amd_order (UF_long n, UF_long *Ap, UF_long *Ai, UF_long *P,
         double *Control, double *Info)
     {
         return (trilinos_amd_l_order(n, Ap, Ai, P, Control, Info)) ;
     }
 
-    static inline long int colamd (long int n_row, long int n_col, long int Alen, long int *A,
-        long int *p, double *knobs, long int *stats)
+    static inline UF_long colamd (UF_long n_row, UF_long n_col, UF_long Alen, UF_long *A,
+        UF_long *p, double *knobs, UF_long *stats)
     {
         return(trilinos_colamd_l (n_row, n_col, Alen, A, p, knobs, stats));
     }
 
-    static inline long int colamd_recommended (long int nnz, long int n_row, long int n_col)
+    static inline UF_long colamd_recommended (UF_long nnz, UF_long n_row, UF_long n_col)
     {
         return(trilinos_colamd_l_recommended(nnz, n_row, n_col));
     }

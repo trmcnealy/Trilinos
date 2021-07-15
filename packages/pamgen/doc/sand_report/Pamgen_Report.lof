@@ -1,0 +1,20 @@
+\contentsline {figure}{\numberline {1}{\ignorespaces The mesh geometry zoo in 3D.}}{9}{figure.1}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Examples of geometry transformation.}}{10}{figure.2}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Definition of a three-dimensional \texttt {RECTILINEAR} mesh.}}{17}{figure.3}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Definition of a two-dimensional spherical mesh.}}{19}{figure.4}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Definition of a three-dimensional spherical mesh.}}{19}{figure.5}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Three dimensional \texttt {CYLINDRICAL} mesh.}}{21}{figure.6}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Three dimensional \texttt {RADIAL} mesh.}}{24}{figure.7}%
+\contentsline {figure}{\numberline {8}{\ignorespaces A 360 degree \texttt {RADIAL} mesh.}}{25}{figure.8}%
+\contentsline {figure}{\numberline {9}{\ignorespaces A \texttt {RADIAL TRISECTION} mesh with three trisection blocks.}}{26}{figure.9}%
+\contentsline {figure}{\numberline {10}{\ignorespaces A \texttt {RADIAL TRISECTION} mesh with three trisection blocks.}}{27}{figure.10}%
+\contentsline {figure}{\numberline {11}{\ignorespaces A 360 degree \texttt {RADIAL TRISECTION} mesh.}}{28}{figure.11}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Three dimensional \texttt {BRICK} mesh.}}{30}{figure.12}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Block topology and labels.}}{32}{figure.13}%
+\contentsline {figure}{\numberline {14}{\ignorespaces A \texttt {RADIAL TRISECTION} mesh with sidesets.}}{33}{figure.14}%
+\contentsline {figure}{\numberline {15}{\ignorespaces 3D Geometry Transformation Example}}{35}{figure.15}%
+\contentsline {figure}{\numberline {16}{\ignorespaces 2D Geometry Transformation Example}}{36}{figure.16}%
+\contentsline {figure}{\numberline {17}{\ignorespaces 2D mesh created with a \texttt {USER DEFINED ELEMENT DENSITY}.}}{38}{figure.17}%
+\contentsline {figure}{\numberline {18}{\ignorespaces \texttt {BISECTION} decomposition run on 7 processors.}}{40}{figure.18}%
+\contentsline {figure}{\numberline {19}{\ignorespaces \texttt {PROCESSOR LAYOUT} decomposition run on 8 processors.}}{41}{figure.19}%
+\contentsline {figure}{\numberline {20}{\ignorespaces \texttt {PROCESSOR LAYOUT} decomposition on 8 processors.}}{41}{figure.20}%

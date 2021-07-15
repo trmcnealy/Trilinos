@@ -97,8 +97,8 @@ struct nrm2w_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosBlas1_nrm2w_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_nrm2w_eti_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_nrm2w_mv_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_nrm2w_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosBlas1_nrm2w_mv_eti_spec_avail.hpp>
 
 namespace KokkosBlas {
 namespace Impl {
@@ -252,7 +252,7 @@ template struct Nrm2w< \
          2, false, true>;
 
 #include<KokkosBlas1_nrm2w_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_nrm2w_eti_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosBlas1_nrm2w_mv_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_nrm2w_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosBlas1_nrm2w_mv_eti_spec_decl.hpp>
 
 #endif // KOKKOSBLAS1_NRM2W_SPEC_HPP_

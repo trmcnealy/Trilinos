@@ -58,10 +58,8 @@ struct MLBlkMat {
 
 
 
-#ifndef ML_CPP
 #ifdef __cplusplus
 extern "C" {
-#endif
 #endif
 
 
@@ -143,10 +141,8 @@ extern ML_Operator *ProjectMe(ML *mlptr, int BlockLocation, int FromLevel, ML_Op
 
 extern void ML_Operator_Copy_Statistics(ML_Operator *source, ML_Operator *target);
 
-#ifndef ML_CPP
 #ifdef __cplusplus
   }
-#endif
 #endif
 
 #endif

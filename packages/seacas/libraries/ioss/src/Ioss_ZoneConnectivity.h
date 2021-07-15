@@ -12,13 +12,21 @@
 #include <cassert>
 #include <string>
 
-#if defined(SEACAS_HAVE_CGNS) && !defined(BUILT_IN_SIERRA)
+#if defined(SEACAS_HAVE_CGNS)
 #include <cgnstypes.h>
+#if !defined(_WINDOWS)
+#if !defined(BUILT_IN_SIERRA)
 using INT = cgsize_t;
 #else
 // If this is not being built with CGNS, then default to using 32-bit integers.
 // Currently there is no way to input/output a structured mesh without CGNS,
 // so this block is simply to get things to compile and probably has no use.
+using INT = int;
+#endif
+#else
+#include <minwindef.h>
+#endif
+#else
 using INT = int;
 #endif
 

@@ -51,7 +51,6 @@
 #define KOKKOS_ATOMIC_INCREMENT_HPP
 
 #include "impl/Kokkos_Atomic_Fetch_Add.hpp"
-
 namespace Kokkos {
 
 // Atomic increment

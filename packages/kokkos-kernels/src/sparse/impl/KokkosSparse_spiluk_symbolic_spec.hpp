@@ -101,7 +101,7 @@ struct spiluk_symbolic_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosSparse_spiluk_symbolic_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spiluk_symbolic_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_spiluk_symbolic_eti_spec_avail.hpp>
 
 namespace KokkosSparse {
 namespace Impl {
@@ -237,7 +237,7 @@ struct SPILUK_SYMBOLIC<KernelHandle, ARowMapType, AEntriesType, LRowMapType, LEn
                       false, true > ;
 
 #include<KokkosSparse_spiluk_symbolic_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spiluk_symbolic_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_spiluk_symbolic_eti_spec_decl.hpp>
 
 
 #endif

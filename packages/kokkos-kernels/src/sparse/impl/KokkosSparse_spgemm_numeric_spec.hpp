@@ -149,7 +149,7 @@ struct spgemm_numeric_eti_spec_avail {
 
 // Include the actual specialization declarations
 #include<KokkosSparse_spgemm_tpl_spec_avail.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spgemm_numeric_eti_spec_avail.hpp>
+#include<gen_hpp/KokkosSparse_spgemm_numeric_eti_spec_avail.hpp>
 
 namespace KokkosSparse {
 namespace Impl {
@@ -489,7 +489,7 @@ struct SPGEMM_NUMERIC<KernelHandle,
 
 
 #include<KokkosSparse_spgemm_tpl_spec_decl.hpp>
-#include<generated_specializations_hpp/KokkosSparse_spgemm_numeric_eti_spec_decl.hpp>
+#include<gen_hpp/KokkosSparse_spgemm_numeric_eti_spec_decl.hpp>
 
 
 #endif // KOKKOS_BLAS1_MV_IMPL_DOT_HPP_
